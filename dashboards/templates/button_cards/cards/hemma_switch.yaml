@@ -1,0 +1,99 @@
+# hemma_switch:
+#   show_state: false
+
+#   tap_action:
+#     action: toggle
+
+#   styles:
+#     card:
+#       - border-radius: 18px
+#       - padding: 12px
+#       - font-size: 14px
+
+#   icon: >
+#     [[[
+#       return variables.icon || "mdi:toggle-switch";
+#     ]]]
+
+#   name: >
+#     [[[
+#       return entity.attributes.friendly_name;
+#     ]]]
+
+#   state:
+#     - value: "on"
+#       styles:
+#         card:
+#           - background-color: rgba(255,180,0,0.25)
+#     - value: "off"
+#       styles:
+#         card:
+#           - background-color: rgba(120,120,120,0.15)
+hemma_switch:
+  show_icon: true
+  show_state: false
+
+  # Match Hemma interaction model
+  tap_action:
+    action: more-info
+    entity: "[[[ return entity.entity_id ]]]"
+
+  hold_action:
+    action: more-info
+    entity: "[[[ return entity.entity_id ]]]"
+
+  icon_tap_action:
+    action: toggle
+
+  icon_hold_action:
+    action: more-info
+    entity: "[[[ return entity.entity_id ]]]"
+
+  icon: >
+    [[[
+      return variables.icon || entity.attributes.icon || "mdi:toggle-switch";
+    ]]]
+
+  name: >
+    [[[
+      return entity.attributes.friendly_name;
+    ]]]
+
+  styles:
+    entity_picture:
+      - opacity: 0.8
+      - transition: opacity 0.2s ease, filter 0.2s ease, transform 0.15s ease
+      - cursor: pointer
+
+    img_cell:
+      - background: transparent !important
+      - box-shadow: none !important
+      - transition: filter 0.2s ease
+      - cursor: pointer
+
+  extra_styles: |
+    @media (hover: hover) {
+      #img-cell:hover img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }
+
+    @media (hover: none) {
+      #img-cell:active img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }
+
+  state:
+    - value: "on"
+      styles:
+        card:
+          - background-color: var(--primary-color)
+    - value: "off"
+      styles:
+        card:
+          - background-color: var(--card-background-color)

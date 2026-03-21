@@ -1,0 +1,29 @@
+homeassistant:
+  packages: !include_dir_named packages
+
+# Loads default set of integrations. Do not remove.
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
+
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include_dir_merge_named scripts
+scene: !include scenes.yaml
+template: !include sensors.yaml
+
+lovelace:
+  mode: storage
+  dashboards:
+    dashboard-hemma:
+      mode: yaml
+      title: "Home"
+      icon: mdi:view-dashboard
+      show_in_sidebar: true
+      filename: dashboards/hemma/hemma.yaml

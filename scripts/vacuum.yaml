@@ -1,0 +1,20 @@
+clean_room:
+  alias: Clean Room (Google Assistant)
+  description: Sends dynamic room cleaning command to Google Assistant
+  mode: single
+
+  fields:
+    room:
+      name: Room
+      description: Name of the room to clean
+      example: living room
+      required: true
+
+  sequence:
+    - condition: template
+      value_template: >
+        {{ states('vacuum.cleaning_lady') not in ['cleaning', 'unavailable', 'unknown'] }}
+
+    - action: google_assistant_sdk.send_text_command
+      data:
+        command: "tell vacuum to clean the {{ room }}"

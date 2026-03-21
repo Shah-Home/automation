@@ -1,0 +1,697 @@
+# Room
+hemma_room:
+  class: "hemma-room"
+  template:
+    - hemma_default
+    - hemma_shared
+
+  triggers_update:
+    - '[[[ return variables.motion_sensor ]]]'
+    - '[[[ return variables.temp_sensor ]]]'
+    - '[[[ return variables.quality_sensor ]]]'
+    - '[[[ return variables.humidity_sensor ]]]'
+    - '[[[ return variables.presence_entity_1 ]]]'
+    - '[[[ return variables.presence_entity_2 ]]]'
+    - '[[[ return variables.media_player_1 ]]]'
+    - '[[[ return variables.media_player_2 ]]]'
+    - '[[[ return variables.media_player_3 ]]]'
+    - '[[[ return variables.media_player_4 ]]]'
+    - '[[[ return variables.image ]]]'
+    - '[[[ return variables.image_night ]]]'
+    - '[[[ return variables.image_position ]]]'
+    - '[[[ return variables.show_weather ]]]'
+    - '[[[ return variables.weather_entity ]]]'
+    - '[[[ return variables.weather_temp_sensor ]]]'
+    - input_boolean.hemma_mobile_navigation
+
+  variables:
+    image:
+    image_night:
+    image_position:
+
+    show_quality: false
+    quality_sensor:
+
+    show_humidity: false
+    humidity_sensor:
+
+    show_temp: false
+    temp_sensor:
+
+    show_motion: false
+    motion_sensor:
+
+    show_presence: false
+    presence_entity_1:
+    presence_entity_2:
+
+    show_media_badge: false
+    pause_timeout_minutes: 5
+
+    show_media_player_1: false
+    media_player_1:
+
+    show_media_player_2: false
+    media_player_2:
+
+    show_media_player_3: false
+    media_player_3:
+
+    show_media_player_4: false
+    media_player_4:
+
+    show_weather: false
+    weather_mode:
+    weather_entity:
+    weather_temp_sensor:
+
+    # =========================================================================
+    # ACTIVE MEDIA PLAYER SELECTOR
+    # =========================================================================
+    # Automatically selects the first active media player from up to 4 sources.
+    # You typically don't need to modify this unless changing media player logic.
+    # =========================================================================
+    active_media_player: >
+      [[[
+        const enabled = (v) => {
+          if (v === undefined || v === null) return false;
+          if (typeof v === 'boolean') return v;
+          if (typeof v === 'number')  return v !== 0;
+          const s = String(v).trim().toLowerCase();
+          if (['false','0','no','off','disabled'].includes(s)) return false;
+          if (['true','1','yes','on','enabled'].includes(s))   return true;
+          return !!s;
+        };
+
+        const isMediaActive = (eid) => {
+          if (!eid) return false;
+
+          const s  = states[eid];
+          const st = String(s?.state || '');
+          const a  = s?.attributes || {};
+
+          if (!s || ['unavailable', 'unknown'].includes(st)) return false;
+          if (['off', 'standby'].includes(st)) return false;
+
+          const title   = String(a.media_title || '').trim();
+          const artist  = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+          const hasContent = !!(title || artist);
+
+          if (st === 'playing' || st === 'buffering') return true;
+          if (st === 'paused') return hasContent;
+          if (st === 'idle' || st === 'on') return hasContent;
+
+          return false;
+        };
+
+        const list = [
+          [variables.show_media_player_1, variables.media_player_1],
+          [variables.show_media_player_2, variables.media_player_2],
+          [variables.show_media_player_3, variables.media_player_3],
+          [variables.show_media_player_4, variables.media_player_4],
+        ];
+
+        for (const [flag, eid] of list) {
+          if (enabled(flag) && eid && isMediaActive(eid)) return eid;
+        }
+
+        return '';
+      ]]]
+
+    # Media player styles
+    _hemma_mp_styles_base: !include /config/dashboards/templates/includes/hemma_media_player_styles.yaml
+
+    _hemma_mp_styles: >
+      [[[
+        let baseStyles = variables._hemma_mp_styles_base || '';
+
+        const eid = variables.active_media_player;
+        if (!eid) return baseStyles;
+
+        const a = states[eid]?.attributes || {};
+        const appName = String(a.app_name || a.source || '').toLowerCase();
+        const appId = String(a.app_id || '').toLowerCase();
+        const isYT = (appName.includes('youtube') || appId.includes('youtube'));
+
+        if (!isYT) return baseStyles;
+
+        const ytStyles = `
+
+          ha-icon.media-player-icon-fallback {
+            background: url("/local/hemma/icons/youtube.png") center/cover no-repeat !important;
+            border-radius: 50% !important;
+            width: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+            height: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+            min-width: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+            min-height: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+            color: transparent !important;
+            --mdc-icon-size: 0px !important;
+            opacity: 1 !important;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14) !important;
+            flex-shrink: 0 !important;
+            margin-right: 2px !important;
+          }
+
+          ha-icon.media-player-icon-fallback::before,
+          ha-icon.media-player-icon-fallback::after {
+            display: none !important;
+          }
+
+          /* Mobile Portrait YouTube icon sizing */
+          @media (max-width: 767px) and (orientation: portrait) {
+            ha-icon.media-player-icon-fallback {
+              width: 32px !important;
+              height: 32px !important;
+              min-width: 32px !important;
+              min-height: 32px !important;
+            }
+          }
+
+          /* Mobile Landscape YouTube icon sizing */
+          @media (max-height: 600px) and (orientation: landscape) {
+            ha-icon.media-player-icon-fallback {
+              width: 26px !important;
+              height: 26px !important;
+              min-width: 26px !important;
+              min-height: 26px !important;
+            }
+          }
+        `;
+
+        return baseStyles + ytStyles;
+      ]]]
+
+  tap_action: { action: none }
+  hold_action: { action: none }
+  double_tap_action: { action: none }
+
+  styles:
+    card:
+      - height: 100svh
+      - padding-top: >
+          [[[
+            const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+            const isPhonePortrait =
+              (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+              mm('(max-width: 767px)') &&
+              mm('(orientation: portrait)');
+
+            const base = 'var(--hero-top)';
+            return isPhonePortrait ? `calc(${base} - 20px)` : base;
+          ]]]
+      - padding-left: var(--hero-gutter)
+      - padding-right: var(--hero-gutter)
+      - padding-bottom: calc(130px + env(safe-area-inset-bottom))
+      - box-shadow: none !important
+      - transform: translateZ(0)
+      - will-change: transform
+      - --hero-img-filter: blur(4px)
+      - --hero-img-scale: 1.08
+      - --hero-img: >
+          [[[
+            const base = variables.image || 'default';
+            const isDark = !!(hass?.themes?.darkMode);
+            const picked = isDark ? (variables.image_night || `${base}-night`) : base;
+            const url = `/local/hemma/rooms/${picked}.jpg`;
+            return `url("${url}")`;
+          ]]]
+      - --hero-img-pos: >
+          [[[
+            return variables.image_position || 'center center';
+          ]]]
+      - --hemma-time-right: >
+          [[[
+            const w = window?.innerWidth || 1024;
+            const h = window?.innerHeight || 800;
+            const isTablet = (w >= 768 && w <= 1249 && h > 500);
+            return isTablet ? 'calc(var(--hero-gutter) - 20px)' : 'var(--hemma-nav-margin-current, 4vw)';
+          ]]]
+
+    name:
+      - grid-area: n
+      - color: var(--primary-text-color)
+      - opacity: 0.9
+      - font-size: var(--hero-room-name-size-current, clamp(48px, 6vw + 12px, 100px))
+      - letter-spacing: var(--hero-room-name-letter-spacing-current, -2px)
+      - font-weight: 700
+      - justify-self: start
+      - padding-left: 0
+      - line-height: var(--hero-room-name-line-height-current, 1.2)
+      - margin-left: var(--hero-room-name-margin-left-current, 0px)
+      - overflow: visible
+
+    grid: []  # Inherits from hemma_shared
+
+    custom_fields:
+      motion_detection:
+        - display: >
+            [[[
+              return variables.show_motion && variables.motion_sensor ? 'block' : 'none';
+            ]]]
+        - position: fixed
+        - right: 0
+        - left: 0
+        - bottom: 0
+        - transform: >
+            [[[
+              return states[variables.motion_sensor]?.state === 'on'
+                ? 'translateY(0)'
+                : 'translateY(100%)';
+            ]]]
+        - transition: transform 0.5s
+        - padding: 18px
+        - color: white
+        - font-size: 13px
+        - text-transform: uppercase
+        - letter-spacing: 2px
+        - font-weight: 700
+        - background: rgba(255,255,255,0.08)
+        - backdrop-filter: blur(10px)
+        - z-index: 999
+
+      temperature:
+        - grid-area: temperature
+        - display: >
+            [[[
+              const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+              const isPhonePortrait =
+                (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+                mm('(max-width: 767px)') &&
+                mm('(orientation: portrait)');
+              return isPhonePortrait ? 'none' : 'flex';
+            ]]]
+        - align-items: center
+        - height: var(--hero-temp-reserve, 22px)
+        - overflow: hidden
+        - pointer-events: auto
+        - cursor: pointer
+        - position: relative
+        - z-index: 5
+        - color: var(--primary-text-color)
+        - justify-self: start
+        - margin: 0
+        - padding-left: 0
+        - background: transparent !important
+        - background-color: transparent !important
+        - margin-left: >
+            calc(
+              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hemma-header-temp-nudge, 0px))
+        - font-size: var(--hero-temp-font-size, var(--hero-temp-font-size-desktop, 16px))
+
+      time:
+        - position: fixed
+        - top: >
+            [[[
+              const w = window?.innerWidth || 1024;
+              const h = window?.innerHeight || 800;
+
+              const isMobile = (w <= 767 || h <= 500);
+              const isTablet = (w >= 768 && w <= 1249 && h > 500);
+
+              const nudge =
+                isMobile ? 'var(--hemma-time-nudge-mobile, 8px)' :
+                isTablet ? 'var(--hemma-time-nudge-tablet, 36px)' :
+                '0px';
+
+              return `calc(env(safe-area-inset-top, 0px) + var(--hemma-nav-top-current, 46px) - ${nudge})`;
+            ]]]
+        - right: >
+            [[[
+              return `var(--hemma-time-right, var(--hemma-nav-margin-current, 4vw))`;
+            ]]]
+        - z-index: 10
+        - pointer-events: auto
+        - "--mdc-ripple-press-opacity": 0
+        - "-webkit-tap-highlight-color": transparent
+        - display: >
+            [[[
+              const navOpen = states['input_boolean.hemma_mobile_navigation']?.state === 'on';
+              const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+              const isTouch = mm('(pointer: coarse)') || mm('(hover: none)');
+              const w = window?.innerWidth || 1024;
+              const h = window?.innerHeight || 800;
+              const isTablet = (w >= 768 && w <= 1249 && h > 500);
+              return (!navOpen && isTouch && isTablet) ? 'block' : 'none';
+            ]]]
+
+      weather:
+        - grid-area: weather
+        - display: >
+            [[[
+              const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+              const isPhonePortrait =
+                (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+                mm('(max-width: 767px)') &&
+                mm('(orientation: portrait)');
+              const mode = String(variables.weather_mode || '').toLowerCase();
+              const isOutdoor = (mode === 'outdoor');
+              const isRoom = (mode === 'room');
+              const hasOutdoorData = isOutdoor && !!(variables.weather_entity || variables.weather_temp_sensor);
+              const hasRoomData = isRoom && !!variables.temp_sensor;
+              const ok = !!variables.show_weather && (hasOutdoorData || hasRoomData);
+              return (isPhonePortrait && ok) ? 'block' : 'none';
+            ]]]
+        - position: absolute
+        - top: >
+            calc(var(--hero-top) - 20px +
+            (var(--hero-room-name-size-current, 48px) * var(--hero-room-name-line-height-current, 1.2)) - 15px)
+        - left: var(--hero-gutter, var(--page-gutter-mobile, 11px))
+        - right: var(--hero-gutter, var(--page-gutter-mobile, 11px))
+        - z-index: 10
+        - text-align: right
+        - align-self: start
+        - justify-self: end
+        - margin: 0
+        - width: auto
+        - max-width: none
+        - overflow: visible
+        - pointer-events: auto
+
+      badges:
+        - grid-area: badges
+        - justify-self: start !important
+        - align-self: start !important
+        - place-self: start !important
+        - text-align: left !important
+        - margin-left: >
+            calc(
+              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hemma-header-badge-nudge, 0px)) !important
+        - margin-right: auto !important
+        - width: max-content
+        - max-width: 100%
+        - margin-top: 0
+        - margin-bottom: 0
+        - padding-left: 0
+        - pointer-events: auto
+        - height: auto !important
+        - display: >
+            [[[
+              return (states['input_boolean.hemma_mobile_navigation']?.state === 'on')
+                ? 'none'
+                : 'block';
+            ]]]
+
+      badges_media:
+        - grid-area: badges_media
+        - justify-self: start !important
+        - align-self: start !important
+        - place-self: start !important
+        - text-align: left !important
+        - margin-top: 0px !important
+        - margin-right: auto !important
+        - margin-left: >
+            calc(
+              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hemma-header-badge-nudge, 0px)
+            ) !important
+        - padding-left: 0 !important
+        - padding-top: 0px !important
+        - padding-bottom: 0px !important
+        - height: auto !important
+        - min-height: 0 !important
+        - width: max-content
+        - max-width: 100%
+        - pointer-events: auto
+        - display: >
+            [[[
+              const navOpen = states['input_boolean.hemma_mobile_navigation']?.state === 'on';
+              if (navOpen) return 'none';
+
+              const enabled = (v) => {
+                if (v === undefined || v === null) return false;
+                if (typeof v === 'boolean') return v;
+                if (typeof v === 'number')  return v !== 0;
+                const s = String(v).trim().toLowerCase();
+                if (['false','0','no','off','disabled'].includes(s)) return false;
+                if (['true','1','yes','on','enabled'].includes(s))   return true;
+                return !!s;
+              };
+
+              const isMediaActive = (eid) => {
+                if (!eid) return false;
+
+                const s  = states[eid];
+                const st = String(s?.state || '');
+                const a  = s?.attributes || {};
+
+                if (!s || ['unavailable', 'unknown'].includes(st)) return false;
+                if (['off', 'standby'].includes(st)) return false;
+
+                const title   = String(a.media_title || '').trim();
+                const artist  = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                const hasContent = !!(title || artist);
+
+                if (st === 'playing' || st === 'buffering') return true;
+                if (st === 'paused') return hasContent;
+                if (st === 'idle' || st === 'on') return hasContent;
+
+                return false;
+              };
+
+              const anyNowPlaying =
+                (enabled(variables.show_media_player_1) && isMediaActive(variables.media_player_1)) ||
+                (enabled(variables.show_media_player_2) && isMediaActive(variables.media_player_2)) ||
+                (enabled(variables.show_media_player_3) && isMediaActive(variables.media_player_3)) ||
+                (enabled(variables.show_media_player_4) && isMediaActive(variables.media_player_4));
+
+              const anyPsn =
+                (enabled(variables.show_psn_1) && states[variables.psn_1]) ||
+                (enabled(variables.show_psn_2) && states[variables.psn_2]);
+
+              const anyPlex =
+                enabled(variables.show_media_plex) && states[variables.media_plex_binary]?.state === 'on';
+
+              return (anyNowPlaying || anyPsn || anyPlex) ? 'block' : 'none';
+            ]]]
+
+      navigation:
+        - position: absolute
+        - top: "-8px"
+        - left: 0
+        - right: 0
+        - "--mdc-ripple-press-opacity": 0
+        - "-webkit-tap-highlight-color": transparent
+        - filter: none
+        - pointer-events: auto
+
+      menu:
+        - position: fixed
+        - top: 8px
+        - left: >
+            [[[
+              const w = window?.innerWidth || 1024;
+              const h = window?.innerHeight || 800;
+
+              if (w <= 767 || h <= 500) {
+                return 'calc(var(--hero-gutter) - 11px)';
+              }
+
+              return 'calc(var(--hero-gutter) - 6px)';
+            ]]]
+        - width: 40px
+        - height: 40px
+        - z-index: 10
+        - pointer-events: auto
+        - cursor: pointer
+
+      preload:
+        - display: none
+        - width: 0
+        - height: 0
+        - opacity: 0
+        - overflow: hidden
+        - position: fixed
+        - pointer-events: none
+
+  custom_fields:
+    menu:
+      card:
+        type: custom:button-card
+        template: hemma_menu_icon
+
+    navigation:
+      card: !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+    preload: |
+      [[[
+        const base = variables.image || 'default';
+        const night = variables.image_night || `${base}-night`;
+        const dayUrl = `/local/hemma/rooms/${base}.jpg`;
+        const nightUrl = `/local/hemma/rooms/${night}.jpg`;
+
+        return `
+          <img src="${dayUrl}" alt="" />
+          <img src="${nightUrl}" alt="" />
+        `;
+      ]]]
+
+    # Temperature
+    temperature:
+      card:
+        type: custom:button-card
+        template: hemma_temperature
+        variables:
+          weather_mode: '[[[ return variables.weather_mode ]]]'
+          show_weather: '[[[ return variables.show_weather ]]]'
+          weather_entity: '[[[ return variables.weather_entity ]]]'
+          weather_temp_sensor: '[[[ return variables.weather_temp_sensor ]]]'
+          show_temp: '[[[ return variables.show_temp ]]]'
+          temp_sensor: '[[[ return variables.temp_sensor ]]]'
+    weather:
+      card:
+        type: custom:button-card
+        template: hemma_weather
+        entity: '[[[ return variables.weather_entity ]]]'
+        variables:
+          weather_mode: '[[[ return variables.weather_mode ]]]'
+          weather_temp_sensor: '[[[ return variables.weather_temp_sensor ]]]'
+          temp_sensor: '[[[ return variables.temp_sensor ]]]'
+
+    time:
+      card:
+        type: custom:button-card
+        template: hemma_time
+
+    badges:
+      card:
+        type: custom:layout-card
+        layout_type: custom:grid-layout
+
+        layout:
+          grid-auto-flow: column
+          grid-auto-columns: max-content
+          grid-template-columns: none
+          justify-content: start
+          justify-items: start
+          align-items: center
+          grid-column-gap: var(--badge-gap-current, var(--badge-gap, 10px))
+
+        cards:
+          - type: custom:button-card
+            template: hemma_badge_presence
+            entity: '[[[ return variables.presence_entity_1 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_presence ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_presence
+            entity: '[[[ return variables.presence_entity_2 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_presence ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_air_quality
+            entity: '[[[ return variables.quality_sensor ]]]'
+            variables:
+              enabled: '[[[ return variables.show_quality ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_humidity
+            entity: '[[[ return variables.humidity_sensor ]]]'
+            variables:
+              enabled: '[[[ return variables.show_humidity ]]]'
+
+    badges_media:
+      card:
+        type: custom:layout-card
+        layout_type: custom:grid-layout
+
+        layout:
+          grid-template-columns: 1fr
+          grid-auto-flow: row
+          grid-auto-rows: min-content
+          justify-items: start
+          justify-content: start
+          align-items: start
+          align-content: start
+          grid-row-gap: var(--hero-header-gap-current, 6px)
+
+        card_mod:
+          style:
+            grid-layout$: |
+              :host {
+                --layout-padding: 0 !important;
+                --layout-margin: 0 !important;
+              }
+              #root {
+                padding: 0 !important;
+                margin: 0 !important;
+                gap: var(--hero-header-gap-current, 6px) !important;
+              }
+              #root > * {
+                margin: 0 !important;
+                padding: 0 !important;
+              }
+              #root > *[hidden],
+              #root > *:has([hidden]),
+              #root > *:has([style*="display: none"]),
+              #root > *:has([style*="display:none"]),
+              #root > *:has(card-mod[style*="display: none"]),
+              #root > *:has(card-mod[style*="display:none"]) {
+                display: none !important;
+              }
+
+        cards:
+          # Now Playing (active media badge)
+          - type: custom:navbar-card
+            desktop:
+              min_width: 1
+              hidden: >
+                [[[
+                  const amp = variables.active_media_player;
+                  if (!amp || amp === '') return true;
+                  const s = states[amp];
+                  if (!s || ['unavailable', 'unknown', 'off', 'standby'].includes(s.state)) return true;
+
+                  const a = s.attributes || {};
+                  const title = String(a.media_title || '').trim();
+                  const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                  const hasContent = !!(title || artist);
+
+                  if (['playing', 'buffering'].includes(s.state)) {
+                    return !hasContent;
+                  }
+
+                  if (s.state === 'paused') {
+                    if (!hasContent) return true;
+                    const pauseTimeoutMin = variables.pause_timeout_minutes ?? 5;
+                    if (pauseTimeoutMin <= 0) return !hasContent; // 0 = no timeout
+                    const lastChanged = new Date(s.last_changed);
+                    const now = new Date();
+                    const minutesPaused = (now - lastChanged) / 60000;
+                    return minutesPaused > pauseTimeoutMin;
+                  }
+
+                  if (['idle', 'on'].includes(s.state)) {
+                    return !hasContent;
+                  }
+
+                  return true;
+                ]]]
+              show_labels: false
+              show_popup_label_backgrounds: false
+              styles: ''
+
+            mobile: { hidden: true }
+            routes: []
+            media_player:
+              entity: '[[[ return variables.active_media_player ]]]'
+              show: true
+              album_cover_background: true
+              tap_action:
+                action: more-info
+                entity: '[[[ return variables.active_media_player ]]]'
+              hold_action: { action: none }
+            styles: '[[[ return variables._hemma_mp_styles ]]]'
+            card_mod:
+              style: |
+                :host {
+                  display: contents !important;
+                }
+
+    motion_detection: |
+      [[[
+        return "Motion detected"
+      ]]]

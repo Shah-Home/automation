@@ -1,0 +1,77 @@
+# Humidity Badge
+# Shows humidity sensor with color-coded status
+hemma_badge_humidity:
+  template: [hemma_badge_base]
+
+  variables:
+    enabled: true
+
+  tap_action: { action: more-info }
+  icon: mdi:water-percent
+
+  extra_styles: >
+    [[[
+      // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+      const ev = variables?.enabled;
+      const enabled = (ev === undefined || ev === null) ? true :
+        (typeof ev === 'boolean') ? ev :
+        (typeof ev === 'number') ? ev !== 0 :
+        !['false','0','no','off','disabled'].includes(String(ev).trim().toLowerCase());
+
+      const hasEnt  = !!entity?.entity_id;
+      const stRaw   = String(entity?.state ?? '').trim();
+      const st      = stRaw.toLowerCase();
+      const v       = parseFloat(stRaw);
+      const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st) || Number.isNaN(v);
+
+      return `:host{display:${hide ? 'none' : 'inline-block'} !important;}`;
+    ]]]
+
+  styles:
+    card:
+      - display: >
+          [[[
+            // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+            const ev = variables?.enabled;
+            const enabled = (ev === undefined || ev === null) ? true :
+              (typeof ev === 'boolean') ? ev :
+              (typeof ev === 'number') ? ev !== 0 :
+              !['false','0','no','off','disabled'].includes(String(ev).trim().toLowerCase());
+
+            const hasEnt  = !!entity?.entity_id;
+            const stRaw   = String(entity?.state ?? '').trim();
+            const st      = stRaw.toLowerCase();
+            const v       = parseFloat(stRaw);
+            const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st) || Number.isNaN(v);
+
+            return hide ? 'none' : 'inline-grid';
+          ]]]
+    icon:
+      - color: >
+          [[[
+            const v = parseFloat(entity?.state);
+            if (isNaN(v)) return 'var(--disabled-text-color)';
+            if (v <= 29.99) return '#ffb254';
+            if (v >= 61)    return '#4bd1fa';
+            return '#45dced';
+          ]]]
+
+  name: >
+    [[[
+      const v = parseFloat(entity?.state);
+      let label = 'Unknown';
+      if (!isNaN(v)) {
+        if (v <= 29.99)      label = 'Very Dry';
+        else if (v >= 61)    label = 'High';
+        else                 label = 'Good';
+      }
+
+      const esc = (t) => String(t || '').replaceAll('"','&quot;');
+
+      return `
+        <div class="mp-wrap">
+          <div class="mp-title">Humidity</div>
+          <div class="mp-sub">${esc(label)}</div>
+        </div>
+      `;
+    ]]]

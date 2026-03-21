@@ -1,0 +1,100 @@
+##########################################################
+# Home Assistant Core
+##########################################################
+# Lock files 
+*.lock
+
+# Database & runtime state
+home-assistant_v2.db*
+*.db-shm
+*.db-wal
+
+# Logs
+home-assistant.log*
+*.log
+
+# Core state files
+.core.*
+storage/
+
+##########################################################
+# Secrets & Sensitive Data
+##########################################################
+
+secrets.yaml
+secrets*.yaml
+
+# SSL / certificates
+ssl/
+*.pem
+*.key
+*.crt
+
+# TTS (can contain cached audio)
+tts/
+
+##########################################################
+# Backups
+##########################################################
+
+backups/
+backup/
+
+##########################################################
+# Temporary / Cache Files
+##########################################################
+
+tmp/
+.cache/
+__pycache__/
+*.pyc
+
+##########################################################
+# Add-ons / Local Data (often machine-specific)
+##########################################################
+
+addon_configs/*/data/
+addon_configs/*/options.json
+
+##########################################################
+# Zigbee / Z-Wave / Matter sensitive data
+##########################################################
+
+zigbee.db*
+zwave_js/
+matter/
+
+##########################################################
+# Media & Downloads (optional - comment if you want tracked)
+##########################################################
+
+media/
+downloads/
+image/
+
+##########################################################
+# VSCode / Editor junk
+##########################################################
+
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+##########################################################
+# Node / Frontend builds (if using custom cards/themes)
+##########################################################
+
+node_modules/
+dist/
+build/
+
+##########################################################
+# Custom exclusions (uncomment if needed)
+##########################################################
+
+esphome/
+nest/
+custom_components/
+www/community/
+blueprints/

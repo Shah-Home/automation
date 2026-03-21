@@ -1,0 +1,50 @@
+hemma_light:
+  template:
+    - hemma_entity
+
+  # IMPORTANT: icon_tap_action needs the icon slot to exist.
+  # This doesn't force an HA icon to show; your entity_picture still renders in img_cell.
+  show_icon: true
+  show_last_changed: false
+
+  state_display: >
+    [[[
+      return entity.state === 'on' ? 'On' : 'Off';
+    ]]]
+
+  # Tap anywhere on the card = more-info
+  tap_action:
+    action: toggle
+
+  hold_action:
+    action: more-info
+
+    entity_picture:
+      - opacity: 0.8
+      - transition: opacity 0.2s ease, filter 0.2s ease, transform 0.15s ease
+      - cursor: pointer
+
+    img_cell:
+      - background: transparent !important
+      - box-shadow: none !important
+      - transition: filter 0.2s ease
+      - cursor: pointer
+
+  extra_styles: |
+    /* Hover effect for desktop */
+    @media (hover: hover) {
+      #img-cell:hover img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }
+
+    /* Active effect for touch */
+    @media (hover: none) {
+      #img-cell:active img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }

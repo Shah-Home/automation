@@ -1,0 +1,79 @@
+# Air Quality Badge
+# Shows air quality sensor with color-coded status
+hemma_badge_air_quality:
+  template: [hemma_badge_base]
+
+  variables:
+    enabled: true
+
+  tap_action: { action: more-info }
+
+  extra_styles: >
+    [[[
+      // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+      const v = variables?.enabled;
+      const enabled = (v === undefined || v === null) ? true :
+        (typeof v === 'boolean') ? v :
+        (typeof v === 'number') ? v !== 0 :
+        !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+      const hasEnt  = !!entity?.entity_id;
+      const stRaw   = String(entity?.state ?? '').trim();
+      const st      = stRaw.toLowerCase();
+      const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+      return `:host{display:${hide ? 'none' : 'inline-block'} !important;}`;
+    ]]]
+
+  styles:
+    card:
+      - display: >
+          [[[
+            // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+            const v = variables?.enabled;
+            const enabled = (v === undefined || v === null) ? true :
+              (typeof v === 'boolean') ? v :
+              (typeof v === 'number') ? v !== 0 :
+              !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+            const hasEnt  = !!entity?.entity_id;
+            const stRaw   = String(entity?.state ?? '').trim();
+            const st      = stRaw.toLowerCase();
+            const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+            return hide ? 'none' : 'inline-grid';
+          ]]]
+    icon:
+      - color: >
+          [[[
+            const s = String(entity?.state || 'unknown').toLowerCase();
+            if (s === 'excellent') return '#67f5a0';
+            if (s === 'good')      return '#44e371';
+            if (s === 'moderate')  return '#f0c741';
+            if (s === 'bad')       return '#f5962a';
+            if (s === 'very bad')  return '#e53552';
+            return 'var(--disabled-text-color)';
+          ]]]
+
+  icon: >
+    [[[
+      const s = String(entity?.state || 'unknown').toLowerCase();
+      if (s === 'very bad') return 'mdi:emoticon-dead-outline';
+      if (['excellent','good','moderate','bad'].includes(s)) return 'mdi:blur';
+      return 'mdi:cloud';
+    ]]]
+
+  name: >
+    [[[
+      const raw = String(entity?.state ?? 'Unknown');
+      const nice = raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : 'Unknown';
+
+      const esc = (t) => String(t || '').replaceAll('"','&quot;');
+
+      return `
+        <div class="mp-wrap">
+          <div class="mp-title">Air Quality</div>
+          <div class="mp-sub">${esc(nice)}</div>
+        </div>
+      `;
+    ]]]

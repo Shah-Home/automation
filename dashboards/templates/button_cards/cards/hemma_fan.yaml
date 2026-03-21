@@ -1,0 +1,53 @@
+hemma_fan:
+  template:
+    - hemma_entity
+
+  show_entity_picture: true
+  show_icon: true
+  show_name: true
+  show_state: true
+  name: Fan
+
+  tap_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  hold_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  icon_tap_action:
+    action: toggle
+
+  icon_hold_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  styles:
+    entity_picture:
+      - opacity: 0.8
+      - transition: opacity 0.2s ease, filter 0.2s ease, transform 0.15s ease
+      - cursor: pointer
+    img_cell:
+      - background: transparent !important
+      - box-shadow: none !important
+      - transition: filter 0.2s ease
+      - cursor: pointer
+
+  extra_styles: |
+    /* Hover effect for desktop */
+    @media (hover: hover) {
+      #img-cell:hover img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }
+    /* Active effect for touch */
+    @media (hover: none) {
+      #img-cell:active img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }

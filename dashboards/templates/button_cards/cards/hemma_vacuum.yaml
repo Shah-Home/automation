@@ -1,0 +1,39 @@
+hemma_vacuum:
+  template:
+    - hemma_entity
+  variables:
+    icon: vacuum
+    room: ""
+  show_name: true
+  show_label: false
+  show_state: false
+
+  tap_action:
+    action: call-service
+    service: script.clean_room
+    service_data:
+      room: "[[[ return variables.room ]]]"
+
+  state:
+    - value: cleaning
+      styles:
+        img_cell:
+          - animation: rotating 1.6s linear infinite
+        entity_picture:
+          - filter: brightness(1.2) saturate(1.3)
+
+  styles:
+    card:
+      - padding: 12px
+    img_cell:
+      - width: 32px
+      - height: 32px
+    name:
+      - font-weight: 500
+      - font-size: 15px
+
+  extra_styles: |
+    @keyframes rotating {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }

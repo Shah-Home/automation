@@ -1,0 +1,45 @@
+# packages/hemma_helpers.yaml
+# ============================================================================
+# REQUIRED: Hemma Dashboard Helper Entities
+#
+# These helper entities are required for the Hemma dashboard to function.
+# Place this file in your /config/packages/ directory and ensure packages
+# are enabled in your configuration.yaml:
+#
+#   homeassistant:
+#     packages: !include_dir_named packages
+#
+# ENTITIES CREATED:
+#   - input_boolean.hemma_thermostat_overlay: Thermostat card temperature adjustment overlay
+#   - input_boolean.hemma_mobile_navigation: Mobile nav menu state
+#   - input_number.hemma_thermostat_target_temperature: Thermostat target temp
+#   - input_select.hemma_thermostat_mode: Heat/Cool mode selector
+#
+# OPTIONAL: Adjust min/max values for input_number to match your climate needs.
+# ============================================================================
+
+input_boolean:
+  hemma_thermostat_overlay:
+    name: Thermostat Overlay
+    initial: off
+
+  hemma_mobile_navigation:
+    name: Mobile Navigation
+    initial: off
+
+input_number:
+  hemma_thermostat_target_temperature:
+    name: Thermostat Target Temperature
+    min: 50
+    max: 90
+    step: 1
+    unit_of_measurement: "°F"
+    mode: slider
+# input_select:
+#   hemma_thermostat_mode:
+#     name: Thermostat Mode
+#     options:
+#       - cool
+#       - heat
+#       - heat_cool
+#     initial: heat_cool

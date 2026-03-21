@@ -1,0 +1,82 @@
+hemma_lock:
+  template: [hemma_entity]
+
+  show_entity_picture: true
+  show_icon: true   # <-- required so icon_tap_action actually has a target
+  show_label: false
+
+  entity_picture: |
+    [[[
+      return entity.state === 'unlocked'
+        ? '/local/hemma/icons/lock_open.svg'
+        : '/local/hemma/icons/lock.svg';
+    ]]]
+
+  state_display: |
+    [[[
+      const state = entity.state;
+      if (state === 'locked') {
+        return "Locked";
+      } else if (state === 'unlocked') {
+        return "Unlocked";
+      } else if (state === 'locking') {
+        return "Locking...";
+      } else if (state === 'unlocking') {
+        return "Unlocking...";
+      } else {
+        return "Unknown";
+      }
+    ]]]
+
+  # Tap anywhere on the card = more-info dialog
+  tap_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  hold_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  # Tap ONLY the icon/picture area = toggle lock/unlock
+  icon_tap_action:
+    action: call-service
+    service: |
+      [[[
+        return entity.state === 'locked' ? 'lock.unlock' : 'lock.lock';
+      ]]]
+    service_data:
+      entity_id: '[[[ return entity.entity_id ]]]'
+
+  # Optional: you can keep icon hold as more-info too
+  icon_hold_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  styles:
+    entity_picture:
+      - opacity: 0.8
+      - transition: opacity 0.2s ease, filter 0.2s ease, transform 0.15s ease
+      - cursor: pointer
+    img_cell:
+      - background: transparent !important
+      - box-shadow: none !important
+      - transition: filter 0.2s ease
+      - cursor: pointer
+
+  extra_styles: |
+    /* Hover effect for desktop */
+    @media (hover: hover) {
+      #img-cell:hover img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }
+    /* Active effect for touch */
+    @media (hover: none) {
+      #img-cell:active img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }
