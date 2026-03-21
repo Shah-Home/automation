@@ -15,7 +15,9 @@ home-assistant.log*
 
 # Core state files
 .core.*
-storage/
+.storage/
+.HA_VERSION
+.shopping_list.json
 
 ##########################################################
 # Secrets & Sensitive Data
