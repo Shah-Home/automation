@@ -80,6 +80,9 @@ views:
           # Temperature Unit
           temp_unit: "F" # Fahrenheit (based on your US location)
 
+      # DESKTOP NAVBAR
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
       # MOBILE NAVBAR
       - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 
@@ -133,6 +136,204 @@ views:
               icon: vacuum
 
   # ------------------------------------------------------
+  # FIRST FLOOR
+  # ------------------------------------------------------
+  - type: custom:grid-layout
+    title: first-floor
+    path: first-floor
+    layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_room
+        name: First Floor
+        variables:
+          image: home
+          image_position: center center
+          show_weather: true
+          weather_mode: room
+          temp_unit: "F"
+
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+      - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+      - type: custom:layout-card
+        class: hemma-entities
+        layout_type: custom:grid-layout
+        layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+        cards:
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Entrance
+            icon: mdi:door
+            variables:
+              path: /dashboard-hemma/entrance
+              subtitle: Front door and doorbell
+
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Bathroom
+            icon: mdi:shower
+            variables:
+              path: /dashboard-hemma/bathroom
+              subtitle: Temperature and humidity
+
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Rec Room
+            icon: mdi:sofa-outline
+            variables:
+              path: /dashboard-hemma/rec-room
+              subtitle: Back camera view
+
+  # ------------------------------------------------------
+  # SECOND FLOOR
+  # ------------------------------------------------------
+  - type: custom:grid-layout
+    title: second-floor
+    path: second-floor
+    layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_room
+        name: Second Floor
+        variables:
+          image: home
+          image_position: center center
+          show_weather: true
+          weather_mode: room
+          temp_unit: "F"
+
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+      - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+      - type: custom:layout-card
+        class: hemma-entities
+        layout_type: custom:grid-layout
+        layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+        cards:
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Living Room
+            icon: mdi:sofa
+            variables:
+              path: /dashboard-hemma/living-room
+              subtitle: Climate, media, and lights
+
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Kitchen
+            icon: mdi:fridge
+            variables:
+              path: /dashboard-hemma/kitchen
+              subtitle: Lights, speakers, and vacuum
+
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Dining Room
+            icon: mdi:table-furniture
+            variables:
+              path: /dashboard-hemma/dining-room
+              subtitle: Lights and presence
+
+  # ------------------------------------------------------
+  # THIRD FLOOR
+  # ------------------------------------------------------
+  - type: custom:grid-layout
+    title: third-floor
+    path: third-floor
+    layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_room
+        name: Third Floor
+        variables:
+          image: home
+          image_position: center center
+          show_weather: true
+          weather_mode: room
+          temp_unit: "F"
+
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+      - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+      - type: custom:layout-card
+        class: hemma-entities
+        layout_type: custom:grid-layout
+        layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+        cards:
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Master Bedroom
+            icon: mdi:bed-king
+            variables:
+              path: /dashboard-hemma/master-bed-room
+              subtitle: Bedroom controls and air quality
+
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Guest Bathroom
+            icon: mdi:shower
+            variables:
+              path: /dashboard-hemma/guest-bathroom
+              subtitle: Guest bath environment
+
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Master Bathroom
+            icon: mdi:shower-head
+            variables:
+              path: /dashboard-hemma/master-bathroom
+              subtitle: Master bath environment
+
+  # ------------------------------------------------------
+  # OUTDOORS
+  # ------------------------------------------------------
+  - type: custom:grid-layout
+    title: outdoors
+    path: outdoors
+    layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_room
+        name: Outdoors
+        variables:
+          image: home
+          image_night: patio-night
+          image_position: center center
+          show_weather: true
+          weather_mode: outdoor
+          weather_entity: weather.forecast_home
+          temp_unit: "F"
+
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+      - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+      - type: custom:layout-card
+        class: hemma-entities
+        layout_type: custom:grid-layout
+        layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+        cards:
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Patio
+            icon: mdi:balcony
+            variables:
+              path: /dashboard-hemma/patio
+              subtitle: Outdoor lights
+
+          - type: custom:button-card
+            template: hemma_nav_tile
+            name: Garage
+            icon: mdi:garage
+            variables:
+              path: /dashboard-hemma/garage
+              subtitle: Camera and entry points
+
+  # ------------------------------------------------------
   # LIVING ROOM
   # ------------------------------------------------------
   - type: custom:grid-layout
@@ -168,6 +369,9 @@ views:
           # Motion/Presence
           show_motion: true
           motion_sensor: binary_sensor.living_room_presence
+
+      # DESKTOP NAVBAR
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
 
       # MOBILE NAVBAR
       - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -254,6 +458,7 @@ views:
         name: Kitchen
         variables:
           image: kitchen
+          image_night: home-night
           image_position: center center
 
           # TODO: {Parth Shah} No dedicated kitchen temp sensor
@@ -275,6 +480,9 @@ views:
           # Presence from FP2 zones
           show_motion: true
           motion_sensor: binary_sensor.cooking_area_presence
+
+      # DESKTOP NAVBAR
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
 
       # MOBILE NAVBAR
       - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -344,7 +552,8 @@ views:
         template: hemma_room
         name: Dining Room
         variables:
-          image: diningroom
+          image: home
+          image_night: diningroom-night
           image_position: center center
 
           # TODO: {Parth Shah} No dedicated dining room temp sensor
@@ -358,6 +567,9 @@ views:
           # Presence from FP2
           show_motion: true
           motion_sensor: binary_sensor.dining_room_presence
+
+      # DESKTOP NAVBAR
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
 
       # MOBILE NAVBAR
       - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -425,6 +637,9 @@ views:
           # TODO: {Parth Shah} No motion sensor in master bedroom
           # show_motion: true
           # motion_sensor: binary_sensor.master_bedroom_motion
+
+      # DESKTOP NAVBAR
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
 
       # MOBILE NAVBAR
       - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -503,7 +718,8 @@ views:
         template: hemma_room
         name: Patio
         variables:
-          image: patio
+          image: home
+          image_night: patio-night
           image_position: center center
 
           # Weather for outdoor area
@@ -513,6 +729,9 @@ views:
           # TODO: {Parth Shah} Add outdoor temperature sensor if available
           # weather_temp_sensor: sensor.outdoor_temperature
           temp_unit: "F"
+
+      # DESKTOP NAVBAR
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
 
       # MOBILE NAVBAR
       - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -552,7 +771,8 @@ views:
         template: hemma_room
         name: Garage
         variables:
-          image: garage
+          image: home
+          image_night: garage-night
           image_position: center center
 
           show_weather: true
@@ -562,6 +782,9 @@ views:
           # TODO: {Parth Shah} Add garage door sensor if available
           # show_motion: true
           # motion_sensor: binary_sensor.garage_door
+
+      # DESKTOP NAVBAR
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
 
       # MOBILE NAVBAR
       - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -587,6 +810,210 @@ views:
           #   name: Garage Door
           #   variables:
           #     icon: garage
+
+  # ------------------------------------------------------
+  # FIRST FLOOR BATHROOM
+  # ------------------------------------------------------
+  - type: custom:grid-layout
+    title: bathroom
+    path: bathroom
+    layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_room
+        name: Bathroom
+        variables:
+          image: home
+          image_position: center center
+          show_temp: true
+          temp_sensor: sensor.bathroom_temperature_sensor
+          show_humidity: true
+          humidity_sensor: sensor.bathroom_humidity_sensor
+          show_weather: true
+          weather_mode: room
+          temp_unit: "F"
+
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+      - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+      - type: custom:layout-card
+        class: hemma-entities
+        layout_type: custom:grid-layout
+        layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+        cards:
+          - type: custom:button-card
+            template: hemma_entity
+            entity: sensor.bathroom_temperature_sensor
+            name: Temperature
+            variables:
+              icon: thermometer
+
+          - type: custom:button-card
+            template: hemma_entity
+            entity: sensor.bathroom_humidity_sensor
+            name: Humidity
+            variables:
+              icon: water-percent
+
+  # ------------------------------------------------------
+  # ENTRANCE
+  # ------------------------------------------------------
+  - type: custom:grid-layout
+    title: entrance
+    path: entrance
+    layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_room
+        name: Entrance
+        variables:
+          image: home
+          image_position: center center
+          show_weather: true
+          weather_mode: outdoor
+          weather_entity: weather.forecast_home
+          temp_unit: "F"
+
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+      - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+      - type: custom:layout-card
+        class: hemma-entities
+        layout_type: custom:grid-layout
+        layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+        cards:
+          - type: custom:button-card
+            template: hemma_entity
+            entity: camera.front_door_doorbell
+            name: Front Door
+            variables:
+              icon: doorbell
+
+  # ------------------------------------------------------
+  # REC ROOM
+  # ------------------------------------------------------
+  - type: custom:grid-layout
+    title: rec-room
+    path: rec-room
+    layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_room
+        name: Rec Room
+        variables:
+          image: home
+          image_position: center center
+          show_weather: true
+          weather_mode: room
+          temp_unit: "F"
+
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+      - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+      - type: custom:layout-card
+        class: hemma-entities
+        layout_type: custom:grid-layout
+        layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+        cards:
+          - type: custom:button-card
+            template: hemma_entity
+            entity: camera.back_door_camera
+            name: Back Camera
+            variables:
+              icon: camera
+
+  # ------------------------------------------------------
+  # GUEST BATHROOM
+  # ------------------------------------------------------
+  - type: custom:grid-layout
+    title: guest-bathroom
+    path: guest-bathroom
+    layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_room
+        name: Guest Bathroom
+        variables:
+          image: home
+          image_position: center center
+          show_temp: true
+          temp_sensor: sensor.guest_bathroom_temperature_sensor
+          show_humidity: true
+          humidity_sensor: sensor.guest_bathroom_humidity_sensor
+          show_weather: true
+          weather_mode: room
+          temp_unit: "F"
+
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+      - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+      - type: custom:layout-card
+        class: hemma-entities
+        layout_type: custom:grid-layout
+        layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+        cards:
+          - type: custom:button-card
+            template: hemma_entity
+            entity: sensor.guest_bathroom_temperature_sensor
+            name: Temperature
+            variables:
+              icon: thermometer
+
+          - type: custom:button-card
+            template: hemma_entity
+            entity: sensor.guest_bathroom_humidity_sensor
+            name: Humidity
+            variables:
+              icon: water-percent
+
+  # ------------------------------------------------------
+  # MASTER BATHROOM
+  # ------------------------------------------------------
+  - type: custom:grid-layout
+    title: master-bathroom
+    path: master-bathroom
+    layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_room
+        name: Master Bathroom
+        variables:
+          image: home
+          image_position: center center
+          show_temp: true
+          temp_sensor: sensor.master_bathroom_temperature_sensor
+          show_humidity: true
+          humidity_sensor: sensor.master_bathroom_humidity_sensor
+          show_weather: true
+          weather_mode: room
+          temp_unit: "F"
+
+      - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+      - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+      - type: custom:layout-card
+        class: hemma-entities
+        layout_type: custom:grid-layout
+        layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+        cards:
+          - type: custom:button-card
+            template: hemma_entity
+            entity: sensor.master_bathroom_temperature_sensor
+            name: Temperature
+            variables:
+              icon: thermometer
+
+          - type: custom:button-card
+            template: hemma_entity
+            entity: sensor.master_bathroom_humidity_sensor
+            name: Humidity
+            variables:
+              icon: water-percent
 
   # # ------------------------------------------------------
   # # FIRST FLOOR BATHROOM

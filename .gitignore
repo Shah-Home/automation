@@ -4,6 +4,9 @@
 # Lock files 
 *.lock
 
+# LLM / AI related files
+llm/
+
 # Database & runtime state
 home-assistant_v2.db*
 *.db-shm

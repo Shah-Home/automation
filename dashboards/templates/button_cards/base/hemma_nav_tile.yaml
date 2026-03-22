@@ -1,0 +1,90 @@
+hemma_nav_tile:
+  template:
+    - hemma_default
+  show_state: false
+  show_icon: true
+  tap_action:
+    action: navigate
+    navigation_path: "[[[ return variables.path ]]]"
+  hold_action:
+    action: none
+  double_tap_action:
+    action: none
+  variables:
+    path: /dashboard-hemma/home
+    subtitle: ""
+  styles:
+    card:
+      - background: var(--ha-card-background)
+      - backdrop-filter: blur(20px)
+      - border-radius: var(--ha-card-border-radius, 30px)
+      - height: var(--hemma-entity-height-current, var(--hemma-entity-height-desktop, 180px))
+      - padding: var(--hemma-entity-inner-pad-current, var(--hemma-entity-inner-pad-desktop, 22px))
+      - display: >
+          [[[
+            return (states['input_boolean.hemma_mobile_navigation'].state === 'on') ? 'none' : 'grid';
+          ]]]
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr min-content min-content
+      - grid-template-areas: |
+          "i"
+          "n"
+          "s"
+      - row-gap: 6px
+      - justify-items: start
+      - align-items: start
+      - scroll-snap-align: start
+      - cursor: pointer
+      - transition: background-color .22s ease, box-shadow .24s ease, transform .14s ease
+    grid:
+      - grid-template-columns: 1fr
+      - grid-template-rows: min-content min-content min-content
+      - grid-template-areas: |
+          "i"
+          "n"
+          "s"
+      - row-gap: 6px
+      - justify-items: start
+      - align-items: start
+    img_cell:
+      - grid-area: i
+      - justify-self: start
+      - align-self: start
+      - width: 30px
+      - height: 30px
+      - display: flex
+      - align-items: center
+      - justify-content: flex-start
+    card:hover:
+      - background: var(--ha-card-background-active)
+      - transform: translateY(-1px)
+    icon:
+      - color: var(--primary-text-color)
+      - width: 100%
+      - height: 100%
+      - opacity: 0.92
+    state:
+      - display: none
+    name:
+      - grid-area: n
+      - color: var(--primary-text-color)
+      - font-size: var(--hemma-entity-name-font-current, var(--hemma-entity-name-font-desktop, 16px))
+      - font-weight: 700
+      - line-height: 1.15
+      - justify-self: start
+      - text-align: left
+      - white-space: normal
+    custom_fields:
+      subtitle:
+        - grid-area: s
+        - color: var(--secondary-text-color)
+        - font-size: var(--hemma-entity-state-font-current, var(--hemma-entity-state-font-desktop, 14px))
+        - line-height: 1.2
+        - opacity: 0.8
+        - justify-self: start
+        - text-align: left
+  custom_fields:
+    subtitle: |
+      [[[
+        return variables.subtitle || '';
+      ]]]

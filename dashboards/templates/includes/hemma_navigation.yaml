@@ -5,12 +5,13 @@
 #
 # ROUTES TO CUSTOMIZE (search for "# Navigation Buttons" or "routes:"):
 #   - Home: /dashboard-hemma/home
-#   - Living Room: /dashboard-hemma/living-room
-#   - Kitchen: /dashboard-hemma/kitchen
-#   - Bedroom: /dashboard-hemma/bedroom
+#   - First Floor: /dashboard-hemma/first-floor
+#   - Second Floor: /dashboard-hemma/second-floor
+#   - Third Floor: /dashboard-hemma/third-floor
+#   - Outdoors: /dashboard-hemma/outdoors
 #   - Scenes: Dynamic popup (no URL change needed)
 #
-# Add or remove rooms by modifying the routes array at the bottom.
+# Update popup members in the routes array at the bottom to add or remove areas.
 # ============================================================================
 
 type: conditional
@@ -157,6 +158,24 @@ card:
           top: 4px !important;
         }
 
+        :is(
+          .navbar.desktop,
+          .navbar.desktop.top,
+          .navbar.desktop.bottom,
+          .navbar.desktop.left,
+          .navbar.desktop.right
+        ){
+          position: relative !important;
+          inset: auto !important;
+          top: auto !important;
+          right: auto !important;
+          bottom: auto !important;
+          left: auto !important;
+          width: auto !important;
+          transform: none !important;
+          z-index: auto !important;
+        }
+
         .navbar.desktop{
           display: flex !important;
           flex-direction: row !important;
@@ -182,11 +201,7 @@ card:
         }
 
         .navbar.desktop .button{
-          border: 0 !important;
-          background: transparent !important;
-          box-shadow: none !important;
-          padding: 0 !important;
-          margin: 0 !important;
+          display: none !important;
         }
 
         .navbar.desktop .route :is(ha-icon, .icon, .image){
@@ -504,31 +519,115 @@ card:
           label: Home
           icon: mdi:home-variant
 
-        - url: /dashboard-hemma/living-room
-          label: Living Room
-          icon: mdi:sofa
+        - label: "First Floor ▾"
+          icon: mdi:numeric-1-circle-outline
+          tap_action:
+            action: open-popup
+          selected: >
+            [[[
+              const p = window.location.pathname || '';
+              return [
+                '/dashboard-hemma/first-floor',
+                '/dashboard-hemma/entrance',
+                '/dashboard-hemma/bathroom',
+                '/dashboard-hemma/rec-room'
+              ].includes(p);
+            ]]]
+          popup:
+            - label: Overview
+              url: /dashboard-hemma/first-floor
+              icon: mdi:floor-plan
+            - label: Entrance
+              url: /dashboard-hemma/entrance
+              icon: mdi:door
+            - label: Bathroom
+              url: /dashboard-hemma/bathroom
+              icon: mdi:shower
+            - label: Rec Room
+              url: /dashboard-hemma/rec-room
+              icon: mdi:sofa-outline
 
-        - url: /dashboard-hemma/kitchen
-          label: Kitchen
-          icon: mdi:fridge
+        - label: "Second Floor ▾"
+          icon: mdi:numeric-2-circle-outline
+          tap_action:
+            action: open-popup
+          selected: >
+            [[[
+              const p = window.location.pathname || '';
+              return [
+                '/dashboard-hemma/second-floor',
+                '/dashboard-hemma/living-room',
+                '/dashboard-hemma/kitchen',
+                '/dashboard-hemma/dining-room'
+              ].includes(p);
+            ]]]
+          popup:
+            - label: Overview
+              url: /dashboard-hemma/second-floor
+              icon: mdi:floor-plan
+            - label: Living Room
+              url: /dashboard-hemma/living-room
+              icon: mdi:sofa
+            - label: Kitchen
+              url: /dashboard-hemma/kitchen
+              icon: mdi:fridge
+            - label: Dining Room
+              url: /dashboard-hemma/dining-room
+              icon: mdi:table-furniture
 
-        - url: /dashboard-hemma/dining-room
-          label: Dining Room
-          icon: mdi:table-furniture
+        - label: "Third Floor ▾"
+          icon: mdi:numeric-3-circle-outline
+          tap_action:
+            action: open-popup
+          selected: >
+            [[[
+              const p = window.location.pathname || '';
+              return [
+                '/dashboard-hemma/third-floor',
+                '/dashboard-hemma/master-bed-room',
+                '/dashboard-hemma/guest-bathroom',
+                '/dashboard-hemma/master-bathroom'
+              ].includes(p);
+            ]]]
+          popup:
+            - label: Overview
+              url: /dashboard-hemma/third-floor
+              icon: mdi:floor-plan
+            - label: Master Bedroom
+              url: /dashboard-hemma/master-bed-room
+              icon: mdi:bed-king
+            - label: Guest Bathroom
+              url: /dashboard-hemma/guest-bathroom
+              icon: mdi:shower
+            - label: Master Bathroom
+              url: /dashboard-hemma/master-bathroom
+              icon: mdi:shower-head
 
-        - url: /dashboard-hemma/master-bed-room
-          label: Master Bed
-          icon: mdi:bed-king
+        - label: "Outdoors ▾"
+          icon: mdi:pine-tree
+          tap_action:
+            action: open-popup
+          selected: >
+            [[[
+              const p = window.location.pathname || '';
+              return [
+                '/dashboard-hemma/outdoors',
+                '/dashboard-hemma/patio',
+                '/dashboard-hemma/garage'
+              ].includes(p);
+            ]]]
+          popup:
+            - label: Overview
+              url: /dashboard-hemma/outdoors
+              icon: mdi:pine-tree
+            - label: Patio
+              url: /dashboard-hemma/patio
+              icon: mdi:balcony
+            - label: Garage
+              url: /dashboard-hemma/garage
+              icon: mdi:garage
 
-        - url: /dashboard-hemma/patio
-          label: Patio
-          icon: mdi:balcony
-
-        - url: /dashboard-hemma/garage
-          label: Garage
-          icon: mdi:garage
-
-        - label: Scenes
+        - label: "Scenes ▾"
           icon: mdi:layers
           tap_action:
             action: open-popup
