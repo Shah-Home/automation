@@ -18,4 +18,6 @@
   class: hemma-entities
   layout_type: custom:grid-layout
   layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
-  cards: !include_dir_merge_list /config/dashboards/metadata/rooms/outdoors/tiles
+  cards:
+    - !include /config/dashboards/metadata/rooms/outdoors/tiles/01_patio.yaml
+    - !include /config/dashboards/metadata/rooms/outdoors/tiles/02_garage.yaml

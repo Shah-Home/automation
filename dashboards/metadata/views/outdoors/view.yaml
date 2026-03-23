@@ -1,0 +1,5 @@
+type: custom:grid-layout
+title: Outdoors
+path: outdoors
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards: !include /config/dashboards/metadata/rooms/outdoors/cards.yaml

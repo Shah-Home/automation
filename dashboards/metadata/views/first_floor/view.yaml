@@ -1,0 +1,5 @@
+type: custom:grid-layout
+title: First Floor
+path: first-floor
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards: !include /config/dashboards/metadata/rooms/first_floor/cards.yaml

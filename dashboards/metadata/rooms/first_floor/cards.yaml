@@ -16,4 +16,7 @@
   class: hemma-entities
   layout_type: custom:grid-layout
   layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
-  cards: !include_dir_merge_list /config/dashboards/metadata/rooms/first_floor/tiles
+  cards:
+    - !include /config/dashboards/metadata/rooms/first_floor/tiles/01_entrance.yaml
+    - !include /config/dashboards/metadata/rooms/first_floor/tiles/02_bathroom.yaml
+    - !include /config/dashboards/metadata/rooms/first_floor/tiles/03_rec_room.yaml

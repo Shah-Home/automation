@@ -1,0 +1,5 @@
+type: custom:grid-layout
+title: Third Floor
+path: third-floor
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards: !include /config/dashboards/metadata/rooms/third_floor/cards.yaml

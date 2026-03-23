@@ -1,0 +1,5 @@
+type: custom:grid-layout
+title: Second Floor
+path: second-floor
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards: !include /config/dashboards/metadata/rooms/second_floor/cards.yaml
