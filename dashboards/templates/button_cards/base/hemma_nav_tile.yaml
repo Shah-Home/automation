@@ -11,7 +11,9 @@ hemma_nav_tile:
   double_tap_action:
     action: none
   variables:
+    # Default destination used when a specific room path is not provided.
     path: /dashboard-hemma/home
+    # Optional secondary copy shown under the room name.
     subtitle: ""
   styles:
     card:

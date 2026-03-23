@@ -1,0 +1,41 @@
+type: custom:grid-layout
+title: outdoors
+path: outdoors
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards:
+  - type: custom:button-card
+    template: hemma_room
+    name: Outdoors
+    variables:
+      image: home
+      image_night: patio-night
+      image_position: center center
+      show_weather: true
+      weather_mode: outdoor
+      weather_entity: weather.forecast_home
+      temp_unit: "F"
+
+  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+  - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+  - type: custom:layout-card
+    class: hemma-entities
+    layout_type: custom:grid-layout
+    layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_nav_tile
+        name: Patio
+        icon: mdi:balcony
+        variables:
+          path: /dashboard-hemma/patio
+          subtitle: Outdoor lights
+
+      - type: custom:button-card
+        template: hemma_nav_tile
+        name: Garage
+        icon: mdi:garage
+        variables:
+          path: /dashboard-hemma/garage
+          subtitle: Camera and entry points

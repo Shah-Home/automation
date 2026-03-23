@@ -1,0 +1,107 @@
+type: custom:grid-layout
+title: living-room
+path: living-room
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards:
+  # ROOM HERO CARD
+  - type: custom:button-card
+    template: hemma_room
+    name: Living Room
+    variables:
+      image: livingroom
+      image_position: center center
+
+      # Room Sensors
+      show_temp: true
+      temp_sensor: sensor.living_room_thermostat_temperature
+
+      show_humidity: true
+      humidity_sensor: sensor.living_room_thermostat_humidity
+
+      # TODO: {Parth Shah} No air quality sensor in Living Room
+      # Master Bedroom has air quality if needed elsewhere
+      # show_quality: true
+      # quality_sensor: sensor.living_room_air_quality
+
+      # Weather (room mode shows indoor conditions)
+      show_weather: true
+      weather_mode: room
+      temp_unit: "F"
+
+      # Motion/Presence
+      show_motion: true
+      motion_sensor: binary_sensor.living_room_presence
+
+  # DESKTOP NAVBAR
+  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+  # MOBILE NAVBAR
+  - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+  # ENTITY CARDS
+  - type: custom:layout-card
+    class: hemma-entities
+    layout_type: custom:grid-layout
+    layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+    cards:
+      # Thermostat
+      - type: custom:button-card
+        template: hemma_thermostat
+        entity: climate.living_room_thermostat
+        name: Thermostat
+        variables:
+          temp_sensor:
+            sensor.living_room_thermostat_temperature
+
+            # Living Room TV (Google Cast)
+      - type: custom:button-card
+        template: hemma_media
+        entity: media_player.living_room_tv
+        name: Living Room TV
+        variables:
+          icon: tv
+
+      - type: custom:button-card
+        template: hemma_light
+        entity: switch.living_room_lights
+        name: Lights
+        variables:
+          icon: light
+
+      # Main Floor Speakers Group
+      - type: custom:button-card
+        template: hemma_media
+        entity: media_player.main_floor_speakers
+        name: Main Floor Speakers
+        variables:
+          icon: speaker
+
+      - type: custom:button-card
+        template: hemma_vacuum
+        entity: vacuum.cleaning_lady
+        name: Clean Living Room
+        variables:
+          room: living room
+
+      # TODO: {Parth Shah} Add Presence Zones
+      # - type: custom:button-card
+      #   template: hemma_entity
+      #   entity: binary_sensor.powder_room_presence
+      #   name: Powder Room
+      #   variables:
+      #     icon: motion
+
+      # - type: custom:button-card
+      #   template: hemma_entity
+      #   entity: binary_sensor.leasure_presence
+      #   name: Leisure Area
+      #   variables:
+      #     icon: motion
+
+      # TODO: {Parth Shah} Add fan if you have one in living room
+      # - type: custom:button-card
+      #   template: hemma_fan
+      #   entity: fan.living_room_fan
+      #   name: Fan
+      #   variables:
+      #     icon: fan

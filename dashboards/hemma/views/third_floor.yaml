@@ -1,0 +1,47 @@
+type: custom:grid-layout
+title: third-floor
+path: third-floor
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards:
+  - type: custom:button-card
+    template: hemma_room
+    name: Third Floor
+    variables:
+      image: home
+      image_position: center center
+      show_weather: true
+      weather_mode: room
+      temp_unit: "F"
+
+  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+  - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+  - type: custom:layout-card
+    class: hemma-entities
+    layout_type: custom:grid-layout
+    layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_nav_tile
+        name: Master Bedroom
+        icon: mdi:bed-king
+        variables:
+          path: /dashboard-hemma/master-bed-room
+          subtitle: Bedroom controls and air quality
+
+      - type: custom:button-card
+        template: hemma_nav_tile
+        name: Guest Bathroom
+        icon: mdi:shower
+        variables:
+          path: /dashboard-hemma/guest-bathroom
+          subtitle: Guest bath environment
+
+      - type: custom:button-card
+        template: hemma_nav_tile
+        name: Master Bathroom
+        icon: mdi:shower-head
+        variables:
+          path: /dashboard-hemma/master-bathroom
+          subtitle: Master bath environment

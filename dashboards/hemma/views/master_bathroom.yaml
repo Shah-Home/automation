@@ -1,0 +1,41 @@
+type: custom:grid-layout
+title: master-bathroom
+path: master-bathroom
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards:
+  - type: custom:button-card
+    template: hemma_room
+    name: Master Bathroom
+    variables:
+      image: home
+      image_position: center center
+      show_temp: true
+      temp_sensor: sensor.master_bathroom_temperature_sensor
+      show_humidity: true
+      humidity_sensor: sensor.master_bathroom_humidity_sensor
+      show_weather: true
+      weather_mode: room
+      temp_unit: "F"
+
+  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+  - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+  - type: custom:layout-card
+    class: hemma-entities
+    layout_type: custom:grid-layout
+    layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+    cards:
+      - type: custom:button-card
+        template: hemma_entity
+        entity: sensor.master_bathroom_temperature_sensor
+        name: Temperature
+        variables:
+          icon: thermometer
+
+      - type: custom:button-card
+        template: hemma_entity
+        entity: sensor.master_bathroom_humidity_sensor
+        name: Humidity
+        variables:
+          icon: water-percent

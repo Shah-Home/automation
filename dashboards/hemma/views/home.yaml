@@ -1,0 +1,101 @@
+type: custom:grid-layout
+title: home
+path: home
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards:
+  # ROOM HERO CARD
+  - type: custom:button-card
+    template: hemma_room
+    name: Home
+    variables:
+      # Image Configuration
+      # Place your images at: /config/www/hemma/rooms/home.jpg (light mode)
+      #                       /config/www/hemma/rooms/home-night.jpg (dark mode)
+      image: home
+      image_position: center center
+
+      # Temperature - Using Living Room thermostat as whole-home temp
+      show_temp: true
+      temp_sensor: sensor.living_room_thermostat_temperature
+
+      # Presence Badges - Your person entities
+      show_presence: true
+      presence_entity_1: person.parth_shah
+      presence_entity_2: person.meetal_mehta
+
+      # Media Player Badges - Shows what's playing across rooms
+      show_media_badge: true
+      pause_timeout_minutes: 5
+      show_media_player_1: true
+      media_player_1: media_player.living_room_tv
+      show_media_player_2: true
+      media_player_2: media_player.kitchen_speaker
+      show_media_player_3: true
+      media_player_3: media_player.master_bedroom_speaker
+      show_media_player_4: true
+      media_player_4: media_player.main_floor_speakers
+
+      # Weather Widget
+      show_weather: true
+      weather_mode: outdoor
+      weather_entity: weather.forecast_home
+      # TODO: {Parth Shah} Add outdoor temperature sensor if available
+      # weather_temp_sensor: sensor.outdoor_temperature
+
+      # Temperature Unit
+      temp_unit: "F" # Fahrenheit (based on your US location)
+
+  # DESKTOP NAVBAR
+  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+  # MOBILE NAVBAR
+  - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+
+  # ENTITY CARDS
+  - type: custom:layout-card
+    class: hemma-entities
+    layout_type: custom:grid-layout
+    layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+    cards:
+      # Living Room Thermostat
+      - type: custom:button-card
+        template: hemma_thermostat
+        entity: climate.living_room_thermostat
+        name: Thermostat
+        variables:
+          temp_sensor: sensor.living_room_thermostat_temperature
+
+      # TODO: {Parth Shah} Add front door lock if available
+      # - type: custom:button-card
+      #   template: hemma_entity
+      #   entity: lock.front_door
+      #   name: Front Door
+      #   variables:
+      #     icon: door
+      #     battery_entity: sensor.front_door_lock_battery
+
+      # All Lights - Using Main Floor Speakers group as proxy for now
+      # TODO: {Parth Shah} Create a light group containing all 4 switches
+      # - type: custom:button-card
+      #   template: hemma_light
+      #   entity: light.all_lights
+      #   name: All Lights
+      #   variables:
+      #     icon: light
+
+      # Doorbell Camera
+      - type: custom:button-card
+        template: hemma_entity
+        entity: camera.front_door_doorbell
+        name: Doorbell
+        variables:
+          icon: doorbell
+          # Note: Nest doorbell doesn't expose battery (hardwired)
+
+      # Roomba Vacuum
+      - type: custom:button-card
+        template: hemma_entity
+        entity: vacuum.cleaning_lady
+        name: Cleaning Lady
+        variables:
+          icon: vacuum
