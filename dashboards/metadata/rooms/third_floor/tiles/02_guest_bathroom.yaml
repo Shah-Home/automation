@@ -1,0 +1,7 @@
+- type: custom:button-card
+  template: hemma_nav_tile
+  name: Guest Bathroom
+  icon: mdi:shower
+  variables:
+    path: /dashboard-hemma/guest-bathroom
+    subtitle: Guest bath environment

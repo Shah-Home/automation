@@ -1,0 +1,57 @@
+- type: custom:button-card
+  template: hemma_thermostat
+  entity: climate.living_room_thermostat
+  name: Thermostat
+  variables:
+    temp_sensor: sensor.living_room_thermostat_temperature
+
+- type: custom:button-card
+  template: hemma_media
+  entity: media_player.living_room_tv
+  name: Living Room TV
+  variables:
+    icon: tv
+
+- type: custom:button-card
+  template: hemma_light
+  entity: switch.living_room_lights
+  name: Lights
+  variables:
+    icon: light
+
+- type: custom:button-card
+  template: hemma_media
+  entity: media_player.main_floor_speakers
+  name: Main Floor Speakers
+  variables:
+    icon: speaker
+
+- type: custom:button-card
+  template: hemma_vacuum
+  entity: vacuum.cleaning_lady
+  name: Clean Living Room
+  variables:
+    room: living room
+
+# TODO: {Parth Shah} Add Presence Zones
+# - type: custom:button-card
+#   template: hemma_entity
+#   entity: binary_sensor.powder_room_presence
+#   name: Powder Room
+#   variables:
+#     icon: motion
+
+# - type: custom:button-card
+#   template: hemma_entity
+#   entity: binary_sensor.leasure_presence
+#   name: Leisure Area
+#   variables:
+#     icon: motion
+
+# TODO: {Parth Shah} Add fan if you have one in living room
+# - type: custom:button-card
+#   template: hemma_fan
+#   entity: fan.living_room_fan
+#   name: Fan
+#   variables:
+#     icon: fan

@@ -1,0 +1,27 @@
+icon: mdi:numeric-2-circle-outline
+icon_selected: mdi:numeric-2-circle
+tap_action:
+  action: open-popup
+selected: >
+  [[[
+    const p = window.location.pathname || '';
+    return [
+      '/dashboard-hemma/second-floor',
+      '/dashboard-hemma/living-room',
+      '/dashboard-hemma/kitchen',
+      '/dashboard-hemma/dining-room'
+    ].includes(p);
+  ]]]
+popup:
+  - label: Overview
+    url: /dashboard-hemma/second-floor
+    icon: mdi:floor-plan
+  - label: Living Room
+    url: /dashboard-hemma/living-room
+    icon: mdi:sofa
+  - label: Kitchen
+    url: /dashboard-hemma/kitchen
+    icon: mdi:fridge
+  - label: Dining Room
+    url: /dashboard-hemma/dining-room
+    icon: mdi:table-furniture

@@ -1,0 +1,6 @@
+- type: custom:button-card
+  template: hemma_entity
+  entity: camera.back_door_camera
+  name: Back Camera
+  variables:
+    icon: camera

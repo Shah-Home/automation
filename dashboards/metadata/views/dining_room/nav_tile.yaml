@@ -1,0 +1,7 @@
+type: custom:button-card
+template: hemma_nav_tile
+name: Dining Room
+icon: mdi:table-furniture
+variables:
+  path: /dashboard-hemma/dining-room
+  subtitle: Lights and presence

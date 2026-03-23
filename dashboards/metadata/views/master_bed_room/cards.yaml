@@ -1,0 +1,50 @@
+# TODO: {Parth Shah} No climate control in master bedroom
+# - type: custom:button-card
+#   template: hemma_thermostat
+#   entity: climate.master_bedroom
+#   name: Thermostat
+#   variables:
+#     temp_sensor: sensor.master_bedroom_temperature_sensor
+
+- type: custom:button-card
+  template: hemma_light
+  entity: switch.master_bedroom_lights
+  name: Bedroom Lights
+  variables:
+    icon: light
+
+- type: custom:button-card
+  template: hemma_media
+  entity: media_player.master_bedroom_speaker
+  name: Bedroom Speaker
+  variables:
+    icon: speaker
+
+- type: custom:button-card
+  template: hemma_fan
+  entity: fan.air_purifier
+  name: Air Purifier
+  variables:
+    icon: fan
+
+- type: custom:button-card
+  template: hemma_entity
+  entity: sensor.master_bedroom_carbon_dioxide_sensor
+  name: CO₂
+  variables:
+    icon: molecule
+
+- type: custom:button-card
+  template: hemma_entity
+  entity: sensor.master_bedroom_pm2_5_sensor
+  name: PM2.5
+  variables:
+    icon: blur
+
+# TODO: {Parth Shah} Add TV if you have one
+# - type: custom:button-card
+#   template: hemma_entity
+#   entity: media_player.master_bedroom_tv
+#   name: TV
+#   variables:
+#     icon: tv

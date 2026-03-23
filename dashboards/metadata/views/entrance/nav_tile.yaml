@@ -1,0 +1,7 @@
+type: custom:button-card
+template: hemma_nav_tile
+name: Entrance
+icon: mdi:door
+variables:
+  path: /dashboard-hemma/entrance
+  subtitle: Front door and doorbell

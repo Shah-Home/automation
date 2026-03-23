@@ -1,0 +1,7 @@
+type: custom:button-card
+template: hemma_nav_tile
+name: Kitchen
+icon: mdi:fridge
+variables:
+  path: /dashboard-hemma/kitchen
+  subtitle: Lights, speakers, and vacuum

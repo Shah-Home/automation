@@ -1,0 +1,69 @@
+hemma_card_shell:
+  variables:
+    card_display: block
+
+  styles:
+    card:
+      - background: var(--ha-card-background)
+      - backdrop-filter: blur(20px)
+      - border-radius: var(--ha-card-border-radius, 30px)
+      - position: relative
+      - height: var(--hemma-entity-height-current, var(--hemma-entity-height-desktop, 180px))
+      - padding: var(--hemma-entity-inner-pad-current, var(--hemma-entity-inner-pad-desktop, 22px))
+      - scroll-snap-align: start
+      - display: >
+          [[[
+            const display = variables.card_display || 'block';
+            return (states['input_boolean.hemma_mobile_navigation'].state === 'on') ? 'none' : display;
+          ]]]
+      - --ha-card-border-width: 0
+      - transition: background-color .22s ease,
+                    box-shadow .24s ease,
+                    transform .14s ease,
+                    filter .18s ease
+
+    grid:
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr min-content min-content
+      - grid-template-areas: |
+          "i"
+          "n"
+          "s"
+      - row-gap: 4px
+      - justify-items: start
+      - align-items: start
+
+    name:
+      - grid-area: n
+      - justify-self: start
+      - margin-bottom: 0px
+      - line-height: 1.15
+      - white-space: nowrap
+      - overflow: hidden
+      - text-overflow: ellipsis
+      - transition: color .18s ease, opacity .18s ease
+
+    state:
+      - grid-area: s
+      - justify-self: start
+      - line-height: 1.15
+      - transition: color .18s ease, opacity .18s ease
+
+    img_cell:
+      - grid-area: i
+      - justify-self: start
+      - align-self: start
+      - width: var(--hemma-entity-icon-size-current, var(--hemma-entity-icon-size-desktop, 30px))
+      - height: var(--hemma-entity-icon-size-current, var(--hemma-entity-icon-size-desktop, 30px))
+      - background: transparent
+      - transition: opacity .18s ease, filter .18s ease
+
+    entity_picture:
+      - opacity: var(--hemma-entity-picture-inactive-opacity, .9)
+      - filter: var(--hemma-entity-picture-inactive-filter, brightness(.9))
+      - transition: opacity .18s ease, filter .18s ease
+
+    icon:
+      - grid-area: i
+      - width: 100%
+      - height: 100%

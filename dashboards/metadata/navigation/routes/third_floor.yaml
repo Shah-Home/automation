@@ -1,0 +1,27 @@
+icon: mdi:numeric-3-circle-outline
+icon_selected: mdi:numeric-3-circle
+tap_action:
+  action: open-popup
+selected: >
+  [[[
+    const p = window.location.pathname || '';
+    return [
+      '/dashboard-hemma/third-floor',
+      '/dashboard-hemma/master-bed-room',
+      '/dashboard-hemma/guest-bathroom',
+      '/dashboard-hemma/master-bathroom'
+    ].includes(p);
+  ]]]
+popup:
+  - label: Overview
+    url: /dashboard-hemma/third-floor
+    icon: mdi:floor-plan
+  - label: Master Bedroom
+    url: /dashboard-hemma/master-bed-room
+    icon: mdi:bed-king
+  - label: Guest Bathroom
+    url: /dashboard-hemma/guest-bathroom
+    icon: mdi:shower
+  - label: Master Bathroom
+    url: /dashboard-hemma/master-bathroom
+    icon: mdi:shower-head

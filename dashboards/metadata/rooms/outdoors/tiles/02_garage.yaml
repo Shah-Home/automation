@@ -1,0 +1,7 @@
+- type: custom:button-card
+  template: hemma_nav_tile
+  name: Garage
+  icon: mdi:garage
+  variables:
+    path: /dashboard-hemma/garage
+    subtitle: Camera and entry points

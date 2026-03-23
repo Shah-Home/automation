@@ -1,0 +1,15 @@
+type: custom:button-card
+template: hemma_room
+name: Living Room
+variables:
+  image: livingroom
+  image_position: center center
+  show_temp: true
+  temp_sensor: sensor.living_room_thermostat_temperature
+  show_humidity: true
+  humidity_sensor: sensor.living_room_thermostat_humidity
+  show_weather: true
+  weather_mode: room
+  temp_unit: "F"
+  show_motion: true
+  motion_sensor: binary_sensor.living_room_presence

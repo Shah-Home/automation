@@ -1,0 +1,27 @@
+icon: mdi:numeric-1-circle-outline
+icon_selected: mdi:numeric-1-circle
+tap_action:
+  action: open-popup
+selected: >
+  [[[
+    const p = window.location.pathname || '';
+    return [
+      '/dashboard-hemma/first-floor',
+      '/dashboard-hemma/entrance',
+      '/dashboard-hemma/bathroom',
+      '/dashboard-hemma/rec-room'
+    ].includes(p);
+  ]]]
+popup:
+  - label: Overview
+    url: /dashboard-hemma/first-floor
+    icon: mdi:floor-plan
+  - label: Entrance
+    url: /dashboard-hemma/entrance
+    icon: mdi:door
+  - label: Bathroom
+    url: /dashboard-hemma/bathroom
+    icon: mdi:shower
+  - label: Rec Room
+    url: /dashboard-hemma/rec-room
+    icon: mdi:sofa-outline

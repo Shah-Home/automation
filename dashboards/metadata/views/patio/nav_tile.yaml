@@ -1,0 +1,7 @@
+type: custom:button-card
+template: hemma_nav_tile
+name: Patio
+icon: mdi:balcony
+variables:
+  path: /dashboard-hemma/patio
+  subtitle: Outdoor lights

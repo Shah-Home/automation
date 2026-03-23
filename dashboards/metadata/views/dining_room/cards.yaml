@@ -1,0 +1,20 @@
+- type: custom:button-card
+  template: hemma_light
+  entity: switch.dining_room_lights
+  name: Dining Lights
+  variables:
+    icon: light
+
+- type: custom:button-card
+  template: hemma_entity
+  entity: binary_sensor.dining_room_presence
+  name: Dining Room
+  variables:
+    icon: motion
+
+- type: custom:button-card
+  template: hemma_entity
+  entity: sensor.dining_room_light
+  name: Light Level
+  variables:
+    icon: brightness

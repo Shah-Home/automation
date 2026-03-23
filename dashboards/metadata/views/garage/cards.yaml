@@ -1,0 +1,14 @@
+- type: custom:button-card
+  template: hemma_entity
+  entity: camera.garage_camera
+  name: Garage Camera
+  variables:
+    icon: camera
+
+# TODO: {Parth Shah} Add garage door opener if available
+# - type: custom:button-card
+#   template: hemma_entity
+#   entity: cover.garage_door
+#   name: Garage Door
+#   variables:
+#     icon: garage

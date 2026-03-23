@@ -1,0 +1,43 @@
+- type: custom:button-card
+  template: hemma_light
+  entity: switch.kitchen_island_lights
+  name: Island Lights
+  variables:
+    icon: light
+
+- type: custom:button-card
+  template: hemma_media
+  entity: media_player.kitchen_speaker
+  name: Kitchen Speaker
+  variables:
+    icon: speaker
+
+- type: custom:button-card
+  template: hemma_vacuum
+  entity: vacuum.cleaning_lady
+  name: Clean Kitchen
+  variables:
+    room: kitchen
+
+# # FP2 Presence Zones
+# - type: custom:button-card
+#   template: hemma_entity
+#   entity: binary_sensor.cooking_area_presence
+#   name: Cooking Area
+#   variables:
+#     icon: motion
+
+# - type: custom:button-card
+#   template: hemma_entity
+#   entity: binary_sensor.island_sitting_area_presence
+#   name: Island Area
+#   variables:
+#     icon: motion
+
+# # Illuminance Sensor (FP2)
+# - type: custom:button-card
+#   template: hemma_entity
+#   entity: sensor.dining_room_light
+#   name: Light Level
+#   variables:
+#     icon: brightness

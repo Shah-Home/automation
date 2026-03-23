@@ -1,0 +1,7 @@
+type: custom:button-card
+template: hemma_nav_tile
+name: Bathroom
+icon: mdi:shower
+variables:
+  path: /dashboard-hemma/bathroom
+  subtitle: Temperature and humidity

@@ -1,0 +1,23 @@
+icon: mdi:pine-tree
+icon_selected: mdi:pine-tree
+tap_action:
+  action: open-popup
+selected: >
+  [[[
+    const p = window.location.pathname || '';
+    return [
+      '/dashboard-hemma/outdoors',
+      '/dashboard-hemma/patio',
+      '/dashboard-hemma/garage'
+    ].includes(p);
+  ]]]
+popup:
+  - label: Overview
+    url: /dashboard-hemma/outdoors
+    icon: mdi:pine-tree
+  - label: Patio
+    url: /dashboard-hemma/patio
+    icon: mdi:balcony
+  - label: Garage
+    url: /dashboard-hemma/garage
+    icon: mdi:garage

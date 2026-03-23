@@ -1,0 +1,63 @@
+# Media Player Styles Logic
+# Handles special styling for different media player apps (YouTube, etc.)
+_hemma_mp_styles_base: !include /config/dashboards/templates/includes/hemma_media_player_styles.yaml
+
+_hemma_mp_styles: >
+  [[[
+    let baseStyles = variables._hemma_mp_styles_base || '';
+
+    const eid = variables.active_media_player;
+    if (!eid) return baseStyles;
+
+    const a = states[eid]?.attributes || {};
+    const appName = String(a.app_name || a.source || '').toLowerCase();
+    const appId = String(a.app_id || '').toLowerCase();
+    const isYT = (appName.includes('youtube') || appId.includes('youtube'));
+
+    if (!isYT) return baseStyles;
+
+    const ytStyles = `
+
+      ha-icon.media-player-icon-fallback {
+        background: url("/local/hemma/icons/youtube.png") center/cover no-repeat !important;
+        border-radius: 50% !important;
+        width: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+        height: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+        min-width: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+        min-height: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+        color: transparent !important;
+        --mdc-icon-size: 0px !important;
+        opacity: 1 !important;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14) !important;
+        flex-shrink: 0 !important;
+        margin-right: 2px !important;
+      }
+
+      ha-icon.media-player-icon-fallback::before,
+      ha-icon.media-player-icon-fallback::after {
+        display: none !important;
+      }
+
+      /* Mobile Portrait YouTube icon sizing */
+      @media (max-width: 767px) and (orientation: portrait) {
+        ha-icon.media-player-icon-fallback {
+          width: 32px !important;
+          height: 32px !important;
+          min-width: 32px !important;
+          min-height: 32px !important;
+        }
+      }
+
+      /* Mobile Landscape YouTube icon sizing */
+      @media (max-height: 600px) and (orientation: landscape) {
+        ha-icon.media-player-icon-fallback {
+          width: 26px !important;
+          height: 26px !important;
+          min-width: 26px !important;
+          min-height: 26px !important;
+        }
+      }
+    `;
+
+    return baseStyles + ytStyles;
+  ]]]

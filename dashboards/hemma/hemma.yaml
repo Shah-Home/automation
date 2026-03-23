@@ -27,19 +27,19 @@ kiosk_mode:
     hide_sidebar: true
 
 views:
-  - !include /config/dashboards/hemma/views/home.yaml
-  - !include /config/dashboards/hemma/views/first_floor.yaml
-  - !include /config/dashboards/hemma/views/second_floor.yaml
-  - !include /config/dashboards/hemma/views/third_floor.yaml
-  - !include /config/dashboards/hemma/views/outdoors.yaml
-  - !include /config/dashboards/hemma/views/living_room.yaml
-  - !include /config/dashboards/hemma/views/kitchen.yaml
-  - !include /config/dashboards/hemma/views/dining_room.yaml
-  - !include /config/dashboards/hemma/views/master_bed_room.yaml
-  - !include /config/dashboards/hemma/views/patio.yaml
-  - !include /config/dashboards/hemma/views/garage.yaml
-  - !include /config/dashboards/hemma/views/bathroom.yaml
-  - !include /config/dashboards/hemma/views/entrance.yaml
-  - !include /config/dashboards/hemma/views/rec_room.yaml
-  - !include /config/dashboards/hemma/views/guest_bathroom.yaml
-  - !include /config/dashboards/hemma/views/master_bathroom.yaml
+  - !include /config/dashboards/metadata/views/home/view.yaml
+  - !include /config/dashboards/metadata/views/first_floor/view.yaml
+  - !include /config/dashboards/metadata/views/second_floor/view.yaml
+  - !include /config/dashboards/metadata/views/third_floor/view.yaml
+  - !include /config/dashboards/metadata/views/outdoors/view.yaml
+  - !include /config/dashboards/metadata/views/living_room/view.yaml
+  - !include /config/dashboards/metadata/views/kitchen/view.yaml
+  - !include /config/dashboards/metadata/views/dining_room/view.yaml
+  - !include /config/dashboards/metadata/views/master_bed_room/view.yaml
+  - !include /config/dashboards/metadata/views/patio/view.yaml
+  - !include /config/dashboards/metadata/views/garage/view.yaml
+  - !include /config/dashboards/metadata/views/bathroom/view.yaml
+  - !include /config/dashboards/metadata/views/entrance/view.yaml
+  - !include /config/dashboards/metadata/views/rec_room/view.yaml
+  - !include /config/dashboards/metadata/views/guest_bathroom/view.yaml
+  - !include /config/dashboards/metadata/views/master_bathroom/view.yaml

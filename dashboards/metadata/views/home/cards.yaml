@@ -1,0 +1,37 @@
+- type: custom:button-card
+  template: hemma_thermostat
+  entity: climate.living_room_thermostat
+  name: Thermostat
+  variables:
+    temp_sensor: sensor.living_room_thermostat_temperature
+
+# TODO: {Parth Shah} Add front door lock if available
+# - type: custom:button-card
+#   template: hemma_entity
+#   entity: lock.front_door
+#   name: Front Door
+#   variables:
+#     icon: door
+#     battery_entity: sensor.front_door_lock_battery
+
+# TODO: {Parth Shah} Create a light group containing all 4 switches
+# - type: custom:button-card
+#   template: hemma_light
+#   entity: light.all_lights
+#   name: All Lights
+#   variables:
+#     icon: light
+
+- type: custom:button-card
+  template: hemma_entity
+  entity: camera.front_door_doorbell
+  name: Doorbell
+  variables:
+    icon: doorbell
+
+- type: custom:button-card
+  template: hemma_entity
+  entity: vacuum.cleaning_lady
+  name: Cleaning Lady
+  variables:
+    icon: vacuum

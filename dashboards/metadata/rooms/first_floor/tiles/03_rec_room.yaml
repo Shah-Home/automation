@@ -1,0 +1,7 @@
+- type: custom:button-card
+  template: hemma_nav_tile
+  name: Rec Room
+  icon: mdi:sofa-outline
+  variables:
+    path: /dashboard-hemma/rec-room
+    subtitle: Back camera view

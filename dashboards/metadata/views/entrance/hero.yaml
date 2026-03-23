@@ -1,0 +1,10 @@
+type: custom:button-card
+template: hemma_room
+name: Entrance
+variables:
+  image: home
+  image_position: center center
+  show_weather: true
+  weather_mode: outdoor
+  weather_entity: weather.forecast_home
+  temp_unit: "F"

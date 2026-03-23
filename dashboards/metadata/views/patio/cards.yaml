@@ -1,0 +1,14 @@
+- type: custom:button-card
+  template: hemma_light
+  entity: switch.patio_lights
+  name: Patio Lights
+  variables:
+    icon: light
+
+# TODO: {Parth Shah} Add outdoor sensors/devices if available
+# - type: custom:button-card
+#   template: hemma_entity
+#   entity: sensor.outdoor_temperature
+#   name: Temperature
+#   variables:
+#     icon: thermometer

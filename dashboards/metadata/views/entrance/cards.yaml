@@ -1,0 +1,6 @@
+- type: custom:button-card
+  template: hemma_entity
+  entity: camera.front_door_doorbell
+  name: Front Door
+  variables:
+    icon: doorbell

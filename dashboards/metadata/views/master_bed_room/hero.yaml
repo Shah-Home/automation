@@ -1,0 +1,15 @@
+type: custom:button-card
+template: hemma_room
+name: Master Bedroom
+variables:
+  image: bedroom
+  image_position: center center
+  show_temp: true
+  temp_sensor: sensor.master_bedroom_temperature_sensor
+  show_humidity: true
+  humidity_sensor: sensor.master_bedroom_humidity_sensor
+  show_quality: true
+  quality_sensor: sensor.master_bedroom_air_quality_sensor
+  show_weather: true
+  weather_mode: room
+  temp_unit: "F"

@@ -1,0 +1,7 @@
+- type: custom:button-card
+  template: hemma_nav_tile
+  name: Master Bedroom
+  icon: mdi:bed-king
+  variables:
+    path: /dashboard-hemma/master-bed-room
+    subtitle: Bedroom controls and air quality

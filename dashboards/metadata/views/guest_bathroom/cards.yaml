@@ -1,0 +1,13 @@
+- type: custom:button-card
+  template: hemma_entity
+  entity: sensor.guest_bathroom_temperature_sensor
+  name: Temperature
+  variables:
+    icon: thermometer
+
+- type: custom:button-card
+  template: hemma_entity
+  entity: sensor.guest_bathroom_humidity_sensor
+  name: Humidity
+  variables:
+    icon: water-percent

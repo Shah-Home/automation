@@ -1,0 +1,7 @@
+- type: custom:button-card
+  template: hemma_nav_tile
+  name: Living Room
+  icon: mdi:sofa
+  variables:
+    path: /dashboard-hemma/living-room
+    subtitle: Climate, media, and lights

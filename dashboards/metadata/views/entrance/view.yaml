@@ -1,0 +1,12 @@
+<<: !include /config/dashboards/metadata/rooms/definitions/entrance.yaml
+type: custom:grid-layout
+layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
+cards:
+  - !include /config/dashboards/metadata/views/entrance/hero.yaml
+  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
+  - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
+  - type: custom:layout-card
+    class: hemma-entities
+    layout_type: custom:grid-layout
+    layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
+    cards: !include /config/dashboards/metadata/views/entrance/cards.yaml

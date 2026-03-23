@@ -1,0 +1,25 @@
+type: custom:button-card
+template: hemma_room
+name: Home
+variables:
+  image: home
+  image_position: center center
+  show_temp: true
+  temp_sensor: sensor.living_room_thermostat_temperature
+  show_presence: true
+  presence_entity_1: person.parth_shah
+  presence_entity_2: person.meetal_mehta
+  show_media_badge: true
+  pause_timeout_minutes: 5
+  show_media_player_1: true
+  media_player_1: media_player.living_room_tv
+  show_media_player_2: true
+  media_player_2: media_player.kitchen_speaker
+  show_media_player_3: true
+  media_player_3: media_player.master_bedroom_speaker
+  show_media_player_4: true
+  media_player_4: media_player.main_floor_speakers
+  show_weather: true
+  weather_mode: outdoor
+  weather_entity: weather.forecast_home
+  temp_unit: "F"

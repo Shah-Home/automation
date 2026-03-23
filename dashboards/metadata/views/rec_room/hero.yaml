@@ -1,0 +1,9 @@
+type: custom:button-card
+template: hemma_room
+name: Rec Room
+variables:
+  image: home
+  image_position: center center
+  show_weather: true
+  weather_mode: room
+  temp_unit: "F"

@@ -1,0 +1,49 @@
+# Active Media Player Selector Logic
+# Automatically selects the first active media player from up to 4 sources.
+# Used by hemma_room and other media-related templates.
+active_media_player: >
+  [[[
+    const enabled = (v) => {
+      if (v === undefined || v === null) return false;
+      if (typeof v === 'boolean') return v;
+      if (typeof v === 'number')  return v !== 0;
+      const s = String(v).trim().toLowerCase();
+      if (['false','0','no','off','disabled'].includes(s)) return false;
+      if (['true','1','yes','on','enabled'].includes(s))   return true;
+      return !!s;
+    };
+
+    const isMediaActive = (eid) => {
+      if (!eid) return false;
+
+      const s  = states[eid];
+      const st = String(s?.state || '');
+      const a  = s?.attributes || {};
+
+      if (!s || ['unavailable', 'unknown'].includes(st)) return false;
+      if (['off', 'standby'].includes(st)) return false;
+
+      const title   = String(a.media_title || '').trim();
+      const artist  = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+      const hasContent = !!(title || artist);
+
+      if (st === 'playing' || st === 'buffering') return true;
+      if (st === 'paused') return hasContent;
+      if (st === 'idle' || st === 'on') return hasContent;
+
+      return false;
+    };
+
+    const list = [
+      [variables.show_media_player_1, variables.media_player_1],
+      [variables.show_media_player_2, variables.media_player_2],
+      [variables.show_media_player_3, variables.media_player_3],
+      [variables.show_media_player_4, variables.media_player_4],
+    ];
+
+    for (const [flag, eid] of list) {
+      if (enabled(flag) && eid && isMediaActive(eid)) return eid;
+    }
+
+    return '';
+  ]]]

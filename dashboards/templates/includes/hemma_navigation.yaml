@@ -1,17 +1,16 @@
 # Desktop Navbar
 # ============================================================================
-# CUSTOMIZATION REQUIRED: Update the routes section at the bottom of this file
-# to match your dashboard URL and view paths.
+# CUSTOMIZATION REQUIRED: Update the shared navigation metadata under
+# /config/dashboards/metadata/navigation/routes/ to match your dashboard URL
+# and view paths.
 #
-# ROUTES TO CUSTOMIZE (search for "# Navigation Buttons" or "routes:"):
+# ROUTES TO CUSTOMIZE:
 #   - Home: /dashboard-hemma/home
 #   - First Floor: /dashboard-hemma/first-floor
 #   - Second Floor: /dashboard-hemma/second-floor
 #   - Third Floor: /dashboard-hemma/third-floor
 #   - Outdoors: /dashboard-hemma/outdoors
 #   - Scenes: Dynamic popup (no URL change needed)
-#
-# Update popup members in the routes array at the bottom to add or remove areas.
 # ============================================================================
 
 type: conditional
@@ -495,156 +494,23 @@ card:
 
       # Navigation Buttons (Edit these)
       routes:
-        - url: /dashboard-hemma/home
+        - <<: !include /config/dashboards/metadata/navigation/routes/home.yaml
           label: Home
-          icon: mdi:home-variant
 
-        - label: "First Floor ▾"
-          icon: mdi:numeric-1-circle-outline
-          tap_action:
-            action: open-popup
-          selected: >
-            [[[
-              const p = window.location.pathname || '';
-              return [
-                '/dashboard-hemma/first-floor',
-                '/dashboard-hemma/entrance',
-                '/dashboard-hemma/bathroom',
-                '/dashboard-hemma/rec-room'
-              ].includes(p);
-            ]]]
-          popup:
-            - label: Overview
-              url: /dashboard-hemma/first-floor
-              icon: mdi:floor-plan
-            - label: Entrance
-              url: /dashboard-hemma/entrance
-              icon: mdi:door
-            - label: Bathroom
-              url: /dashboard-hemma/bathroom
-              icon: mdi:shower
-            - label: Rec Room
-              url: /dashboard-hemma/rec-room
-              icon: mdi:sofa-outline
+        - <<: !include /config/dashboards/metadata/navigation/routes/first_floor.yaml
+          label: "First Floor ▾"
 
-        - label: "Second Floor ▾"
-          icon: mdi:numeric-2-circle-outline
-          tap_action:
-            action: open-popup
-          selected: >
-            [[[
-              const p = window.location.pathname || '';
-              return [
-                '/dashboard-hemma/second-floor',
-                '/dashboard-hemma/living-room',
-                '/dashboard-hemma/kitchen',
-                '/dashboard-hemma/dining-room'
-              ].includes(p);
-            ]]]
-          popup:
-            - label: Overview
-              url: /dashboard-hemma/second-floor
-              icon: mdi:floor-plan
-            - label: Living Room
-              url: /dashboard-hemma/living-room
-              icon: mdi:sofa
-            - label: Kitchen
-              url: /dashboard-hemma/kitchen
-              icon: mdi:fridge
-            - label: Dining Room
-              url: /dashboard-hemma/dining-room
-              icon: mdi:table-furniture
+        - <<: !include /config/dashboards/metadata/navigation/routes/second_floor.yaml
+          label: "Second Floor ▾"
 
-        - label: "Third Floor ▾"
-          icon: mdi:numeric-3-circle-outline
-          tap_action:
-            action: open-popup
-          selected: >
-            [[[
-              const p = window.location.pathname || '';
-              return [
-                '/dashboard-hemma/third-floor',
-                '/dashboard-hemma/master-bed-room',
-                '/dashboard-hemma/guest-bathroom',
-                '/dashboard-hemma/master-bathroom'
-              ].includes(p);
-            ]]]
-          popup:
-            - label: Overview
-              url: /dashboard-hemma/third-floor
-              icon: mdi:floor-plan
-            - label: Master Bedroom
-              url: /dashboard-hemma/master-bed-room
-              icon: mdi:bed-king
-            - label: Guest Bathroom
-              url: /dashboard-hemma/guest-bathroom
-              icon: mdi:shower
-            - label: Master Bathroom
-              url: /dashboard-hemma/master-bathroom
-              icon: mdi:shower-head
+        - <<: !include /config/dashboards/metadata/navigation/routes/third_floor.yaml
+          label: "Third Floor ▾"
 
-        - label: "Outdoors ▾"
-          icon: mdi:pine-tree
-          tap_action:
-            action: open-popup
-          selected: >
-            [[[
-              const p = window.location.pathname || '';
-              return [
-                '/dashboard-hemma/outdoors',
-                '/dashboard-hemma/patio',
-                '/dashboard-hemma/garage'
-              ].includes(p);
-            ]]]
-          popup:
-            - label: Overview
-              url: /dashboard-hemma/outdoors
-              icon: mdi:pine-tree
-            - label: Patio
-              url: /dashboard-hemma/patio
-              icon: mdi:balcony
-            - label: Garage
-              url: /dashboard-hemma/garage
-              icon: mdi:garage
+        - <<: !include /config/dashboards/metadata/navigation/routes/outdoors.yaml
+          label: "Outdoors ▾"
 
-        - label: "Scenes ▾"
-          icon: mdi:layers
-          tap_action:
-            action: open-popup
-          popup: |
-            [[[
-              const reg = hass.entities;
-
-              const getRegEntry = (id) => {
-                if (!reg) return null;
-                if (Array.isArray(reg)) return reg.find(e => e?.entity_id === id) || null;
-                return reg[id] || (reg.get ? reg.get(id) : null) || null;
-              };
-
-              const isHidden = (id) => {
-                const e = getRegEntry(id);
-                // Different HA versions expose slightly different fields
-                return !!(e && (e.hidden || e.hidden_by || e.disabled || e.disabled_by));
-              };
-
-              const scenes = Object.values(hass.states || {})
-                .filter(e => e?.entity_id?.startsWith('scene.'))
-                // Keep only scenes that are NOT hidden/disabled in HA
-                .filter(s => !isHidden(s.entity_id))
-                .slice()
-                .sort((a,b) => (a.attributes?.friendly_name || a.entity_id)
-                  .localeCompare(b.attributes?.friendly_name || b.entity_id));
-
-              return scenes.map(s => ({
-                label: s.attributes?.friendly_name || s.entity_id.replace('scene.',''),
-                icon: s.attributes?.icon || 'mdi:layers',
-                tap_action: {
-                  action: 'call-service',
-                  service: 'scene.turn_on',
-                  service_data: { entity_id: s.entity_id }
-                }
-              }));
-            ]]]
+        - <<: !include /config/dashboards/metadata/navigation/routes/scenes.yaml
+          label: "Scenes ▾"
 
     # Time (right)
     - type: custom:layout-card

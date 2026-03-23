@@ -1,0 +1,7 @@
+type: custom:button-card
+template: hemma_nav_tile
+name: Master Bathroom
+icon: mdi:shower-head
+variables:
+  path: /dashboard-hemma/master-bathroom
+  subtitle: Master bath environment

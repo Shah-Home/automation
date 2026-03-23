@@ -1,0 +1,13 @@
+type: custom:button-card
+template: hemma_room
+name: Bathroom
+variables:
+  image: home
+  image_position: center center
+  show_temp: true
+  temp_sensor: sensor.bathroom_temperature_sensor
+  show_humidity: true
+  humidity_sensor: sensor.bathroom_humidity_sensor
+  show_weather: true
+  weather_mode: room
+  temp_unit: "F"
