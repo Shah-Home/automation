@@ -317,22 +317,161 @@ cards:
 
       # Buttons (Edit these)
       routes: &hemma_nav_routes_abbrev
-        - <<: !include /config/dashboards/metadata/navigation/routes/home.yaml
+        - url: /dashboard-hemma/home
+          icon: mdi:home-variant
+          icon_selected: mdi:home-variant
           label: Home
 
-        - <<: !include /config/dashboards/metadata/navigation/routes/first_floor.yaml
+        - icon: mdi:numeric-1-circle-outline
+          icon_selected: mdi:numeric-1-circle
+          tap_action:
+            action: open-popup
+          selected: >
+            [[[
+              const p = window.location.pathname || '';
+              return [
+                '/dashboard-hemma/first-floor',
+                '/dashboard-hemma/entrance',
+                '/dashboard-hemma/bathroom',
+                '/dashboard-hemma/rec-room'
+              ].includes(p);
+            ]]]
+          popup:
+            - label: Overview
+              url: /dashboard-hemma/first-floor
+              icon: mdi:floor-plan
+            - label: Entrance
+              url: /dashboard-hemma/entrance
+              icon: mdi:door
+            - label: Bathroom
+              url: /dashboard-hemma/bathroom
+              icon: mdi:shower
+            - label: Rec Room
+              url: /dashboard-hemma/rec-room
+              icon: mdi:sofa-outline
           label: "1F ▾"
 
-        - <<: !include /config/dashboards/metadata/navigation/routes/second_floor.yaml
+        - icon: mdi:numeric-2-circle-outline
+          icon_selected: mdi:numeric-2-circle
+          tap_action:
+            action: open-popup
+          selected: >
+            [[[
+              const p = window.location.pathname || '';
+              return [
+                '/dashboard-hemma/second-floor',
+                '/dashboard-hemma/living-room',
+                '/dashboard-hemma/kitchen',
+                '/dashboard-hemma/dining-room'
+              ].includes(p);
+            ]]]
+          popup:
+            - label: Overview
+              url: /dashboard-hemma/second-floor
+              icon: mdi:floor-plan
+            - label: Living Room
+              url: /dashboard-hemma/living-room
+              icon: mdi:sofa
+            - label: Kitchen
+              url: /dashboard-hemma/kitchen
+              icon: mdi:fridge
+            - label: Dining Room
+              url: /dashboard-hemma/dining-room
+              icon: mdi:silverware-fork-knife
           label: "2F ▾"
 
-        - <<: !include /config/dashboards/metadata/navigation/routes/third_floor.yaml
+        - icon: mdi:numeric-3-circle-outline
+          icon_selected: mdi:numeric-3-circle
+          tap_action:
+            action: open-popup
+          selected: >
+            [[[
+              const p = window.location.pathname || '';
+              return [
+                '/dashboard-hemma/third-floor',
+                '/dashboard-hemma/master-bed-room',
+                '/dashboard-hemma/master-bathroom',
+                '/dashboard-hemma/guest-bathroom'
+              ].includes(p);
+            ]]]
+          popup:
+            - label: Overview
+              url: /dashboard-hemma/third-floor
+              icon: mdi:floor-plan
+            - label: Master Bedroom
+              url: /dashboard-hemma/master-bed-room
+              icon: mdi:bed
+            - label: Master Bathroom
+              url: /dashboard-hemma/master-bathroom
+              icon: mdi:shower
+            - label: Guest Bathroom
+              url: /dashboard-hemma/guest-bathroom
+              icon: mdi:shower
           label: "3F ▾"
 
-        - <<: !include /config/dashboards/metadata/navigation/routes/outdoors.yaml
+        - icon: mdi:tree-outline
+          icon_selected: mdi:tree
+          tap_action:
+            action: open-popup
+          selected: >
+            [[[
+              const p = window.location.pathname || '';
+              return [
+                '/dashboard-hemma/outdoors',
+                '/dashboard-hemma/garage',
+                '/dashboard-hemma/patio'
+              ].includes(p);
+            ]]]
+          popup:
+            - label: Overview
+              url: /dashboard-hemma/outdoors
+              icon: mdi:floor-plan
+            - label: Garage
+              url: /dashboard-hemma/garage
+              icon: mdi:garage
+            - label: Patio
+              url: /dashboard-hemma/patio
+              icon: mdi:patio-heater
           label: "Out ▾"
 
-        - <<: !include /config/dashboards/metadata/navigation/routes/scenes.yaml
+        - icon: mdi:layers
+          icon_selected: mdi:layers
+          tap_action:
+            action: open-popup
+          popup: |
+            [[[
+              const reg = hass.entities;
+
+              const getRegEntry = (id) => {
+                if (!reg) return null;
+                if (Array.isArray(reg)) return reg.find(e => e?.entity_id === id) || null;
+                return reg[id] || (reg.get ? reg.get(id) : null) || null;
+              };
+
+              const isHidden = (id) => {
+                const e = getRegEntry(id);
+                // Different HA versions expose slightly different fields
+                return !!(e && (e.hidden || e.hidden_by || e.disabled || e.disabled_by));
+              };
+
+              const scenes = Object.values(hass.states || {})
+                .filter(e => e?.entity_id?.startsWith('scene.'))
+                // Keep only scenes that are NOT hidden/disabled in HA
+                .filter(s => !isHidden(s.entity_id))
+                .slice()
+                .sort((a,b) => (a.attributes?.friendly_name || a.entity_id)
+                  .localeCompare(b.attributes?.friendly_name || b.entity_id));
+
+              return scenes.map(s => ({
+                label: s.attributes?.friendly_name || s.entity_id.replace('scene.',''),
+                icon: s.attributes?.icon || 'mdi:layers',
+                tap_action: {
+                  action: 'call-service',
+                  service: 'scene.turn_on',
+                  service_data: { entity_id: s.entity_id }
+                }
+              }));
+            ]]]
           label: "Scenes ▾"
 
   # Phone Landscape

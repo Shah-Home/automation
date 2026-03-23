@@ -1,0 +1,3300 @@
+hemma_card_shell:
+  variables:
+    card_display: block
+
+  styles:
+    card:
+      - background: var(--ha-card-background)
+      - backdrop-filter: blur(20px)
+      - border-radius: var(--ha-card-border-radius, 30px)
+      - position: relative
+      - height: var(--hemma-entity-height-current, var(--hemma-entity-height-desktop, 180px))
+      - padding: var(--hemma-entity-inner-pad-current, var(--hemma-entity-inner-pad-desktop, 22px))
+      - scroll-snap-align: start
+      - display: >
+          [[[
+            const display = variables.card_display || 'block';
+            return (states['input_boolean.hemma_mobile_navigation'].state === 'on') ? 'none' : display;
+          ]]]
+      - --ha-card-border-width: 0
+      - transition: background-color .22s ease,
+                    box-shadow .24s ease,
+                    transform .14s ease,
+                    filter .18s ease
+
+    grid:
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr min-content min-content
+      - grid-template-areas: |
+          "i"
+          "n"
+          "s"
+      - row-gap: 4px
+      - justify-items: start
+      - align-items: start
+
+    name:
+      - grid-area: n
+      - justify-self: start
+      - margin-bottom: 0px
+      - line-height: 1.15
+      - white-space: nowrap
+      - overflow: hidden
+      - text-overflow: ellipsis
+      - transition: color .18s ease, opacity .18s ease
+
+    state:
+      - grid-area: s
+      - justify-self: start
+      - line-height: 1.15
+      - transition: color .18s ease, opacity .18s ease
+
+    img_cell:
+      - grid-area: i
+      - justify-self: start
+      - align-self: start
+      - width: var(--hemma-entity-icon-size-current, var(--hemma-entity-icon-size-desktop, 30px))
+      - height: var(--hemma-entity-icon-size-current, var(--hemma-entity-icon-size-desktop, 30px))
+      - background: transparent
+      - transition: opacity .18s ease, filter .18s ease
+
+    entity_picture:
+      - opacity: var(--hemma-entity-picture-inactive-opacity, .9)
+      - filter: var(--hemma-entity-picture-inactive-filter, brightness(.9))
+      - transition: opacity .18s ease, filter .18s ease
+
+    icon:
+      - grid-area: i
+      - width: 100%
+      - height: 100%
+
+hemma_default:
+  styles:
+    card:
+      - "--button-card-ripple-color": transparent
+      - "-webkit-tap-highlight-color": transparent
+      - position: relative
+      - border: none
+      - border-radius: 0
+      - padding: 0
+      - margin: 0
+      - box-shadow: var(--button-card-box-shadow, var(--ha-card-box-shadow))
+hemma_entity:
+  template:
+    - hemma_default
+    - hemma_card_shell
+  class: hemma-entity
+  show_state: true
+  show_entity_picture: true
+  show_icon: false
+
+  triggers_update:
+    - '[[[ return variables.battery_entity || "" ]]]'
+
+  variables:
+    battery_entity: null
+    battery_low_threshold: 20
+
+  extra_styles: |
+    #battery{
+      opacity: 0;
+      transform: scale(.92);
+      transition: opacity .8s ease, transform .3s ease;
+      will-change: opacity, transform;
+    }
+
+    @media (hover: hover) and (pointer: fine){
+      :host(:hover) #battery,
+      :host(:focus-within) #battery{
+        opacity: .6;
+        transform: scale(1);
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse){
+      #battery{ opacity: 0; }
+    }
+
+  custom_fields:
+    battery: |
+      [[[
+        const batt = variables.battery_entity;
+        if (!batt) return "";
+        const st = states[batt];
+        if (!st) return "";
+        const raw = (st.state ?? "").toString().toLowerCase();
+        const isLowWord = ["low", "critical"].includes(raw);
+        const n = parseFloat(raw);
+        const hasNum = Number.isFinite(n);
+        const threshold = Number(variables.battery_low_threshold ?? 20);
+        const isLowNum = hasNum && n <= threshold;
+        if (!(isLowWord || isLowNum)) return "";
+        const size = (window.innerWidth <= 768) ? 20 : 24;
+        return `
+          <ha-icon
+            icon="mdi:battery-alert"
+            style="
+              --mdc-icon-size:${size}px;
+              color: var(--hemma-entity-inactive, var(--secondary-text-color));
+              opacity: .7;
+            "
+          ></ha-icon>
+        `;
+      ]]]
+
+  entity_picture: |
+    [[[
+      const icon = variables.icon || "default";
+      return `/local/hemma/icons/${icon}.svg`;
+    ]]]
+
+  state_display: |
+    [[[
+      if (!entity.state) return "";
+      if (entity.state === "ok") return "Healthy";
+      return entity.state.charAt(0).toUpperCase() + entity.state.slice(1);
+    ]]]
+
+  state:
+    - operator: template
+      value: |
+        [[[
+          const s = (entity?.state || "").toLowerCase();
+          return ["on","playing","unlocked","cleaning","cool","heat"].includes(s);
+        ]]]
+      styles:
+        card:
+          - background: var(--ha-card-background-active)
+          - box-shadow: var(--button-card-box-shadow-active, var(--button-card-box-shadow)) !important
+        name:
+          - color: var(--hemma-entity-active, var(--primary-text-color))
+        state:
+          - color: var(--secondary-text-color)
+        icon:
+          - color: var(--hemma-entity-active, var(--primary-text-color))
+        entity_picture:
+          - opacity: var(--hemma-entity-picture-active-opacity, 1) !important
+          - filter: var(--hemma-entity-picture-active-filter, none) !important
+        img_cell:
+          - opacity: var(--hemma-entity-picture-active-opacity, 1) !important
+          - filter: var(--hemma-entity-picture-active-filter, none) !important
+
+  styles:
+    custom_fields:
+      battery:
+        - position: absolute
+        - top: 24px
+        - right: 22px
+        - line-height: 0
+        - z-index: 3
+        - pointer-events: none
+        - filter: drop-shadow(0 2px 6px rgba(0,0,0,.25))
+
+    name:
+      - color: var(--hemma-entity-inactive, var(--secondary-text-color)) !important
+      - font-weight: 600
+      - text-shadow: var(--hemma-entity-text-shadow, 0 0 3px rgba(0, 0, 0, 0.3))
+      - font-size: var(--hemma-entity-name-font-current, var(--hemma-entity-name-font-desktop, 16px))
+
+    state:
+      - text-transform: capitalize
+      - color: var(--hemma-entity-inactive, var(--secondary-text-color)) !important
+      - font-size: var(--hemma-entity-state-font-current, var(--hemma-entity-state-font-desktop, 14px))
+      - text-shadow: var(--hemma-entity-text-shadow, 0 0 3px rgba(0, 0, 0, 0.3))
+      - font-weight: 700
+      - opacity: 0.75
+
+hemma_menu_icon:
+  show_icon: false
+
+  tap_action:
+    action: javascript
+    javascript: |
+      [[[
+        this.dispatchEvent(new Event('hass-toggle-menu', { bubbles: true, composed: true }));
+      ]]]
+
+  hold_action: { action: none }
+  double_tap_action: { action: none }
+
+  custom_fields:
+    glyph: >
+      [[[
+        return `
+          <svg class="hamburger" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+            <rect x="3" y="6"  width="18" height="2" rx="1"></rect>
+            <rect x="3" y="11" width="18" height="2" rx="1"></rect>
+            <rect x="3" y="16" width="18" height="2" rx="1"></rect>
+          </svg>
+        `;
+      ]]]
+
+  styles:
+    card:
+      - width: 40px
+      - height: 40px
+      - border-radius: 50%
+      - display: grid
+      - place-items: center
+      - padding: 0
+      - background: transparent
+      - box-shadow: none
+      - cursor: pointer
+      - pointer-events: all
+      - transition: background 120ms ease
+    card:hover:
+      - background: rgba(255,255,255,0.10)
+
+    custom_fields:
+      glyph:
+        - display: grid
+        - place-items: center
+        - width: 22px
+        - height: 22px
+        - margin: 0
+        - line-height: 0
+
+  extra_styles: |
+    :host{
+      position: fixed !important;
+      top: 8px !important;
+      left: 10px !important;
+      right: auto !important;
+
+      width: 40px !important;
+      height: 40px !important;
+      margin: 0 !important;
+      display: block !important;
+      color: var(--primary-text-color) !important;
+      z-index: 9999 !important;
+      pointer-events: auto !important;
+    }
+
+    :host ha-card{
+      position: relative !important;
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 50% !important;
+      display: grid !important;
+      place-items: center !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    :host .custom-field,
+    :host .custom-field-glyph{
+      line-height: 0 !important;
+    }
+
+    :host .hamburger{
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 26px !important;
+      height: 26px !important;
+      display: block !important;
+      fill: currentColor !important;
+      pointer-events: none !important;
+      opacity: .32 !important;
+      transition: opacity 360ms cubic-bezier(.22,.61,.36,1) !important;
+      will-change: opacity;
+    }
+
+    @media (hover: hover) and (pointer: fine) and (min-width: 769px){
+      :host .hamburger{ opacity: .12 !important; }
+      :host(:hover) .hamburger,
+      :host(:focus-within) .hamburger,
+      :host ha-card:hover .hamburger{ opacity: .9 !important; }
+    }
+
+    @media (max-width: 767px), (max-height: 500px){
+      :host{
+        width: 48px !important;
+        height: 48px !important;
+        top: 8px !important;
+        left: calc(var(--hero-gutter, 10px) - 11px) !important;
+      }
+
+      :host ha-card{
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 50% !important;
+      }
+
+      :host .hamburger{
+        width: 28px !important;
+        height: 28px !important;
+        opacity: .1 !important;
+      }
+    }
+
+    @media (min-width:768px) and (max-width:1249px) and (orientation: portrait){
+      :host{
+        top: 6px !important;
+        left: calc(var(--hero-gutter, 10px) - 16px) !important;
+      }
+    }
+
+    @media (max-width: 767px) and (orientation: portrait){
+      :host{
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+      }
+    }
+hemma_nav_tile:
+  template:
+    - hemma_default
+    - hemma_card_shell
+  show_state: false
+  show_icon: true
+  tap_action:
+    action: navigate
+    navigation_path: "[[[ return variables.path ]]]"
+  hold_action:
+    action: none
+  double_tap_action:
+    action: none
+  variables:
+    # Default destination used when a specific room path is not provided.
+    path: /dashboard-hemma/home
+    # Optional secondary copy shown under the room name.
+    subtitle: ""
+    card_display: grid
+  styles:
+    card:
+      - cursor: pointer
+    grid:
+      - row-gap: 6px
+    img_cell:
+      - display: flex
+      - align-items: center
+      - justify-content: flex-start
+    card:hover:
+      - background: var(--ha-card-background-active)
+      - transform: translateY(-1px)
+    icon:
+      - color: var(--primary-text-color)
+      - opacity: 0.92
+    state:
+      - display: none
+    name:
+      - color: var(--primary-text-color)
+      - font-size: var(--hemma-entity-name-font-current, var(--hemma-entity-name-font-desktop, 16px))
+      - font-weight: 700
+      - line-height: 1.15
+      - text-align: left
+      - white-space: normal
+    custom_fields:
+      subtitle:
+        - grid-area: s
+        - color: var(--secondary-text-color)
+        - font-size: var(--hemma-entity-state-font-current, var(--hemma-entity-state-font-desktop, 14px))
+        - line-height: 1.2
+        - opacity: 0.8
+        - justify-self: start
+        - text-align: left
+  custom_fields:
+    subtitle: |
+      [[[
+        return variables.subtitle || '';
+      ]]]
+
+hemma_picture_interaction:
+  styles:
+    entity_picture:
+      - opacity: 0.8
+      - transition: opacity 0.2s ease, filter 0.2s ease, transform 0.15s ease
+      - cursor: pointer
+    img_cell:
+      - background: transparent !important
+      - box-shadow: none !important
+      - transition: filter 0.2s ease
+      - cursor: pointer
+
+  extra_styles: |
+    /* Hover effect for desktop */
+    @media (hover: hover) {
+      #img-cell:hover img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }
+
+    /* Active effect for touch */
+    @media (hover: none) {
+      #img-cell:active img {
+        opacity: 1 !important;
+        filter: brightness(1.2) !important;
+        transform: scale(1.05);
+      }
+    }
+
+# Shared Styles
+# ============================================================================
+# This template provides shared styles for the Hemma room hero cards.
+#
+# CONFIGURABLE VARIABLES:
+#   preload_rooms: Array of room names to preload images for (light + dark)
+#                  Default: ['home', 'livingroom', 'kitchen', 'bedroom']
+#
+#   preload_night_suffix: Suffix for dark mode images (default: '-night')
+#   preload_path: Base path for room images (default: '/local/hemma/rooms')
+#   preload_extension: Image file extension (default: '.jpg')
+# ============================================================================
+hemma_shared:
+  variables:
+    # Room images to preload (for smooth transitions between rooms)
+    # Add your room names here - both light and dark variants will be preloaded
+    preload_rooms:
+      - home
+      - livingroom
+      - kitchen
+      - bedroom
+    preload_night_suffix: "-night"
+    preload_path: "/local/hemma/rooms"
+    preload_extension: ".jpg"
+
+  styles:
+    grid:
+      # Grid layout - temperature row only on desktop/tablet/mobile-landscape
+      - grid-template-columns: 1fr max-content
+      - grid-template-areas: >
+          [[[
+            const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+            const isPhonePortrait =
+              (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+              mm('(max-width: 767px)') &&
+              mm('(orientation: portrait)');
+
+            return isPhonePortrait
+              ? `"n            weather"
+                 "badges       badges"
+                 "badges_media badges_media"`
+              : `"temperature weather"
+                 "n           weather"
+                 "badges      badges"
+                 "badges_media badges_media"`;
+          ]]]
+      - grid-template-rows: >
+          [[[
+            const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+            const isPhonePortrait =
+              (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+              mm('(max-width: 767px)') &&
+              mm('(orientation: portrait)');
+
+            return isPhonePortrait
+              ? "min-content min-content min-content"
+              : "var(--hero-temp-reserve, 22px) min-content min-content min-content";
+          ]]]
+      - row-gap: var(--hero-header-gap-current, 6px)
+      - align-content: start
+
+  extra_styles: |
+    [[[
+      // Force image preload - store images persistently to prevent garbage collection
+      const rooms = variables.preload_rooms || [];
+      const suffix = variables.preload_night_suffix || '-night';
+      const basePath = variables.preload_path || '/local/hemma/rooms';
+      const ext = variables.preload_extension || '.jpg';
+
+      if (rooms.length > 0 && !window.hemmaPreloadedImages) {
+        // Store images on window to prevent garbage collection
+        window.hemmaPreloadedImages = [];
+
+        rooms.forEach(room => {
+          // Preload light version
+          const imgLight = new Image();
+          imgLight.src = `${basePath}/${room}${ext}`;
+          window.hemmaPreloadedImages.push(imgLight);
+
+          // Preload dark version
+          const imgDark = new Image();
+          imgDark.src = `${basePath}/${room}${suffix}${ext}`;
+          window.hemmaPreloadedImages.push(imgDark);
+        });
+      }
+
+      return `
+
+    :host{
+      position: relative;
+      z-index: 0;
+
+      --hero-gutter: var(--content-rail,
+                      var(--hemma-rail-left,
+                      var(--page-gutter, 8vw)));
+      --hero-top: var(--header-top-desktop, clamp(220px, 26vh, 340px));
+      --hero-temp-font-size: var(--hero-temp-font-size-desktop, 18px);
+      --hero-temp-font-weight: 600;
+      --hero-temp-letter-spacing: 0.04em;
+      --hero-temp-reserve: calc(var(--hero-temp-font-size) * 1.2);
+      --hero-header-gap-current: var(--hero-header-gap-desktop, 6px);
+      --hero-img-blur-current: var(--hero-img-blur, 4px);
+      --hero-img-scale-current: var(--hero-img-scale, 1.08);
+      --hero-img-filter: blur(var(--hero-img-blur-current))
+        saturate(var(--hero-img-saturate, 1.02))
+        brightness(var(--hero-img-brightness, .985));
+      --hero-img-filter-from: blur(var(--hero-img-blur-current))
+        saturate(var(--hero-img-saturate-from, 1.0))
+        brightness(var(--hero-img-brightness-from, .97));
+      --hero-title-to-badges-gap-mobile: 8px;
+      --hemma-hover-filter: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+      --mdc-ripple-press-opacity: 0 !important;
+    }
+
+    :host ha-card{
+      position: relative;
+      pointer-events: auto !important;
+      cursor: default !important;
+      filter: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      box-shadow: none !important;
+      transition: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+      --mdc-ripple-press-opacity: 0 !important;
+      background-repeat: no-repeat, no-repeat !important;
+      background-position: center center, center center !important;
+      background-size: cover, cover !important;
+      background-attachment: local, local !important;
+      isolation: isolate !important;
+      overflow-x: hidden !important;
+      overflow-y: hidden !important;
+    }
+
+    :host ha-card:hover,
+    :host ha-card:focus-within,
+    :host ha-card:active{
+      filter:none !important;
+      box-shadow:none !important;
+      transform:none !important;
+      cursor:default !important;
+    }
+
+    /* Background image */
+    :host ha-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      pointer-events:none;
+      z-index:-2;
+      background-image: var(--hero-img);
+      background-position: var(--hero-img-pos, center center);
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity:1;
+      filter: var(--hero-img-filter);
+      transform: scale(var(--hero-img-scale-current, 1.08)) !important;
+      transform-origin: center;
+      transition: opacity .35s ease, filter .35s ease, transform .35s ease;
+      will-change: opacity, filter, transform;
+      animation: heroSwap .35s ease;
+    }
+
+    :host ha-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      pointer-events:none;
+      z-index:-1;
+      background: var(--hero-tint, rgba(56,56,56,0.50))
+    }
+
+    @keyframes heroSwap{
+      from{ opacity:0; filter: var(--hero-img-filter-from, var(--hero-img-filter)); }
+      to{   opacity:1; filter: var(--hero-img-filter); }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      :host ha-card::after{
+        transition:none;
+        animation:none;
+      }
+    }
+
+    .hero-temp-line{
+      font-size: var(--hero-temp-font-size);
+      font-weight: var(--hero-temp-font-weight, 600);
+      letter-spacing: var(--hero-temp-letter-spacing, 0.04em);
+      line-height: 1.2;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* Tablet */
+    @media (min-width:768px) and (max-width:1249px){
+      :host{
+        --hero-top: var(--header-top-tablet, clamp(180px, 22vh, 280px));
+        --hero-temp-font-size: var(--hero-temp-font-size-tablet, var(--hero-temp-font-size-desktop, 18px));
+        --hero-header-gap-current: var(--hero-header-gap-tablet, var(--hero-header-gap-desktop, 6px));
+      }
+    }
+
+    /* Mobile */
+    @media (max-width: 767px), (max-height: 500px){
+      :host{
+        --hero-top: calc(var(--header-top-mobile, clamp(80px, 12vh, 120px)) - var(--header-top-mobile-nudge, 0px));
+        --hero-temp-font-size: var(--hero-temp-font-size-mobile, 13px);
+        --hero-temp-reserve: 0px;
+        --hero-header-gap-current: var(--hero-header-gap-mobile, 5px);
+        --tiles-pad-bottom: 164px;
+        --hero-gutter: var(--content-rail,
+                      var(--hemma-rail-left,
+                      var(--page-gutter-mobile, 10px)));
+      }
+
+      :host ha-card{
+        position: fixed !important;
+        inset: 0 !important;
+        height: 100svh !important;
+        min-height: 100svh !important;
+        max-height: 100svh !important;
+
+        overflow: hidden !important;
+        padding: 0 !important;
+        touch-action: none !important;
+      }
+
+      :host .button-card-main{
+        position: fixed !important;
+        inset: 0 !important;
+        overflow: hidden !important;
+        padding:
+          var(--hero-top)
+          var(--hero-gutter)
+          var(--tiles-pad-bottom)
+          var(--hero-gutter) !important;
+      }
+    }
+
+      :host .container{
+        position: relative !important;
+        inset: auto !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        overflow-x: hidden !important;
+      }
+
+      :host .button-card-content,
+      :host .grid{
+        padding:0 !important;
+        margin:0 !important;
+        overflow:visible !important;
+        display:grid !important;
+      }
+    }
+
+    /* Mobile portrait tweaks */
+    @media (max-width: 767px) and (orientation: portrait){
+      :host{
+        --hero-temp-reserve: 0px;
+      }
+
+      .hero-temp-line{
+        display: none !important;
+      }
+
+      #name,
+      .name,
+      .button-card-name{
+        margin-bottom: var(--hero-title-to-badges-gap-mobile, 8px) !important;
+      }
+    }
+
+    @media (max-height: 500px) and (orientation: landscape){
+      :host{
+        --hero-gutter: 18px;
+        --hero-top: calc(env(safe-area-inset-top, 0px) + 96px + var(--hemma-hero-top-landscape-nudge, 0px));
+        --tiles-pad-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      }
+
+      :host .button-card-main{
+        padding:
+          var(--hero-top)
+          calc(18px + env(safe-area-inset-right, 0px))
+          calc(16px + env(safe-area-inset-bottom, 0px))
+          calc(18px + env(safe-area-inset-left, 0px)) !important;
+      }
+    }
+
+    /* Weather Formatting */
+    .hemma-weather-glance{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      max-width: min(60vw, 520px);
+      overflow: visible;
+    }
+
+    .hemma-weather-glance .hw-text{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      min-width: 0;
+      max-width: 100%;
+      overflow: visible;
+    }
+
+    .hemma-weather-glance .hw-title{
+      font-size: var(--hero-weather-title-size, 12px);
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      opacity: 0.95;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .hemma-weather-glance .hw-sub{
+      font-size: var(--hero-weather-sub-size, 12px);
+      font-weight: 500;
+      opacity: 0.76;
+      line-height: 1.1;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: unset;
+      max-width: 100%;
+    }
+
+    .hemma-weather-glance .hw-ico{
+      flex: 0 0 auto;
+      width: var(--hero-weather-icon-size, 30px);
+      height: var(--hero-weather-icon-size, 30px);
+      opacity: 0.92;
+    }
+
+    @media (max-width: 767px){
+      :host{
+        --hero-weather-title-size: 12px;
+        --hero-weather-sub-size: 12px;
+        --hero-weather-icon-size: 30px;
+      }
+
+      .hemma-weather-glance{
+        max-width: min(72vw, 520px);
+      }
+    }`;
+    ]]]
+
+# Temperature Display (Desktop/Tablet hero row)
+# ============================================================================
+# CONFIGURABLE VARIABLES:
+#   temp_unit: 'F' or 'C' (default: 'F')
+#
+# TEMPERATURE THRESHOLDS (keep in sync with hemma_weather.yaml):
+#   Fahrenheit (default)     Celsius (temp_unit: 'C')
+#   Very Cold:   <= 65°F     Very Cold:   <= 18°C
+#   Cool:        <= 70°F     Cool:        <= 21°C
+#   Comfortable: <= 76°F     Comfortable: <= 24°C
+#   Warm:        <= 81°F     Warm:        <= 27°C
+#   Hot:         <= 85°F     Hot:         <= 29°C
+#   Very Hot:    > 85°F      Very Hot:    > 29°C
+# ============================================================================
+hemma_temperature:
+  class: hemma-room
+
+  variables:
+    weather_mode: ''
+    show_weather: false
+    weather_entity: ''
+    weather_temp_sensor: ''
+    show_temp: false
+    temp_sensor: ''
+    temp_unit: 'F'
+
+  show_icon: false
+  show_state: false
+  show_label: false
+  show_name: true
+
+  entity: >
+    [[[
+      const mode = String(variables.weather_mode || '').toLowerCase();
+      const useOutdoorRow = (mode === 'outdoor') && !!variables.show_weather;
+      return useOutdoorRow
+        ? (variables.weather_entity || '')
+        : (variables.temp_sensor || '');
+    ]]]
+
+  tap_action:
+    action: more-info
+    entity: >
+      [[[
+        const mode = String(variables.weather_mode || '').toLowerCase();
+        const useOutdoorRow = (mode === 'outdoor') && !!variables.show_weather;
+        return useOutdoorRow
+          ? (variables.weather_entity || '')
+          : (variables.temp_sensor || '');
+      ]]]
+
+  extra_styles: |
+    :host,
+    :host(:hover),
+    :host(:focus),
+    :host(:focus-within),
+    :host(:active),
+    :host([active]) {
+      background: transparent !important;
+      background-color: transparent !important;
+      border: 0 !important;
+    }
+
+    :host ha-card,
+    :host(:hover) ha-card,
+    :host(:focus) ha-card,
+    :host(:focus-within) ha-card,
+    :host(:active) ha-card,
+    :host([active]) ha-card {
+      background: transparent !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+      filter: none !important;
+      transform: none !important;
+      border: 0 !important;
+      border-radius: 8px !important;
+      opacity: 1 !important;
+    }
+
+    :host ha-card::before,
+    :host ha-card::after,
+    :host(:hover) ha-card::before,
+    :host(:hover) ha-card::after,
+    :host(:active) ha-card::before,
+    :host(:active) ha-card::after,
+    :host(:focus) ha-card::before,
+    :host(:focus) ha-card::after {
+      display: none !important;
+      content: none !important;
+      opacity: 0 !important;
+    }
+
+    ha-card {
+      background: transparent !important;
+      background-color: transparent !important;
+      border-radius: 8px !important;
+    }
+
+    ha-ripple {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+
+  styles:
+    card:
+      - background: transparent !important
+      - background-color: transparent !important
+      - box-shadow: none !important
+      - border: 0 !important
+      - outline: none !important
+      - pointer-events: auto !important
+      - cursor: pointer !important
+      - border-radius: 8px !important
+      - "-webkit-tap-highlight-color": transparent
+
+    name:
+      - margin: 0
+      - padding: 0
+      - color: var(--primary-text-color)
+      - opacity: 0.9
+      - font-size: var(--hero-temp-font-size, var(--hero-temp-font-size-desktop, 16px))
+      - font-weight: 600
+      - letter-spacing: 0.6px
+      - line-height: 1
+      - cursor: pointer !important
+
+  name: >
+    [[[
+      const mode = String(variables.weather_mode || '').toLowerCase();
+      const useOutdoorRow = (mode === 'outdoor') && !!variables.show_weather;
+      const unit = String(variables.temp_unit || 'F').toUpperCase();
+
+      const thresholds = (unit === 'C')
+        ? { veryCold: 18, cool: 21, comfortable: 24, warm: 27, hot: 29 }
+        : { veryCold: 65, cool: 70, comfortable: 76, warm: 81, hot: 85 };
+
+      const getComfortLabel = (v) => {
+        if (v <= thresholds.veryCold) return 'Very Cold';
+        if (v <= thresholds.cool) return 'Cool';
+        if (v <= thresholds.comfortable) return 'Comfortable';
+        if (v <= thresholds.warm) return 'Warm';
+        if (v <= thresholds.hot) return 'Hot';
+        return 'Very Hot';
+      };
+
+      if (useOutdoorRow) {
+        const weatherEid = variables.weather_entity;
+        const tempEid = variables.weather_temp_sensor;
+        if (!weatherEid) return '&nbsp;';
+
+        let tempVal = null;
+        if (tempEid) {
+          const tState = states[tempEid];
+          if (tState && !['unknown','unavailable',''].includes(String(tState.state))) {
+            const n = Number(tState.state);
+            if (!Number.isNaN(n)) tempVal = Math.round(n);
+          }
+        }
+        if (tempVal === null) {
+          const w = states[weatherEid];
+          const n = Number(w?.attributes?.temperature);
+          if (!Number.isNaN(n)) tempVal = Math.round(n);
+        }
+
+        const condKey = String(states[weatherEid]?.state || '').toLowerCase().trim();
+        if (tempVal === null || !condKey || ['unknown','unavailable'].includes(condKey)) return '&nbsp;';
+
+        let pretty = '';
+        if (hass?.localize) {
+          const loc = hass.localize(`state.weather.${condKey}`);
+          if (loc && !loc.includes(`state.weather.${condKey}`)) pretty = loc;
+        }
+        if (!pretty) {
+          const weatherMap = {
+            'partlycloudy': 'Partly Cloudy',
+            'clear-night': 'Clear Night',
+            'snowy-rainy': 'Snowy Rainy',
+            'lightning-rainy': 'Lightning Rainy',
+            'windy-variant': 'Windy Variant'
+          };
+          pretty = weatherMap[condKey] || condKey.replace(/_/g,' ').replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+        }
+
+        return `${tempVal}° - ${String(pretty).toUpperCase()}`;
+      }
+
+      const has = variables.show_temp && variables.temp_sensor && states[variables.temp_sensor];
+      if (!has) return '&nbsp;';
+
+      const v = Number(states[variables.temp_sensor].state);
+      if (Number.isNaN(v)) return '&nbsp;';
+
+      const t = Math.round(v);
+      const label = getComfortLabel(v);
+
+      return `${t}° - ${label.toUpperCase()}`;
+    ]]]
+
+hemma_time:
+  template:
+    - hemma_default
+
+  variables:
+    time_entity: sensor.time
+    use_12h: true
+    time_suffix:
+
+  triggers_update:
+    - '[[[ return variables.time_entity || "sensor.time" ]]]'
+
+  name: >
+    [[[
+      const id  = variables.time_entity || "sensor.time";
+      const ent = states[id];
+      if (!ent) return "";
+
+      const raw    = String(ent.state || "");
+      const use12  = variables.use_12h === true;
+      const suffix = (variables.time_suffix || "").toString().trim();
+
+      const to12h = (timeStr) => {
+        const m = String(timeStr).match(/^(\d{1,2}):(\d{2})$/);
+        if (!m) return timeStr;
+        let h = parseInt(m[1], 10);
+        const min = m[2];
+        const ampm = h >= 12 ? "PM" : "AM";
+        h = h % 12;
+        if (h === 0) h = 12;
+        return `${h}:${min} ${ampm}`;
+      };
+
+      let timePart = raw;
+      if (raw.includes(",")) {
+        const parts = raw.split(",");
+        timePart = (parts[1] || "").trim() || raw;
+      }
+
+      let display = timePart;
+      if (use12 && /^\d{1,2}:\d{2}$/.test(timePart)) {
+        display = to12h(timePart);
+      }
+
+      if (suffix) display = `${display} ${suffix}`;
+
+      return display.toUpperCase();
+    ]]]
+
+  show_icon: false
+  show_state: false
+  show_label: false
+
+  styles:
+    grid:
+      - grid-template-areas: '"n"'
+      - grid-template-columns: max-content
+      - grid-template-rows: min-content
+      - justify-items: end
+      - align-items: center
+
+    card:
+      - background: transparent
+      - box-shadow: none
+      - border-radius: 0
+      - padding: 0
+      - margin: 0
+      - height: min-content
+      - width: max-content
+      - min-width: 0
+      - overflow: visible
+      - pointer-events: none
+      - "--mdc-ripple-press-opacity": 0
+      - "-webkit-tap-highlight-color": transparent
+
+    name:
+      - color: var(--primary-text-color)
+      - opacity: var(--hemma-time-opacity, 0.92)
+      - letter-spacing: 1px
+      - font-size: 18px
+      - line-height: 1
+      - text-transform: uppercase
+      - font-weight: 700
+      - justify-self: end
+      - align-self: center
+      - padding: 0
+      - margin: 0
+
+# Weather Widget (Mobile portrait hero row)
+# ============================================================================
+# CONFIGURABLE VARIABLES:
+#   temp_unit: 'F' or 'C' (default: 'F')
+#
+# TEMPERATURE THRESHOLDS (keep in sync with hemma_temperature.yaml):
+#   Fahrenheit (default)     Celsius (temp_unit: 'C')
+#   Very Cold:   <= 65°F     Very Cold:   <= 18°C
+#   Cool:        <= 70°F     Cool:        <= 21°C
+#   Comfortable: <= 76°F     Comfortable: <= 24°C
+#   Warm:        <= 81°F     Warm:        <= 27°C
+#   Hot:         <= 85°F     Hot:         <= 29°C
+#   Very Hot:    > 85°F      Very Hot:    > 29°C
+# ============================================================================
+hemma_weather:
+  variables:
+    show_icon: true
+    weather_mode: ''
+    weather_temp_sensor: ''
+    temp_sensor: ''
+    temp_unit: 'F'
+
+  show_icon: true
+  show_name: true
+  show_label: true
+  show_state: false
+
+  tap_action:
+    action: more-info
+
+  triggers_update:
+    - '[[[ return entity?.entity_id ]]]'
+    - '[[[ return variables?.weather_temp_sensor ]]]'
+    - '[[[ return variables?.temp_sensor ]]]'
+
+  styles:
+    card:
+      - background: none
+      - box-shadow: none
+      - border: 0
+      - padding: 0
+      - margin: 0
+      - width: max-content
+      - max-width: 100%
+      - overflow: visible
+      - "--mdc-ripple-press-opacity": 0
+      - "-webkit-tap-highlight-color": transparent
+
+    grid:
+      # Matches the hemma_room.yaml weather widget layout
+      - grid-template-areas: '"n i" "l i"'
+      - grid-template-columns: max-content max-content
+      - grid-template-rows: min-content min-content
+      - column-gap: 4px
+      - row-gap: 0px
+      - justify-content: end
+      - justify-items: end
+      - align-items: start
+      - overflow: visible
+      - min-width: 0
+      - margin-right: 0
+
+    name:
+      - justify-self: end
+      - text-align: right
+      - font-size: var(--hero-weather-title-size, 12px)
+      - font-weight: 700
+      - letter-spacing: -0.2px
+      - line-height: 1
+      - white-space: nowrap
+      - overflow: hidden
+      - text-overflow: ellipsis
+      - max-width: 100%
+      - opacity: 0.95
+
+    label:
+      - justify-self: end
+      - text-align: right
+      - font-size: var(--hero-weather-sub-size, 12px)
+      - font-weight: 500
+      - line-height: 1.2
+      - margin-top: -2px
+      - opacity: 0.76
+      - white-space: nowrap
+      - overflow: visible
+      - text-overflow: ellipsis
+      - max-width: 100%
+
+    icon:
+      - width: var(--hero-weather-icon-size, 30px)
+      - height: var(--hero-weather-icon-size, 30px)
+      - opacity: 0.92
+
+  name: >
+    [[[
+      const mode = String(variables.weather_mode || '').toLowerCase();
+      const isRoom = (mode === 'room');
+
+      let tempVal = null;
+
+      if (isRoom && variables.temp_sensor) {
+        const s = states[variables.temp_sensor];
+        if (s && !['unknown','unavailable',''].includes(String(s.state))) {
+          const n = Number(s.state);
+          if (!Number.isNaN(n)) tempVal = Math.round(n);
+        }
+        return (tempVal === null) ? '' : `${tempVal}°`;
+      }
+
+      const tempEid = variables.weather_temp_sensor;
+      const w = entity;
+
+      if (tempEid) {
+        const tState = states[tempEid];
+        if (tState && !['unknown','unavailable',''].includes(String(tState.state))) {
+          const n = Number(tState.state);
+          if (!Number.isNaN(n)) tempVal = Math.round(n);
+        }
+      }
+
+      if (tempVal === null) {
+        const n = Number(w?.attributes?.temperature);
+        if (!Number.isNaN(n)) tempVal = Math.round(n);
+      }
+
+      if (tempVal === null && variables.temp_sensor) {
+        const s = states[variables.temp_sensor];
+        const n = Number(s?.state);
+        if (!Number.isNaN(n)) tempVal = Math.round(n);
+      }
+
+      return (tempVal === null) ? '' : `${tempVal}°`;
+    ]]]
+
+  label: >
+    [[[
+      const mode = String(variables.weather_mode || '').toLowerCase();
+      const isRoom = (mode === 'room');
+      const unit = String(variables.temp_unit || 'F').toUpperCase();
+
+      const thresholds = (unit === 'C')
+        ? { veryCold: 18, cool: 21, comfortable: 24, warm: 27, hot: 29 }
+        : { veryCold: 65, cool: 70, comfortable: 76, warm: 81, hot: 85 };
+
+      const getComfortLabel = (v) => {
+        if (v <= thresholds.veryCold) return 'Very Cold';
+        if (v <= thresholds.cool) return 'Cool';
+        if (v <= thresholds.comfortable) return 'Comfortable';
+        if (v <= thresholds.warm) return 'Warm';
+        if (v <= thresholds.hot) return 'Hot';
+        return 'Very Hot';
+      };
+
+      if (isRoom && variables.temp_sensor) {
+        const s = states[variables.temp_sensor];
+        if (!s || ['unknown','unavailable',''].includes(String(s.state))) return '';
+
+        const v = Number(s.state);
+        if (Number.isNaN(v)) return '';
+
+        return getComfortLabel(v);
+      }
+
+      const w = entity;
+      const condRaw = String(w?.state || '').toLowerCase();
+      if (!condRaw || ['unknown','unavailable'].includes(condRaw)) return '';
+
+      // Use HA localization if available, else prettify
+      if (hass?.localize) {
+        const t = hass.localize(`state.weather.${condRaw}`);
+        if (t && !t.includes(`state.weather.${condRaw}`)) return t;
+      }
+
+      const weatherMap = {
+        'partlycloudy': 'Partly Cloudy',
+        'clear-night': 'Clear Night',
+        'snowy-rainy': 'Snowy Rainy',
+        'lightning-rainy': 'Lightning Rainy',
+        'windy-variant': 'Windy Variant'
+      };
+
+      if (weatherMap[condRaw]) return weatherMap[condRaw];
+
+      return condRaw
+        .replace(/_/g,' ')
+        .replace(/-/g,' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+    ]]]
+
+  icon: >
+    [[[
+      const show = (variables?.show_icon !== false);
+      if (!show) return 'mdi:blank';
+
+      const mode = String(variables.weather_mode || '').toLowerCase();
+      const isRoom = (mode === 'room');
+
+      if (isRoom) {
+        return 'mdi:home-thermometer-outline';
+      }
+
+      const w = entity;
+      const condRaw = String(w?.state || '').toLowerCase();
+
+      const iconMap = {
+        'sunny': 'mdi:weather-sunny',
+        'clear-night': 'mdi:weather-night',
+        'partlycloudy': 'mdi:weather-partly-cloudy',
+        'cloudy': 'mdi:weather-cloudy',
+        'overcast': 'mdi:weather-cloudy',
+        'rainy': 'mdi:weather-rainy',
+        'pouring': 'mdi:weather-pouring',
+        'snowy': 'mdi:weather-snowy',
+        'snow': 'mdi:weather-snowy',
+        'snowy-rainy': 'mdi:weather-snowy-rainy',
+        'hail': 'mdi:weather-hail',
+        'lightning': 'mdi:weather-lightning',
+        'lightning-rainy': 'mdi:weather-lightning-rainy',
+        'fog': 'mdi:weather-fog',
+        'windy': 'mdi:weather-windy',
+        'windy-variant': 'mdi:weather-windy-variant',
+        'exceptional': 'mdi:alert-circle-outline'
+      };
+
+      return iconMap[condRaw] || w?.attributes?.icon || 'mdi:weather-partly-cloudy';
+    ]]]
+
+hemma_fan:
+  template:
+    - hemma_entity
+    - hemma_picture_interaction
+
+  show_entity_picture: true
+  show_icon: true
+  show_name: true
+  show_state: true
+  name: Fan
+
+  tap_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  hold_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  icon_tap_action:
+    action: toggle
+
+  icon_hold_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+hemma_light:
+  template:
+    - hemma_entity
+    - hemma_picture_interaction
+
+  # IMPORTANT: icon_tap_action needs the icon slot to exist.
+  # This doesn't force an HA icon to show; your entity_picture still renders in img_cell.
+  show_icon: true
+  show_last_changed: false
+
+  state_display: >
+    [[[
+      return entity.state === 'on' ? 'On' : 'Off';
+    ]]]
+
+  # Tap anywhere on the card = more-info
+  tap_action:
+    action: toggle
+
+  hold_action:
+    action: more-info
+
+hemma_lock:
+  template:
+    - hemma_entity
+    - hemma_picture_interaction
+
+  show_entity_picture: true
+  show_icon: true   # <-- required so icon_tap_action actually has a target
+  show_label: false
+
+  entity_picture: |
+    [[[
+      return entity.state === 'unlocked'
+        ? '/local/hemma/icons/lock_open.svg'
+        : '/local/hemma/icons/lock.svg';
+    ]]]
+
+  state_display: |
+    [[[
+      const state = entity.state;
+      if (state === 'locked') {
+        return "Locked";
+      } else if (state === 'unlocked') {
+        return "Unlocked";
+      } else if (state === 'locking') {
+        return "Locking...";
+      } else if (state === 'unlocking') {
+        return "Unlocking...";
+      } else {
+        return "Unknown";
+      }
+    ]]]
+
+  # Tap anywhere on the card = more-info dialog
+  tap_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  hold_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+  # Tap ONLY the icon/picture area = toggle lock/unlock
+  icon_tap_action:
+    action: call-service
+    service: |
+      [[[
+        return entity.state === 'locked' ? 'lock.unlock' : 'lock.lock';
+      ]]]
+    service_data:
+      entity_id: '[[[ return entity.entity_id ]]]'
+
+  # Optional: you can keep icon hold as more-info too
+  icon_hold_action:
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
+
+# Media Card
+hemma_media:
+  show_empty: false
+  template:
+    - hemma_entity
+
+  variables:
+    icon: |
+      [[[
+        const id = entity?.entity_id || "";
+        const type = entity?.attributes?.media_content_type || "";
+        if (id.includes("apple_tv")) return "apple";
+        if (id.includes("homepod")) return "apple";
+        if (id.includes("spotify")) return "music";
+        if (id.includes("playstation")) return "sony";
+        if (type === "music") return "speaker";
+        if (type === "video") return "tv";
+        return "speaker";
+      ]]]
+
+  show_last_changed: false
+  show_entity_picture: true
+  show_icon: false
+
+  state_display: |
+    [[[
+      const sRaw = String(entity?.state || "");
+      const s    = sRaw.toLowerCase();
+      const a    = entity?.attributes || {};
+      const cap  = (x) => (x ? x.charAt(0).toUpperCase() + x.slice(1) : "");
+      const esc  = (t) => String(t ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .trim();
+      if (s === "playing") {
+        const id       = entity?.entity_id || "";
+        const friendly = (a.friendly_name || "").toLowerCase();
+        const type   = String(a.media_content_type || "").toLowerCase();
+        const title  = (a.media_title || a.title || "").trim();
+        const artist =
+          (a.media_artist || a.artist || a.media_album_artist || "").trim();
+        const app    = (a.app_name || "").trim();
+        const source = (a.source || a.media_channel || "").trim();
+        const isMusic =
+          type === "music" ||
+          id.includes("spotify") ||
+          (!!artist && !["movie","video","tvshow"].includes(type));
+        let label = "";
+        if (isMusic) {
+          if (artist && title) label = `${artist} - ${title}`;
+          else label = title || artist || app || source || cap(s);
+        } else {
+          label = title || app || source || cap(s);
+        }
+        const isSonos = id.includes("sonos") || friendly.includes("sonos");
+        const bareInputs = ["tv","hdmi","arc","hdmi arc","optical","line-in","line in"];
+        let looksLikeBareInput = false;
+        if (isSonos) {
+          const tLow = title.toLowerCase();
+          const sLow = source.toLowerCase();
+          if (
+            title && (
+              bareInputs.includes(tLow) ||
+              (source && tLow === sLow)
+            )
+          ) {
+            looksLikeBareInput = true;
+          }
+        }
+        const hasRichMeta =
+          !!(a.media_artist || a.media_album_artist || a.media_series_title || a.media_episode_title);
+        const mediaTypes = ["music","movie","video","tvshow"];
+        const fromRichApp =
+          /youtube|plex|netflix|hulu|disney|max|prime|spotify|apple tv|apple music|paramount|peacock/i
+            .test(app);
+        const isRichPlayback = !looksLikeBareInput && (
+          hasRichMeta ||
+          mediaTypes.includes(type) ||
+          fromRichApp
+        );
+        if (!isRichPlayback) return esc(label) || cap(s);
+        return `<span class="hemma-media-state">${esc(label)}</span>`;
+      }
+      if (["off","idle","paused","standby","unavailable","unknown"].includes(s)) {
+        return cap(s);
+      }
+      return s ? cap(s) : "Off";
+    ]]]
+
+  tap_action:
+    action: more-info
+  hold_action:
+    action: more-info
+
+  styles:
+    grid:
+      - grid-template-areas: |
+          "i"
+          "."
+          "n"
+          "s"
+      - grid-template-columns: 1fr
+      - grid-template-rows: min-content 1fr min-content min-content
+      - row-gap: 4px
+      - justify-items: start
+      - align-items: start
+
+    card:
+      - background-size: cover
+      - background-position: center
+      - background-image: |
+          [[[
+            const isActive = ["playing","paused"].includes(String(entity?.state || "").toLowerCase());
+            const pic = entity?.attributes?.entity_picture || "";
+            if (isActive && pic) {
+              const path = pic.startsWith("/") ? `${window.location.origin}${pic}` : pic;
+              return `linear-gradient(rgba(70, 70, 70, 0.7), rgba(70, 70, 70, 0.7)), url('${path}')`;
+            }
+            return "none";
+          ]]]
+
+    name:
+      - grid-area: n
+      - align-self: end
+      - z-index: 2
+
+    state:
+      - grid-area: s
+      - align-self: start
+      - z-index: 2
+      - white-space: nowrap
+      - overflow: hidden
+      - text-overflow: ellipsis
+
+# Room
+hemma_room:
+  class: "hemma-room"
+  template:
+    - hemma_default
+    - hemma_shared
+
+  triggers_update:
+    - '[[[ return variables.motion_sensor ]]]'
+    - '[[[ return variables.temp_sensor ]]]'
+    - '[[[ return variables.quality_sensor ]]]'
+    - '[[[ return variables.humidity_sensor ]]]'
+    - '[[[ return variables.presence_entity_1 ]]]'
+    - '[[[ return variables.presence_entity_2 ]]]'
+    - '[[[ return variables.media_player_1 ]]]'
+    - '[[[ return variables.media_player_2 ]]]'
+    - '[[[ return variables.media_player_3 ]]]'
+    - '[[[ return variables.media_player_4 ]]]'
+    - '[[[ return variables.image ]]]'
+    - '[[[ return variables.image_night ]]]'
+    - '[[[ return variables.image_position ]]]'
+    - '[[[ return variables.show_weather ]]]'
+    - '[[[ return variables.weather_entity ]]]'
+    - '[[[ return variables.weather_temp_sensor ]]]'
+    - input_boolean.hemma_mobile_navigation
+
+  variables:
+    image:
+    image_night:
+    image_position:
+
+    show_quality: false
+    quality_sensor:
+
+    show_humidity: false
+    humidity_sensor:
+
+    show_temp: false
+    temp_sensor:
+
+    show_motion: false
+    motion_sensor:
+
+    show_presence: false
+    presence_entity_1:
+    presence_entity_2:
+
+    show_media_badge: false
+    pause_timeout_minutes: 5
+
+    show_media_player_1: false
+    media_player_1:
+
+    show_media_player_2: false
+    media_player_2:
+
+    show_media_player_3: false
+    media_player_3:
+
+    show_media_player_4: false
+    media_player_4:
+
+    show_weather: false
+    weather_mode:
+    weather_entity:
+    weather_temp_sensor:
+
+    # =========================================================================
+    # ACTIVE MEDIA PLAYER SELECTOR
+    # =========================================================================
+    # Automatically selects the first active media player from up to 4 sources.
+    # You typically don't need to modify this unless changing media player logic.
+    # =========================================================================
+    active_media_player: >
+      [[[
+        const enabled = (v) => {
+          if (v === undefined || v === null) return false;
+          if (typeof v === 'boolean') return v;
+          if (typeof v === 'number')  return v !== 0;
+          const s = String(v).trim().toLowerCase();
+          if (['false','0','no','off','disabled'].includes(s)) return false;
+          if (['true','1','yes','on','enabled'].includes(s))   return true;
+          return !!s;
+        };
+
+        const isMediaActive = (eid) => {
+          if (!eid) return false;
+
+          const s  = states[eid];
+          const st = String(s?.state || '');
+          const a  = s?.attributes || {};
+
+          if (!s || ['unavailable', 'unknown'].includes(st)) return false;
+          if (['off', 'standby'].includes(st)) return false;
+
+          const title   = String(a.media_title || '').trim();
+          const artist  = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+          const hasContent = !!(title || artist);
+
+          if (st === 'playing' || st === 'buffering') return true;
+          if (st === 'paused') return hasContent;
+          if (st === 'idle' || st === 'on') return hasContent;
+
+          return false;
+        };
+
+        const list = [
+          [variables.show_media_player_1, variables.media_player_1],
+          [variables.show_media_player_2, variables.media_player_2],
+          [variables.show_media_player_3, variables.media_player_3],
+          [variables.show_media_player_4, variables.media_player_4],
+        ];
+
+        for (const [flag, eid] of list) {
+          if (enabled(flag) && eid && isMediaActive(eid)) return eid;
+        }
+
+        return '';
+      ]]]
+
+    # Media player styles
+    _hemma_mp_styles_base: !include /config/dashboards/templates/includes/hemma_media_player_styles.yaml
+
+    _hemma_mp_styles: >
+      [[[
+        let baseStyles = variables._hemma_mp_styles_base || '';
+
+        const eid = variables.active_media_player;
+        if (!eid) return baseStyles;
+
+        const a = states[eid]?.attributes || {};
+        const appName = String(a.app_name || a.source || '').toLowerCase();
+        const appId = String(a.app_id || '').toLowerCase();
+        const isYT = (appName.includes('youtube') || appId.includes('youtube'));
+
+        if (!isYT) return baseStyles;
+
+        const ytStyles = `
+
+          ha-icon.media-player-icon-fallback {
+            background: url("/local/hemma/icons/youtube.png") center/cover no-repeat !important;
+            border-radius: 50% !important;
+            width: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+            height: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+            min-width: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+            min-height: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
+            color: transparent !important;
+            --mdc-icon-size: 0px !important;
+            opacity: 1 !important;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14) !important;
+            flex-shrink: 0 !important;
+            margin-right: 2px !important;
+          }
+
+          ha-icon.media-player-icon-fallback::before,
+          ha-icon.media-player-icon-fallback::after {
+            display: none !important;
+          }
+
+          /* Mobile Portrait YouTube icon sizing */
+          @media (max-width: 767px) and (orientation: portrait) {
+            ha-icon.media-player-icon-fallback {
+              width: 32px !important;
+              height: 32px !important;
+              min-width: 32px !important;
+              min-height: 32px !important;
+            }
+          }
+
+          /* Mobile Landscape YouTube icon sizing */
+          @media (max-height: 600px) and (orientation: landscape) {
+            ha-icon.media-player-icon-fallback {
+              width: 26px !important;
+              height: 26px !important;
+              min-width: 26px !important;
+              min-height: 26px !important;
+            }
+          }
+        `;
+
+        return baseStyles + ytStyles;
+      ]]]
+
+  tap_action: { action: none }
+  hold_action: { action: none }
+  double_tap_action: { action: none }
+
+  styles:
+    card:
+      - height: 100svh
+      - padding-top: >
+          [[[
+            const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+            const isPhonePortrait =
+              (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+              mm('(max-width: 767px)') &&
+              mm('(orientation: portrait)');
+
+            const base = 'var(--hero-top)';
+            return isPhonePortrait ? `calc(${base} - 20px)` : base;
+          ]]]
+      - padding-left: var(--hero-gutter)
+      - padding-right: var(--hero-gutter)
+      - padding-bottom: calc(130px + env(safe-area-inset-bottom))
+      - box-shadow: none !important
+      - transform: translateZ(0)
+      - will-change: transform
+      - --hero-img-filter: blur(4px)
+      - --hero-img-scale: 1.08
+      - --hero-img: >
+          [[[
+            const base = variables.image || 'default';
+            const isDark = !!(hass?.themes?.darkMode);
+            const picked = isDark ? (variables.image_night || `${base}-night`) : base;
+            const url = `/local/hemma/rooms/${picked}.jpg`;
+            return `url("${url}")`;
+          ]]]
+      - --hero-img-pos: >
+          [[[
+            return variables.image_position || 'center center';
+          ]]]
+      - --hemma-time-right: >
+          [[[
+            const w = window?.innerWidth || 1024;
+            const h = window?.innerHeight || 800;
+            const isTablet = (w >= 768 && w <= 1249 && h > 500);
+            return isTablet ? 'calc(var(--hero-gutter) - 20px)' : 'var(--hemma-nav-margin-current, 4vw)';
+          ]]]
+
+    name:
+      - grid-area: n
+      - color: var(--primary-text-color)
+      - opacity: 0.9
+      - font-size: var(--hero-room-name-size-current, clamp(48px, 6vw + 12px, 100px))
+      - letter-spacing: var(--hero-room-name-letter-spacing-current, -2px)
+      - font-weight: 700
+      - justify-self: start
+      - padding-left: 0
+      - line-height: var(--hero-room-name-line-height-current, 1.2)
+      - margin-left: var(--hero-room-name-margin-left-current, 0px)
+      - overflow: visible
+
+    grid: []  # Inherits from hemma_shared
+
+    custom_fields:
+      motion_detection:
+        - display: >
+            [[[
+              return variables.show_motion && variables.motion_sensor ? 'block' : 'none';
+            ]]]
+        - position: fixed
+        - right: 0
+        - left: 0
+        - bottom: 0
+        - transform: >
+            [[[
+              return states[variables.motion_sensor]?.state === 'on'
+                ? 'translateY(0)'
+                : 'translateY(100%)';
+            ]]]
+        - transition: transform 0.5s
+        - padding: 18px
+        - color: white
+        - font-size: 13px
+        - text-transform: uppercase
+        - letter-spacing: 2px
+        - font-weight: 700
+        - background: rgba(255,255,255,0.08)
+        - backdrop-filter: blur(10px)
+        - z-index: 999
+
+      temperature:
+        - grid-area: temperature
+        - display: >
+            [[[
+              const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+              const isPhonePortrait =
+                (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+                mm('(max-width: 767px)') &&
+                mm('(orientation: portrait)');
+              return isPhonePortrait ? 'none' : 'flex';
+            ]]]
+        - align-items: center
+        - height: var(--hero-temp-reserve, 22px)
+        - overflow: hidden
+        - pointer-events: auto
+        - cursor: pointer
+        - position: relative
+        - z-index: 5
+        - color: var(--primary-text-color)
+        - justify-self: start
+        - margin: 0
+        - padding-left: 0
+        - background: transparent !important
+        - background-color: transparent !important
+        - margin-left: >
+            calc(
+              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hemma-header-temp-nudge, 0px))
+        - font-size: var(--hero-temp-font-size, var(--hero-temp-font-size-desktop, 16px))
+
+      time:
+        - position: fixed
+        - top: >
+            [[[
+              const w = window?.innerWidth || 1024;
+              const h = window?.innerHeight || 800;
+
+              const isMobile = (w <= 767 || h <= 500);
+              const isTablet = (w >= 768 && w <= 1249 && h > 500);
+
+              const nudge =
+                isMobile ? 'var(--hemma-time-nudge-mobile, 8px)' :
+                isTablet ? 'var(--hemma-time-nudge-tablet, 36px)' :
+                '0px';
+
+              return `calc(env(safe-area-inset-top, 0px) + var(--hemma-nav-top-current, 46px) - ${nudge})`;
+            ]]]
+        - right: >
+            [[[
+              return `var(--hemma-time-right, var(--hemma-nav-margin-current, 4vw))`;
+            ]]]
+        - z-index: 10
+        - pointer-events: auto
+        - "--mdc-ripple-press-opacity": 0
+        - "-webkit-tap-highlight-color": transparent
+        - display: >
+            [[[
+              const navOpen = states['input_boolean.hemma_mobile_navigation']?.state === 'on';
+              const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+              const isTouch = mm('(pointer: coarse)') || mm('(hover: none)');
+              const w = window?.innerWidth || 1024;
+              const h = window?.innerHeight || 800;
+              const isTablet = (w >= 768 && w <= 1249 && h > 500);
+              return (!navOpen && isTouch && isTablet) ? 'block' : 'none';
+            ]]]
+
+      weather:
+        - grid-area: weather
+        - display: >
+            [[[
+              const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+              const isPhonePortrait =
+                (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+                mm('(max-width: 767px)') &&
+                mm('(orientation: portrait)');
+              const mode = String(variables.weather_mode || '').toLowerCase();
+              const isOutdoor = (mode === 'outdoor');
+              const isRoom = (mode === 'room');
+              const hasOutdoorData = isOutdoor && !!(variables.weather_entity || variables.weather_temp_sensor);
+              const hasRoomData = isRoom && !!variables.temp_sensor;
+              const ok = !!variables.show_weather && (hasOutdoorData || hasRoomData);
+              return (isPhonePortrait && ok) ? 'block' : 'none';
+            ]]]
+        - position: absolute
+        - top: >
+            calc(var(--hero-top) - 20px +
+            (var(--hero-room-name-size-current, 48px) * var(--hero-room-name-line-height-current, 1.2)) - 15px)
+        - left: var(--hero-gutter, var(--page-gutter-mobile, 11px))
+        - right: var(--hero-gutter, var(--page-gutter-mobile, 11px))
+        - z-index: 10
+        - text-align: right
+        - align-self: start
+        - justify-self: end
+        - margin: 0
+        - width: auto
+        - max-width: none
+        - overflow: visible
+        - pointer-events: auto
+
+      badges:
+        - grid-area: badges
+        - justify-self: start !important
+        - align-self: start !important
+        - place-self: start !important
+        - text-align: left !important
+        - margin-left: >
+            calc(
+              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hemma-header-badge-nudge, 0px)) !important
+        - margin-right: auto !important
+        - width: max-content
+        - max-width: 100%
+        - margin-top: 0
+        - margin-bottom: 0
+        - padding-left: 0
+        - pointer-events: auto
+        - height: auto !important
+        - display: >
+            [[[
+              return (states['input_boolean.hemma_mobile_navigation']?.state === 'on')
+                ? 'none'
+                : 'block';
+            ]]]
+
+      badges_media:
+        - grid-area: badges_media
+        - justify-self: start !important
+        - align-self: start !important
+        - place-self: start !important
+        - text-align: left !important
+        - margin-top: 0px !important
+        - margin-right: auto !important
+        - margin-left: >
+            calc(
+              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hemma-header-badge-nudge, 0px)
+            ) !important
+        - padding-left: 0 !important
+        - padding-top: 0px !important
+        - padding-bottom: 0px !important
+        - height: auto !important
+        - min-height: 0 !important
+        - width: max-content
+        - max-width: 100%
+        - pointer-events: auto
+        - display: >
+            [[[
+              const navOpen = states['input_boolean.hemma_mobile_navigation']?.state === 'on';
+              if (navOpen) return 'none';
+
+              const enabled = (v) => {
+                if (v === undefined || v === null) return false;
+                if (typeof v === 'boolean') return v;
+                if (typeof v === 'number')  return v !== 0;
+                const s = String(v).trim().toLowerCase();
+                if (['false','0','no','off','disabled'].includes(s)) return false;
+                if (['true','1','yes','on','enabled'].includes(s))   return true;
+                return !!s;
+              };
+
+              const isMediaActive = (eid) => {
+                if (!eid) return false;
+
+                const s  = states[eid];
+                const st = String(s?.state || '');
+                const a  = s?.attributes || {};
+
+                if (!s || ['unavailable', 'unknown'].includes(st)) return false;
+                if (['off', 'standby'].includes(st)) return false;
+
+                const title   = String(a.media_title || '').trim();
+                const artist  = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                const hasContent = !!(title || artist);
+
+                if (st === 'playing' || st === 'buffering') return true;
+                if (st === 'paused') return hasContent;
+                if (st === 'idle' || st === 'on') return hasContent;
+
+                return false;
+              };
+
+              const anyNowPlaying =
+                (enabled(variables.show_media_player_1) && isMediaActive(variables.media_player_1)) ||
+                (enabled(variables.show_media_player_2) && isMediaActive(variables.media_player_2)) ||
+                (enabled(variables.show_media_player_3) && isMediaActive(variables.media_player_3)) ||
+                (enabled(variables.show_media_player_4) && isMediaActive(variables.media_player_4));
+
+              const anyPsn =
+                (enabled(variables.show_psn_1) && states[variables.psn_1]) ||
+                (enabled(variables.show_psn_2) && states[variables.psn_2]);
+
+              const anyPlex =
+                enabled(variables.show_media_plex) && states[variables.media_plex_binary]?.state === 'on';
+
+              return (anyNowPlaying || anyPsn || anyPlex) ? 'block' : 'none';
+            ]]]
+
+      navigation:
+        - position: absolute
+        - top: "-8px"
+        - left: 0
+        - right: 0
+        - "--mdc-ripple-press-opacity": 0
+        - "-webkit-tap-highlight-color": transparent
+        - filter: none
+        - pointer-events: auto
+
+      menu:
+        - position: fixed
+        - top: 8px
+        - left: >
+            [[[
+              const w = window?.innerWidth || 1024;
+              const h = window?.innerHeight || 800;
+
+              if (w <= 767 || h <= 500) {
+                return 'calc(var(--hero-gutter) - 11px)';
+              }
+
+              return 'calc(var(--hero-gutter) - 6px)';
+            ]]]
+        - width: 40px
+        - height: 40px
+        - z-index: 10
+        - pointer-events: auto
+        - cursor: pointer
+
+      preload:
+        - display: none
+        - width: 0
+        - height: 0
+        - opacity: 0
+        - overflow: hidden
+        - position: fixed
+        - pointer-events: none
+
+  custom_fields:
+    menu:
+      card:
+        type: custom:button-card
+        template: hemma_menu_icon
+
+    navigation:
+      card: !include /config/dashboards/templates/includes/hemma_navigation.yaml
+
+    preload: |
+      [[[
+        const base = variables.image || 'default';
+        const night = variables.image_night || `${base}-night`;
+        const dayUrl = `/local/hemma/rooms/${base}.jpg`;
+        const nightUrl = `/local/hemma/rooms/${night}.jpg`;
+
+        return `
+          <img src="${dayUrl}" alt="" />
+          <img src="${nightUrl}" alt="" />
+        `;
+      ]]]
+
+    # Temperature
+    temperature:
+      card:
+        type: custom:button-card
+        template: hemma_temperature
+        variables:
+          weather_mode: '[[[ return variables.weather_mode ]]]'
+          show_weather: '[[[ return variables.show_weather ]]]'
+          weather_entity: '[[[ return variables.weather_entity ]]]'
+          weather_temp_sensor: '[[[ return variables.weather_temp_sensor ]]]'
+          show_temp: '[[[ return variables.show_temp ]]]'
+          temp_sensor: '[[[ return variables.temp_sensor ]]]'
+    weather:
+      card:
+        type: custom:button-card
+        template: hemma_weather
+        entity: '[[[ return variables.weather_entity ]]]'
+        variables:
+          weather_mode: '[[[ return variables.weather_mode ]]]'
+          weather_temp_sensor: '[[[ return variables.weather_temp_sensor ]]]'
+          temp_sensor: '[[[ return variables.temp_sensor ]]]'
+
+    time:
+      card:
+        type: custom:button-card
+        template: hemma_time
+
+    badges:
+      card:
+        type: custom:layout-card
+        layout_type: custom:grid-layout
+
+        layout:
+          grid-auto-flow: column
+          grid-auto-columns: max-content
+          grid-template-columns: none
+          justify-content: start
+          justify-items: start
+          align-items: center
+          grid-column-gap: var(--badge-gap-current, var(--badge-gap, 10px))
+
+        cards:
+          - type: custom:button-card
+            template: hemma_badge_presence
+            entity: '[[[ return variables.presence_entity_1 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_presence ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_presence
+            entity: '[[[ return variables.presence_entity_2 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_presence ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_air_quality
+            entity: '[[[ return variables.quality_sensor ]]]'
+            variables:
+              enabled: '[[[ return variables.show_quality ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_humidity
+            entity: '[[[ return variables.humidity_sensor ]]]'
+            variables:
+              enabled: '[[[ return variables.show_humidity ]]]'
+
+    badges_media:
+      card:
+        type: custom:layout-card
+        layout_type: custom:grid-layout
+
+        layout:
+          grid-template-columns: 1fr
+          grid-auto-flow: row
+          grid-auto-rows: min-content
+          justify-items: start
+          justify-content: start
+          align-items: start
+          align-content: start
+          grid-row-gap: var(--hero-header-gap-current, 6px)
+
+        card_mod:
+          style:
+            grid-layout$: |
+              :host {
+                --layout-padding: 0 !important;
+                --layout-margin: 0 !important;
+              }
+              #root {
+                padding: 0 !important;
+                margin: 0 !important;
+                gap: var(--hero-header-gap-current, 6px) !important;
+              }
+              #root > * {
+                margin: 0 !important;
+                padding: 0 !important;
+              }
+              #root > *[hidden],
+              #root > *:has([hidden]),
+              #root > *:has([style*="display: none"]),
+              #root > *:has([style*="display:none"]),
+              #root > *:has(card-mod[style*="display: none"]),
+              #root > *:has(card-mod[style*="display:none"]) {
+                display: none !important;
+              }
+
+        cards:
+          # Now Playing (active media badge)
+          - type: custom:navbar-card
+            desktop:
+              min_width: 1
+              hidden: >
+                [[[
+                  const amp = variables.active_media_player;
+                  if (!amp || amp === '') return true;
+                  const s = states[amp];
+                  if (!s || ['unavailable', 'unknown', 'off', 'standby'].includes(s.state)) return true;
+
+                  const a = s.attributes || {};
+                  const title = String(a.media_title || '').trim();
+                  const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                  const hasContent = !!(title || artist);
+
+                  if (['playing', 'buffering'].includes(s.state)) {
+                    return !hasContent;
+                  }
+
+                  if (s.state === 'paused') {
+                    if (!hasContent) return true;
+                    const pauseTimeoutMin = variables.pause_timeout_minutes ?? 5;
+                    if (pauseTimeoutMin <= 0) return !hasContent; // 0 = no timeout
+                    const lastChanged = new Date(s.last_changed);
+                    const now = new Date();
+                    const minutesPaused = (now - lastChanged) / 60000;
+                    return minutesPaused > pauseTimeoutMin;
+                  }
+
+                  if (['idle', 'on'].includes(s.state)) {
+                    return !hasContent;
+                  }
+
+                  return true;
+                ]]]
+              show_labels: false
+              show_popup_label_backgrounds: false
+              styles: ''
+
+            mobile: { hidden: true }
+            routes: []
+            media_player:
+              entity: '[[[ return variables.active_media_player ]]]'
+              show: true
+              album_cover_background: true
+              tap_action:
+                action: more-info
+                entity: '[[[ return variables.active_media_player ]]]'
+              hold_action: { action: none }
+            styles: '[[[ return variables._hemma_mp_styles ]]]'
+            card_mod:
+              style: |
+                :host {
+                  display: contents !important;
+                }
+
+    motion_detection: |
+      [[[
+        return "Motion detected"
+      ]]]
+# hemma_switch:
+#   show_state: false
+
+#   tap_action:
+#     action: toggle
+
+#   styles:
+#     card:
+#       - border-radius: 18px
+#       - padding: 12px
+#       - font-size: 14px
+
+#   icon: >
+#     [[[
+#       return variables.icon || "mdi:toggle-switch";
+#     ]]]
+
+#   name: >
+#     [[[
+#       return entity.attributes.friendly_name;
+#     ]]]
+
+#   state:
+#     - value: "on"
+#       styles:
+#         card:
+#           - background-color: rgba(255,180,0,0.25)
+#     - value: "off"
+#       styles:
+#         card:
+#           - background-color: rgba(120,120,120,0.15)
+hemma_switch:
+  template:
+    - hemma_picture_interaction
+
+  show_icon: true
+  show_state: false
+
+  # Match Hemma interaction model
+  tap_action:
+    action: more-info
+    entity: "[[[ return entity.entity_id ]]]"
+
+  hold_action:
+    action: more-info
+    entity: "[[[ return entity.entity_id ]]]"
+
+  icon_tap_action:
+    action: toggle
+
+  icon_hold_action:
+    action: more-info
+    entity: "[[[ return entity.entity_id ]]]"
+
+  icon: >
+    [[[
+      return variables.icon || entity.attributes.icon || "mdi:toggle-switch";
+    ]]]
+
+  name: >
+    [[[
+      return entity.attributes.friendly_name;
+    ]]]
+
+  state:
+    - value: "on"
+      styles:
+        card:
+          - background-color: var(--primary-color)
+    - value: "off"
+      styles:
+        card:
+          - background-color: var(--card-background-color)
+
+hemma_thermostat:
+  template: [hemma_entity]
+  show_entity_picture: false
+  show_icon: false
+  show_label: false
+  name: Thermostat
+
+  variables:
+    thermostat_toggle_helper: input_boolean.hemma_thermostat_overlay
+    temp_sensor:
+
+  state_display: |
+    [[[
+      const mode = entity.state;
+      const target = entity.attributes.temperature;
+      const target_temp_high = entity.attributes.target_temp_high;
+      const target_temp_low = entity.attributes.target_temp_low;
+      if (mode === 'cool') {
+        return "Cooling to " + target + "°";
+      } else if (mode === 'heat') {
+        return "Heating to " + target + "°";
+      } else if (mode === 'heat_cool'){
+        return "Between " + target_temp_low + "° - " + target_temp_high + "°";
+      } else {
+        return "Off";
+      }
+    ]]]
+
+  tap_action:
+    action: call-service
+    service: input_boolean.toggle
+    service_data:
+      entity_id: |
+        [[[
+          return variables.thermostat_toggle_helper;
+        ]]]
+
+  hold_action:
+    action: more-info
+    entity: "[[[ return entity.entity_id ]]]"
+
+  custom_fields:
+    temp_puck:
+      card:
+        type: custom:button-card
+        entity: "[[[ return entity.entity_id ]]]"
+        show_name: false
+        show_icon: false
+        show_state: false
+        tap_action:
+          action: more-info
+        custom_fields:
+          temp_display: |
+            [[[
+              let raw;
+              const eid = variables.temp_sensor;
+              if (eid && states[eid] && !["unknown","unavailable"].includes(states[eid].state)) {
+                raw = states[eid].state;
+              } else {
+                raw = entity?.attributes?.current_temperature;
+              }
+              const n = Math.round(Number(raw));
+              if (raw == null || Number.isNaN(n)) return '';
+              return `${n}`;
+            ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  const s = String(entity?.state || '').toLowerCase();
+                  const active = ["cool","heat","heat_cool"].includes(s);
+                  return active
+                    ? 'rgba(255,255,255,0.06)'
+                    : 'rgba(255,255,255,0.02)';
+                ]]]
+            - border: 1.8px solid
+            - border-color: |
+                [[[
+                  const s = String(entity?.state || '').toLowerCase();
+                  const isActive = ["cool","heat","heat_cool"].includes(s);
+                  const c = isActive
+                    ? 'var(--hemma-entity-active, var(--primary-text-color))'
+                    : 'var(--hemma-entity-inactive, var(--secondary-text-color))';
+                  return `color-mix(in srgb, ${c} 55%, transparent)`;
+                ]]]
+            - border-radius: 50%
+            - width: 100%
+            - height: 100%
+            - min-width: 0
+            - min-height: 0
+            - padding: 6px
+            - margin: 0
+            - box-shadow: none
+            - opacity: 0.8
+            - transition: opacity 0.2s ease, transform 0.15s ease, filter 0.2s ease
+            - cursor: pointer
+            - box-sizing: border-box
+            - display: flex
+            - align-items: center
+            - justify-content: center
+          name:
+            - display: none
+          custom_fields:
+            temp_display:
+              - display: flex
+              - align-items: center
+              - justify-content: center
+              - width: 100%
+              - height: 100%
+              - color: |
+                  [[[
+                    const s = String(entity?.state || '').toLowerCase();
+                    const isActive = ["cool","heat","heat_cool"].includes(s);
+                    const c = isActive
+                      ? 'var(--hemma-entity-active, var(--primary-text-color))'
+                      : 'var(--hemma-entity-inactive, var(--secondary-text-color))';
+                    return `color-mix(in srgb, ${c} 75%, transparent)`;
+                  ]]]
+              - font-weight: 500
+              - line-height: 1
+              - font-size: |
+                  [[[
+                    const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+                    return isMobile ? '12px' : '16px';
+                  ]]]
+              - letter-spacing: -0.5px
+        extra_styles: |
+          @media (hover: hover) {
+            :host ha-card:hover {
+              opacity: 1 !important;
+              filter: brightness(1.2);
+              transform: scale(1.05);
+            }
+          }
+          @media (hover: none) {
+            :host ha-card:active {
+              opacity: 1 !important;
+              filter: brightness(1.2);
+              transform: scale(1.05);
+            }
+          }
+
+    cooling_modes:
+      card:
+        type: custom:layout-card
+        layout_type: custom:grid-layout
+        layout:
+          position: absolute
+          inset: 0 0 0 auto
+          width: var(--rail-w)
+          grid-template-columns: 1fr
+          grid-template-rows: repeat(2, 1fr)
+          height: 100%
+          margin: 0
+          padding: 0
+          align-items: stretch
+          justify-items: stretch
+        cards:
+          - type: custom:button-card
+            template: [hemma_default]
+            show_entity_picture: true
+            entity_picture: |
+              [[[
+                return entity.state === 'off'
+                  ? '/local/hemma/icons/power_on.svg'
+                  : '/local/hemma/icons/power_off.svg';
+              ]]]
+
+            tap_action:
+              action: call-service
+              service: climate.set_hvac_mode
+              data:
+                entity_id: "[[[ return entity.entity_id ]]]"
+                hvac_mode: |
+                  [[[
+                    const cur = entity.state;
+
+                    // Turn OFF if running
+                    if (cur !== 'off') return 'off';
+
+                    return 'cool';
+                  ]]]
+            styles:
+              card:
+                - height: 100%
+                - min-height: 0
+                - padding: 0
+                - box-shadow: none !important
+                - background: |
+                    [[[
+                      return entity.state === 'off'
+                        ? 'var(--hemma-control-on)'
+                        : 'var(--hemma-control-off)';
+                    ]]]
+              img_cell: [{ width: "30%" }]
+              icon: [{ width: "100%" }, { height: "100%" }]
+
+          - type: custom:button-card
+            template: [hemma_default]
+            show_entity_picture: true
+            entity_picture: |
+              [[[
+                const icons = {
+                  heat: '/local/hemma/icons/heating.svg',
+                  cool: '/local/hemma/icons/cooling.svg',
+                  heat_cool: '/local/hemma/icons/heat_cool.svg',
+                  off: '/local/hemma/icons/power_off.svg'
+                };
+
+                return icons[entity.state] || icons.cool;
+              ]]]
+
+            tap_action:
+              action: call-service
+              service: climate.set_hvac_mode
+              data:
+                entity_id: "[[[ return entity.entity_id ]]]"
+                hvac_mode: |
+                  [[[
+                    const order = ['heat','cool','heat_cool'];
+                    const cur = entity.state;
+                    
+                    if (!cur || cur === 'off')
+                      return order[0];
+                    
+                    if (!order.includes(cur))
+                      return 'cool';
+
+                    const idx = order.indexOf(cur);
+                    return order[(idx + 1) % order.length];
+                  ]]]
+
+            hold_action:
+              action: call-service
+              service: climate.set_preset_mode
+              data:
+                entity_id: "[[[ return entity.entity_id ]]]"
+                preset_mode: |
+                  [[[
+                    return entity.attributes.preset_mode === 'eco'
+                      ? 'none'
+                      : 'eco';
+                  ]]]
+
+            styles:
+              card:
+                - height: 100%
+                - min-height: 0
+                - padding: 0
+                - box-shadow: none !important
+                - background: |
+                    [[[
+                      return ['cool','heat','heat_cool'].includes(entity.state)
+                        ? 'var(--hemma-control-on)'
+                        : 'var(--hemma-control-off)';
+                    ]]]
+              img_cell: [{ width: "35%" }]
+              icon: [{ width: "100%" }, { height: "100%" }]
+
+    target_temperature:
+      card:
+        type: custom:button-card
+        template: [hemma_entity]
+        entity: "[[[ return entity.entity_id ]]]"
+        show_entity_picture: false
+        show_icon: false
+        name: Target Temp
+        state_display: |
+          [[[
+            const raw = states['input_number.hemma_thermostat_target_temperature']?.state;
+            const n = Math.round(Number(raw));
+            if (raw == null || raw === 'unknown' || raw === 'unavailable' || Number.isNaN(n)) return '';
+            return `${n}°`;
+          ]]]
+        tap_action:
+          action: call-service
+          service: input_boolean.toggle
+          service_data:
+            entity_id: |
+              [[[
+                return variables.thermostat_toggle_helper;
+              ]]]
+
+        styles:
+          card:
+            - background: transparent !important
+            - background-color: transparent !important
+            - backdrop-filter: none !important
+            - animation: none !important
+            - box-shadow: none !important
+            - border: none !important
+            - padding-right: var(--rail-w)
+          icon:
+            - background: transparent !important
+          img_cell:
+            - background: transparent !important
+          custom_fields:
+            temperature_controls:
+              - position: absolute
+              - top: 0
+              - right: 0
+              - bottom: 0
+              - width: var(--rail-w)
+
+        custom_fields:
+          temperature_controls:
+            card:
+              type: custom:layout-card
+              layout_type: custom:grid-layout
+              layout:
+                position: absolute
+                inset: 0 0 0 auto
+                width: var(--rail-w)
+                grid-template-columns: 1fr
+                grid-template-rows: repeat(3, 1fr)
+                height: 100%
+                margin: 0
+                padding: 0
+                align-items: stretch
+                justify-items: stretch
+              cards:
+                - type: custom:button-card
+                  template: [hemma_default]
+                  show_entity_picture: true
+                  entity_picture: /local/hemma/icons/increase.svg
+                  tap_action:
+                    action: call-service
+                    service: input_number.increment
+                    service_data:
+                      entity_id: input_number.hemma_thermostat_target_temperature
+                  styles:
+                    card:
+                      - height: 100%
+                      - min-height: 0
+                      - padding: 0
+                      - background: var(--hemma-control-on)
+                      - border-bottom: "0.5px solid rgba(255,255,255,0.1)"
+                      - box-shadow: none !important
+                    img_cell: [{ width: "30%" }]
+                    icon: [{ transform: "rotate(-90deg)" }]
+
+                - type: custom:button-card
+                  template: [hemma_default]
+                  name: SET
+                  tap_action:
+                    action: call-service
+                    service: climate.set_temperature
+                    service_data:
+                      entity_id: "[[[ return entity.entity_id ]]]"
+                      temperature: |
+                        [[[
+                          const helperState = states['input_number.hemma_thermostat_target_temperature']?.state;
+                          const n = parseFloat(helperState);
+                          
+                          if (Number.isFinite(n)) return n;
+                          
+                          // Fallback to current thermostat target
+                          const currentTarget = entity.attributes.temperature;
+                          return Number.isFinite(currentTarget) ? currentTarget : 68;
+                        ]]]
+                  styles:
+                    card:
+                      - height: 100%
+                      - min-height: 0
+                      - padding: 0
+                      - background: var(--hemma-control-on)
+                      - box-shadow: none !important
+                      - border-bottom: "0.5px solid rgba(255,255,255,0.1)"
+                    name:
+                      - font-size: 10px
+                      - letter-spacing: 2px
+                      - text-transform: uppercase
+                      - font-weight: 600
+
+                - type: custom:button-card
+                  template: [hemma_default]
+                  show_entity_picture: true
+                  entity_picture: /local/hemma/icons/decrease.svg
+                  tap_action:
+                    action: call-service
+                    service: input_number.decrement
+                    service_data:
+                      entity_id: input_number.hemma_thermostat_target_temperature
+                  styles:
+                    card:
+                      - height: 100%
+                      - min-height: 0
+                      - padding: 0
+                      - box-shadow: none !important
+                      - background: var(--hemma-control-on)
+                    img_cell: [{ width: "30%" }]
+                    icon: [{ transform: "rotate(-90deg)" }]
+
+  styles:
+    card:
+      - --rail-w: |
+          [[[
+            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            return isMobile ? '48px' : '60px';
+          ]]]
+      - background: |
+          [[[
+            const mode = entity.state;
+            const orange = 'var(--warning-color)'; // Hemma default for Heat
+            const blue = 'var(--info-color)';     // Hemma default for Cool
+            const base = 'rgba(255,255,255,0.06)';
+
+            if (mode === 'heat')
+              return `color-mix(in srgb, ${orange} 28%, ${base}) !important`;
+
+            if (mode === 'cool')
+              return `color-mix(in srgb, ${blue} 28%, ${base}) !important`;
+
+            if (mode === 'heat_cool')
+              return `
+                linear-gradient(
+                  135deg,
+                  color-mix(in srgb, ${orange} 28%, ${base}),
+                  color-mix(in srgb, ${blue} 28%, ${base})
+                )
+              `;
+
+            return `${base} !important`;
+          ]]]
+
+      - backdrop-filter: blur(14px) saturate(140%)
+      - transition: background 0.35s ease
+    name:
+      - color: |
+          [[[
+            const active = ['heat','cool','heat_cool'].includes(entity.state);
+            return active
+              ? 'var(--primary-text-color)'
+              : 'var(--secondary-text-color)';
+          ]]]
+      - opacity: |
+          [[[
+            const on = states[variables.thermostat_toggle_helper]?.state === "on";
+            return on ? "0" : "1";
+          ]]]
+      - transition: opacity 0.25s
+    state:
+      - opacity: |
+          [[[
+            const toggleOn = states[variables.thermostat_toggle_helper]?.state === "on";
+            const isActive = ["cool","heat","heat_cool"].includes(entity.state);
+            if (toggleOn) return "0";
+            return isActive ? "1" : "0.85";  // Full opacity when active
+          ]]]
+      - transition: opacity 0.25s
+
+    custom_fields:
+      temp_puck:
+        - position: absolute
+        - top: var(--hemma-entity-inner-pad-current, 16px)
+        - left: var(--hemma-entity-inner-pad-current, 16px)
+        - width: var(--hemma-temp-puck-size, 44px)
+        - height: var(--hemma-temp-puck-size, 44px)
+        - z-index: 4
+        - pointer-events: auto
+        - "--mdc-ripple-color": transparent
+        - "--paper-item-icon-active-color": transparent
+
+      cooling_modes:
+        - position: absolute
+        - top: 0
+        - right: 0
+        - bottom: 0
+        - width: var(--rail-w)
+        - z-index: 2
+        - pointer-events: auto
+        - display: |
+            [[[
+              const on = states[variables.thermostat_toggle_helper]?.state === "on";
+              return on ? "none" : "block";
+            ]]]
+
+      target_temperature:
+        - position: absolute
+        - inset: 0
+        - z-index: 3
+        - pointer-events: auto
+        - display: |
+            [[[
+              const on = states[variables.thermostat_toggle_helper]?.state === "on";
+              return on ? "block" : "none";
+            ]]]
+
+hemma_vacuum:
+  template:
+    - hemma_entity
+  variables:
+    icon: vacuum
+    room: ""
+  show_name: true
+  show_label: false
+  show_state: false
+
+  tap_action:
+    action: call-service
+    service: script.clean_room
+    service_data:
+      room: "[[[ return variables.room ]]]"
+
+  state:
+    - value: cleaning
+      styles:
+        img_cell:
+          - animation: rotating 1.6s linear infinite
+        entity_picture:
+          - filter: brightness(1.2) saturate(1.3)
+
+  styles:
+    card:
+      - padding: 12px
+    img_cell:
+      - width: 32px
+      - height: 32px
+    name:
+      - font-weight: 500
+      - font-size: 15px
+
+  extra_styles: |
+    @keyframes rotating {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+# Air Quality Badge
+# Shows air quality sensor with color-coded status
+hemma_badge_air_quality:
+  template: [hemma_badge_base]
+
+  variables:
+    enabled: true
+
+  tap_action: { action: more-info }
+
+  extra_styles: >
+    [[[
+      // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+      const v = variables?.enabled;
+      const enabled = (v === undefined || v === null) ? true :
+        (typeof v === 'boolean') ? v :
+        (typeof v === 'number') ? v !== 0 :
+        !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+      const hasEnt  = !!entity?.entity_id;
+      const stRaw   = String(entity?.state ?? '').trim();
+      const st      = stRaw.toLowerCase();
+      const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+      return `:host{display:${hide ? 'none' : 'inline-block'} !important;}`;
+    ]]]
+
+  styles:
+    card:
+      - display: >
+          [[[
+            // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+            const v = variables?.enabled;
+            const enabled = (v === undefined || v === null) ? true :
+              (typeof v === 'boolean') ? v :
+              (typeof v === 'number') ? v !== 0 :
+              !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+            const hasEnt  = !!entity?.entity_id;
+            const stRaw   = String(entity?.state ?? '').trim();
+            const st      = stRaw.toLowerCase();
+            const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+            return hide ? 'none' : 'inline-grid';
+          ]]]
+    icon:
+      - color: >
+          [[[
+            const s = String(entity?.state || 'unknown').toLowerCase();
+            if (s === 'excellent') return '#67f5a0';
+            if (s === 'good')      return '#44e371';
+            if (s === 'moderate')  return '#f0c741';
+            if (s === 'bad')       return '#f5962a';
+            if (s === 'very bad')  return '#e53552';
+            return 'var(--disabled-text-color)';
+          ]]]
+
+  icon: >
+    [[[
+      const s = String(entity?.state || 'unknown').toLowerCase();
+      if (s === 'very bad') return 'mdi:emoticon-dead-outline';
+      if (['excellent','good','moderate','bad'].includes(s)) return 'mdi:blur';
+      return 'mdi:cloud';
+    ]]]
+
+  name: >
+    [[[
+      const raw = String(entity?.state ?? 'Unknown');
+      const nice = raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : 'Unknown';
+
+      const esc = (t) => String(t || '').replaceAll('"','&quot;');
+
+      return `
+        <div class="mp-wrap">
+          <div class="mp-title">Air Quality</div>
+          <div class="mp-sub">${esc(nice)}</div>
+        </div>
+      `;
+    ]]]
+
+# Base Badge Template
+hemma_badge_base:
+  styles:
+    card:
+      - background: var(--badge-background)
+      - box-shadow: var(--badge-shadow)
+      - backdrop-filter: blur(8px)
+      - -webkit-backdrop-filter: blur(8px)
+      - border-radius: var(--badge-br, 9999px)
+      - padding: var(--badge-padding-current, var(--badge-padding, 6px 14px))
+      - min-height: var(--badge-min-height-current, var(--badge-min-height, 44px))
+      - display: >
+          [[[
+            // Robust enabled check - handles boolean, number, and string inputs
+            const v = variables?.enabled;
+            if (v === undefined || v === null) return 'inline-grid';
+            if (typeof v === 'boolean') return v ? 'inline-grid' : 'none';
+            if (typeof v === 'number') return v !== 0 ? 'inline-grid' : 'none';
+            const s = String(v).trim().toLowerCase();
+            if (['false','0','no','off','disabled'].includes(s)) return 'none';
+            return 'inline-grid';
+          ]]]
+      - align-items: center
+      - gap: var(--badge-col-gap-current, var(--badge-col-gap, 10px))
+      - width: fit-content
+      - margin-inline-start: 0
+      - margin-inline-end: 0
+      - margin-block-start: 0
+      - margin-block-end: 0
+      - position: relative
+      - isolation: isolate
+      - --badge-title-color: var(--primary-text-color)
+      - --badge-sub-color: var(--secondary-text-color)
+      - background-clip: padding-box
+      - overflow: hidden
+
+    grid:
+      - grid-template-areas: '"i l"'
+      - grid-template-columns: min-content minmax(0, 1fr)
+      - column-gap: var(--badge-col-gap-current, var(--badge-col-gap, 10px))
+      - row-gap: 0
+      - align-items: center
+
+    name:
+      - grid-area: l
+      - min-width: 0
+      - color: var(--badge-title-color, var(--secondary-text-color))
+      - font-weight: 700
+      - font-size: var(--badge-font-size-current, var(--badge-font-size, 13px))
+      - line-height: 1.2
+      - text-align: left
+      - justify-self: start
+      - z-index: 4
+
+    icon:
+      - grid-area: i
+      - width: var(--badge-icon-size-current, var(--badge-icon-size, 28px))
+      - height: var(--badge-icon-size-current, var(--badge-icon-size, 28px))
+      - color: var(--primary-text-color)
+      - z-index: 4
+
+    img_cell:
+      - width: var(--badge-icon-size-current, var(--badge-icon-size, 30px)) !important
+      - height: var(--badge-icon-size-current, var(--badge-icon-size, 30px)) !important
+      - border-radius: 9999px !important
+      - overflow: hidden !important
+      - display: block !important
+
+    entity_picture:
+      - grid-area: i
+      - width: var(--badge-icon-size-current, var(--badge-icon-size, 28px))
+      - height: var(--badge-icon-size-current, var(--badge-icon-size, 28px))
+      - border-radius: 50%
+      - z-index: 4
+      - object-fit: cover
+
+    label:
+      - font-size: var(--badge-font-size-current, var(--badge-font-size, 13px))
+
+    state:
+      - font-size: var(--badge-font-size-current, var(--badge-font-size, 13px))
+
+  extra_styles: |
+    :host{
+      --media-sub-opacity: .82;
+      --badge-after-z:  2;
+      --badge-before-z: 3;
+    }
+
+    @media (max-width: 767px) and (orientation: portrait) {
+      ha-card {
+        min-height: 43px !important;
+        padding: 1px 14px 1px 6px !important;
+      }
+      #img-cell, .img-cell {
+        width: 32px !important;
+        height: 32px !important;
+      }
+      #name {
+        font-size: 13px !important;
+      }
+      .mp-title {
+        font-size: 13px !important;
+      }
+      .mp-sub {
+        font-size: 12px !important;
+      }
+    }
+
+    @media (max-height: 600px) and (orientation: landscape) {
+      ha-card {
+        min-height: 36px !important;
+        padding: 1px 12px 1px 6px !important;
+      }
+      #img-cell, .img-cell {
+        width: 26px !important;
+        height: 26px !important;
+      }
+      #name {
+        font-size: 12px !important;
+      }
+      .mp-title {
+        font-size: 12px !important;
+      }
+      .mp-sub {
+        font-size: 11px !important;
+      }
+    }
+
+    ha-card::after{  z-index: var(--badge-after-z, 2) !important; }
+    ha-card::before{ z-index: var(--badge-before-z, 3) !important; }
+
+    #img-cell{
+      width:  var(--badge-icon-size-current, var(--badge-icon-size, 32px)) !important;
+      height: var(--badge-icon-size-current, var(--badge-icon-size, 32px)) !important;
+      border-radius: 9999px !important;
+      overflow: hidden !important;
+      display: block !important;
+    }
+
+    #img-cell img,
+    #img-cell ha-img{
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+      border-radius: inherit !important;
+    }
+
+    #name{
+      display:flex !important;
+      align-items:center !important;
+      padding-block: 2px !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+      line-height: normal !important;
+    }
+
+    .mp-wrap{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap: 2px;
+      min-width:0;
+      max-width:100%;
+      padding-top: 0 !important;
+      padding-bottom: 2px !important;
+    }
+
+    .mp-title{
+      font-size: var(--badge-font-size-current, 13px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--badge-title-color, var(--secondary-text-color));
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .mp-sub{
+      font-size: calc(var(--badge-font-size-current, 13px) - 1px);
+      font-weight: 500;
+      line-height: 1.05;
+      opacity: var(--media-sub-opacity, .82);
+      color: var(--badge-sub-color, var(--secondary-text-color));
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+
+# Humidity Badge
+# Shows humidity sensor with color-coded status
+hemma_badge_humidity:
+  template: [hemma_badge_base]
+
+  variables:
+    enabled: true
+
+  tap_action: { action: more-info }
+  icon: mdi:water-percent
+
+  extra_styles: >
+    [[[
+      // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+      const ev = variables?.enabled;
+      const enabled = (ev === undefined || ev === null) ? true :
+        (typeof ev === 'boolean') ? ev :
+        (typeof ev === 'number') ? ev !== 0 :
+        !['false','0','no','off','disabled'].includes(String(ev).trim().toLowerCase());
+
+      const hasEnt  = !!entity?.entity_id;
+      const stRaw   = String(entity?.state ?? '').trim();
+      const st      = stRaw.toLowerCase();
+      const v       = parseFloat(stRaw);
+      const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st) || Number.isNaN(v);
+
+      return `:host{display:${hide ? 'none' : 'inline-block'} !important;}`;
+    ]]]
+
+  styles:
+    card:
+      - display: >
+          [[[
+            // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+            const ev = variables?.enabled;
+            const enabled = (ev === undefined || ev === null) ? true :
+              (typeof ev === 'boolean') ? ev :
+              (typeof ev === 'number') ? ev !== 0 :
+              !['false','0','no','off','disabled'].includes(String(ev).trim().toLowerCase());
+
+            const hasEnt  = !!entity?.entity_id;
+            const stRaw   = String(entity?.state ?? '').trim();
+            const st      = stRaw.toLowerCase();
+            const v       = parseFloat(stRaw);
+            const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st) || Number.isNaN(v);
+
+            return hide ? 'none' : 'inline-grid';
+          ]]]
+    icon:
+      - color: >
+          [[[
+            const v = parseFloat(entity?.state);
+            if (isNaN(v)) return 'var(--disabled-text-color)';
+            if (v <= 29.99) return '#ffb254';
+            if (v >= 61)    return '#4bd1fa';
+            return '#45dced';
+          ]]]
+
+  name: >
+    [[[
+      const v = parseFloat(entity?.state);
+      let label = 'Unknown';
+      if (!isNaN(v)) {
+        if (v <= 29.99)      label = 'Very Dry';
+        else if (v >= 61)    label = 'High';
+        else                 label = 'Good';
+      }
+
+      const esc = (t) => String(t || '').replaceAll('"','&quot;');
+
+      return `
+        <div class="mp-wrap">
+          <div class="mp-title">Humidity</div>
+          <div class="mp-sub">${esc(label)}</div>
+        </div>
+      `;
+    ]]]
+
+# Presence Badge
+# Shows person entity with home/away status
+hemma_badge_presence:
+  template: [hemma_badge_base]
+
+  variables:
+    enabled: true
+
+  show_state: false
+  show_label: false
+  show_entity_picture: >
+    [[[ return !!entity?.attributes?.entity_picture; ]]]
+  show_icon: >
+    [[[ return !entity?.attributes?.entity_picture; ]]]
+
+  extra_styles: >
+    [[[
+      // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+      const v = variables?.enabled;
+      const enabled = (v === undefined || v === null) ? true :
+        (typeof v === 'boolean') ? v :
+        (typeof v === 'number') ? v !== 0 :
+        !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+      const hasEnt  = !!entity?.entity_id;
+      const stRaw   = String(entity?.state ?? '').trim();
+      const st      = stRaw.toLowerCase().replace(/_/g,' ');
+      const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+      return `:host{display:${hide ? 'none' : 'inline-block'} !important;}`;
+    ]]]
+
+  styles:
+    card:
+      - display: >
+          [[[
+            const v = variables?.enabled;
+            const enabled = (v === undefined || v === null) ? true :
+              (typeof v === 'boolean') ? v :
+              (typeof v === 'number') ? v !== 0 :
+              !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+            const hasEnt  = !!entity?.entity_id;
+            const stRaw   = String(entity?.state ?? '').trim();
+            const st      = stRaw.toLowerCase().replace(/_/g,' ');
+            const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+            return hide ? 'none' : 'inline-grid';
+          ]]]
+      - --presence-filter: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase().replace(/_/g, ' ');
+            const on = (s === 'home' || s === 'just arrived');
+            return on ? 'none' : 'grayscale(1) contrast(.96) brightness(.94)';
+          ]]]
+      - --presence-opacity: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase().replace(/_/g, ' ');
+            return (s === 'home' || s === 'just arrived') ? '1' : '.88';
+          ]]]
+      - --badge-title-color: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase().replace(/_/g, ' ');
+            return (s === 'home' || s === 'just arrived')
+              ? 'var(--primary-text-color)'
+              : 'var(--badge-title-inactive)';
+          ]]]
+      - --badge-sub-color: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase().replace(/_/g, ' ');
+            return (s === 'home' || s === 'just arrived')
+              ? 'var(--secondary-text-color)'
+              : 'color-mix(in oklab, var(--secondary-text-color) 70%, transparent)';
+          ]]]
+    icon:
+      - filter: var(--presence-filter)
+      - -webkit-filter: var(--presence-filter)
+      - opacity: var(--presence-opacity)
+      - color: var(--badge-title-color)
+    entity_picture:
+      - filter: var(--presence-filter)
+      - -webkit-filter: var(--presence-filter)
+      - opacity: var(--presence-opacity)
+
+  name: >
+    [[[
+      const friendly = (entity?.attributes?.friendly_name || 'Person').split(' ')[0];
+      const raw = String(entity?.state || 'Unknown');
+      const s = raw.toLowerCase().replace(/_/g, ' ');
+      const status =
+        s === 'home'           ? 'Home' :
+        s === 'not home' || s === 'away' ? 'Away' :
+        s === 'just arrived'   ? 'Just Arrived' :
+        s === 'just left'      ? 'Just Left' :
+        s === 'extended away'  ? 'Extended Away' :
+                                  raw;
+
+      const esc = (t) => String(t || '').replaceAll('"','&quot;');
+
+      return `
+        <div class="mp-wrap">
+          <div class="mp-title">${esc(friendly)}</div>
+          <div class="mp-sub">${esc(status)}</div>
+        </div>
+      `;
+    ]]]
+

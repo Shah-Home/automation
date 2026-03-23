@@ -14,7 +14,7 @@
 # - Temperature/Humidity sensors
 # ============================================================================
 
-button_card_templates: !include_dir_merge_named /config/dashboards/templates/button_cards
+button_card_templates: !include /config/dashboards/templates/all_button_card_templates.yaml
 
 # Kiosk Mode (optional - requires kiosk-mode HACS integration)
 kiosk_mode:
