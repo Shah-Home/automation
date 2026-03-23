@@ -1,5 +1,6 @@
-<<: !include /config/dashboards/metadata/rooms/definitions/kitchen.yaml
 type: custom:grid-layout
+title: Kitchen
+path: kitchen
 layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
 cards:
   - !include /config/dashboards/metadata/views/kitchen/hero.yaml

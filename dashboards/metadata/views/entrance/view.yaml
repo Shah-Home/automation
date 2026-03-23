@@ -1,5 +1,6 @@
-<<: !include /config/dashboards/metadata/rooms/definitions/entrance.yaml
 type: custom:grid-layout
+title: Entrance
+path: entrance
 layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
 cards:
   - !include /config/dashboards/metadata/views/entrance/hero.yaml

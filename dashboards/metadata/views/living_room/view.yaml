@@ -1,5 +1,6 @@
-<<: !include /config/dashboards/metadata/rooms/definitions/living_room.yaml
 type: custom:grid-layout
+title: Living Room
+path: living-room
 layout: !include /config/dashboards/templates/includes/hemma_screen_layout.yaml
 cards:
   - !include /config/dashboards/metadata/views/living_room/hero.yaml
