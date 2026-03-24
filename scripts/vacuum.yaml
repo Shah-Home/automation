@@ -11,10 +11,19 @@ clean_room:
       required: true
 
   sequence:
+    # Check if vacuum is not already busy
     - condition: template
       value_template: >
         {{ states('vacuum.cleaning_lady') not in ['cleaning', 'unavailable', 'unknown'] }}
 
+    # Set helper to "command_sent" to indicate we're sending a command
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.vacuum_command_state
+      data:
+        option: command_sent
+
+    # Send the command to Google Assistant
     - action: google_assistant_sdk.send_text_command
       data:
         command: "tell vacuum to clean the {{ room }}"

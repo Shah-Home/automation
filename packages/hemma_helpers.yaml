@@ -35,11 +35,19 @@ input_number:
     step: 1
     unit_of_measurement: "°F"
     mode: slider
-# input_select:
-#   hemma_thermostat_mode:
-#     name: Thermostat Mode
-#     options:
-#       - cool
-#       - heat
-#       - heat_cool
-#     initial: heat_cool
+
+input_select:
+  vacuum_command_state:
+    name: Vacuum Command State
+    options:
+      - idle
+      - command_sent
+      - command_acknowledged
+      - executing
+      - completed
+      - error_timeout
+      - error_busy
+      - error_offline
+      - error_unknown
+    initial: idle
+    icon: mdi:robot-vacuum

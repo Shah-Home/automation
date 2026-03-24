@@ -1,1 +1,114 @@
-[]
+# Vacuum Command State Tracking Automations
+# ==========================================
+# These automations track the lifecycle of vacuum commands:
+# idle → command_acknowledged → executing → completed/error
+#
+# Helper entity: input_select.vacuum_command_state
+# Vacuum entity: vacuum.cleaning_lady
+
+automation:
+
+  # AUTOMATION 1: Acknowledge command when vacuum starts cleaning
+  # Trigger: Vacuum enters 'cleaning' state from any other state
+  # Action: Set helper to 'command_acknowledged' to indicate GA command was accepted
+  # Purpose: Detect that Google Assistant command was received and vacuum started
+  - id: vacuum_automation_acknowledge_command
+    alias: "Vacuum: Acknowledge command when cleaning starts"
+    description: "Set helper to 'command_acknowledged' when vacuum enters cleaning state (GA command accepted)"
+    trigger:
+      platform: state
+      entity_id: vacuum.cleaning_lady
+      to: 'cleaning'
+    action:
+      service: input_select.select_option
+      target:
+        entity_id: input_select.vacuum_command_state
+      data:
+        option: 'command_acknowledged'
+
+  # AUTOMATION 2: Timeout handler for stuck commands
+  # Trigger: Helper stays in 'command_acknowledged' for 10 seconds
+  # Condition: Vacuum is still in 'idle' state (not executing)
+  # Action: Set helper to 'error_timeout' to indicate command failed
+  # Purpose: Catch GA failures, network issues, or vacuum offline without moving to cleaning
+  - id: vacuum_automation_timeout_handler
+    alias: "Vacuum: Timeout handler for stuck commands"
+    description: "Set to 'error_timeout' if acknowledged for 10s but vacuum still idle (network/GA failure)"
+    trigger:
+      platform: state
+      entity_id: input_select.vacuum_command_state
+      to: 'command_acknowledged'
+      for:
+        seconds: 10
+    condition:
+      condition: state
+      entity_id: vacuum.cleaning_lady
+      state: 'idle'
+    action:
+      service: input_select.select_option
+      target:
+        entity_id: input_select.vacuum_command_state
+      data:
+        option: 'error_timeout'
+
+  # AUTOMATION 3: Mark completed when vacuum returns to idle
+  # Trigger: Vacuum state changes to 'idle' or 'docked'
+  # Condition: Helper is currently in 'command_acknowledged' state (means it was executing)
+  # Action: Set helper to 'completed' to indicate job finished
+  # Purpose: Detect job completion and update UI status
+  - id: vacuum_automation_mark_completed
+    alias: "Vacuum: Mark command completed when vacuum docks"
+    description: "Set helper to 'completed' when vacuum returns to idle/docked (job finished)"
+    trigger:
+      platform: state
+      entity_id: vacuum.cleaning_lady
+      to:
+        - 'idle'
+        - 'docked'
+    condition:
+      condition: state
+      entity_id: input_select.vacuum_command_state
+      state: 'command_acknowledged'
+    action:
+      service: input_select.select_option
+      target:
+        entity_id: input_select.vacuum_command_state
+      data:
+        option: 'completed'
+
+  # AUTOMATION 4: Safety reset after 30 minutes
+  # Trigger: Helper state remains unchanged for 30 minutes
+  # Action: Reset helper to 'idle'
+  # Purpose: Safety net to recover from stuck states and prevent hung UI
+  - id: vacuum_automation_safety_reset
+    alias: "Vacuum: Safety reset after 30 minutes"
+    description: "Reset helper to 'idle' after 30 minutes to recover from stuck states"
+    trigger:
+      platform: state
+      entity_id: input_select.vacuum_command_state
+      for:
+        minutes: 30
+    action:
+      service: input_select.select_option
+      target:
+        entity_id: input_select.vacuum_command_state
+      data:
+        option: 'idle'
+
+  # AUTOMATION 5: Relay vacuum error state
+  # Trigger: Vacuum enters 'error' state
+  # Action: Set helper to 'error_unknown' to propagate error
+  # Purpose: Notify UI that vacuum has encountered an error condition
+  - id: vacuum_automation_relay_error
+    alias: "Vacuum: Relay error state to helper"
+    description: "Set helper to 'error_unknown' when vacuum enters error state"
+    trigger:
+      platform: state
+      entity_id: vacuum.cleaning_lady
+      to: 'error'
+    action:
+      service: input_select.select_option
+      target:
+        entity_id: input_select.vacuum_command_state
+      data:
+        option: 'error_unknown'
