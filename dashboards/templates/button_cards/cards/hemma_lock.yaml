@@ -2,14 +2,17 @@ hemma_lock:
   template: [hemma_entity]
 
   show_entity_picture: true
-  show_icon: true   # <-- required so icon_tap_action actually has a target
+  show_icon: true
   show_label: false
+
+  variables:
+    show_toggle: true
 
   entity_picture: |
     [[[
-      return entity.state === 'unlocked'
-        ? '/local/hemma/icons/lock_open.svg'
-        : '/local/hemma/icons/lock.svg';
+      if (entity.state === 'unlocked') return '/local/hemma/icons/lock-open.svg';
+      if (entity.state === 'unlocking') return '/local/hemma/icons/lock-unlocking.svg';
+      return '/local/hemma/icons/lock.svg';
     ]]]
 
   state_display: |
@@ -28,7 +31,6 @@ hemma_lock:
       }
     ]]]
 
-  # Tap anywhere on the card = more-info dialog
   tap_action:
     action: more-info
     entity: '[[[ return entity.entity_id ]]]'
@@ -37,46 +39,85 @@ hemma_lock:
     action: more-info
     entity: '[[[ return entity.entity_id ]]]'
 
-  # Tap ONLY the icon/picture area = toggle lock/unlock
   icon_tap_action:
-    action: call-service
-    service: |
-      [[[
-        return entity.state === 'locked' ? 'lock.unlock' : 'lock.lock';
-      ]]]
-    service_data:
-      entity_id: '[[[ return entity.entity_id ]]]'
+    action: more-info
+    entity: '[[[ return entity.entity_id ]]]'
 
-  # Optional: you can keep icon hold as more-info too
   icon_hold_action:
     action: more-info
     entity: '[[[ return entity.entity_id ]]]'
 
+  state:
+    - value: unlocked
+      styles:
+        card:
+          - "--hemma-active-overlay-opacity": "1"
+          - "--hemma-active-overlay-dur": "0s"
+          - --hemma-entity-top-gradient: none
+          - box-shadow: var(--button-card-box-shadow-active, var(--button-card-box-shadow)) !important
+          - --hemma-icon-color-current: var(--hemma-popup-primary-color, #00c3d0)
+          - --hemma-icon-svg-url: "url('/local/hemma/icons/lock-open.svg')"
+          - --hemma-icon-use-mask: "1"
+          - --hemma-icon-circle-bg: var(--hemma-icon-color-current)
+        name:
+          - color: var(--hemma-entity-name-active, var(--primary-text-color))
+        state:
+          - color: var(--hemma-entity-state-active-color)
+        img_cell:
+          - opacity: "1 !important"
+          - filter: none !important
+          - background: "var(--hemma-popup-primary-color, #00c3d0) !important"
+        entity_picture:
+          - opacity: "1 !important"
+          - filter: none !important
+    - value: unlocking
+      styles:
+        state:
+          - color: var(--hemma-entity-state, rgba(255,255,255,0.65))
+
   styles:
-    entity_picture:
-      - opacity: 0.8
-      - transition: opacity 0.2s ease, filter 0.2s ease, transform 0.15s ease
-      - cursor: pointer
     img_cell:
-      - background: transparent !important
-      - box-shadow: none !important
-      - transition: filter 0.2s ease
-      - cursor: pointer
+      - color: var(--hemma-entity-name-active, var(--primary-text-color)) !important
+    entity_picture:
+      - opacity: var(--hemma-entity-picture-active-opacity, 1) !important
+    icon:
+      - color: var(--hemma-entity-name-active, var(--primary-text-color)) !important
 
   extra_styles: |
-    /* Hover effect for desktop */
-    @media (hover: hover) {
-      #img-cell:hover img {
-        opacity: 1 !important;
-        filter: brightness(1.2) !important;
-        transform: scale(1.05);
-      }
+    #img-cell {
+      position: relative;
+      border-radius: 50% !important;
+      background: var(--hemma-icon-circle-bg, rgba(255,255,255,0.10)) !important;
+      width: 44px !important;
+      height: 44px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
     }
-    /* Active effect for touch */
+    #img-cell::before { opacity: 0 !important; }
+    #img-cell img {
+      width: 68% !important;
+      height: 68% !important;
+      max-width: 68% !important;
+      max-height: 68% !important;
+      object-fit: contain !important;
+      flex: none !important;
+    }
+    #img-cell ha-icon {
+      --mdc-icon-size: 26px !important;
+      flex: none !important;
+      color: rgba(255,255,255,1.0) !important;
+    }
+    #icon { color: rgba(255,255,255,1.0) !important; }
+    @media (max-width: 767px) and (orientation: portrait) {
+      #img-cell { width: 38px !important; height: 38px !important; }
+      #img-cell ha-icon { --mdc-icon-size: 23px !important; }
+      #toggle { filter: invert(var(--hemma-toggle-invert, 0)); }
+    }
+    @media (hover: hover) {
+      #img-cell:hover { filter: brightness(1.15); transform: scale(1.03); transition: filter 0.15s ease, transform 0.15s ease; }
+    }
     @media (hover: none) {
-      #img-cell:active img {
-        opacity: 1 !important;
-        filter: brightness(1.2) !important;
-        transform: scale(1.05);
-      }
+      #img-cell:active { filter: brightness(1.15); transform: scale(1.03); }
     }

@@ -1,0 +1,159 @@
+# Presence Group Badge
+# Shows consolidated presence status for multiple people.
+# Tap to expand/collapse the individual presence badges row
+# (driven by input_select.hemma_expanded_row).
+#
+# Variables:
+#   entity_1          - entity ID of person 1 (required)
+#   entity_2 – entity_4 - entity IDs of additional people (optional)
+hemma_badge_presence_group:
+  template: [hemma_badge_base]
+
+  entity: input_select.hemma_expanded_row
+
+  variables:
+    enabled: true
+    entity_1:
+    entity_2:
+    entity_3:
+    entity_4:
+
+  show_state: false
+  show_label: false
+  show_icon: true
+  icon: mdi:home-account
+
+  tap_action:
+    action: call-service
+    service: input_select.select_option
+    service_data:
+      entity_id: input_select.hemma_expanded_row
+      option: >
+        [[[
+          return states['input_select.hemma_expanded_row']?.state === 'presence' ? 'none' : 'presence';
+        ]]]
+
+  hold_action:
+    action: none
+
+  double_tap_action:
+    action: none
+
+  triggers_update:
+    - '[[[ return variables?.entity_1 ]]]'
+    - '[[[ return variables?.entity_2 ]]]'
+    - '[[[ return variables?.entity_3 ]]]'
+    - '[[[ return variables?.entity_4 ]]]'
+
+  extra_styles: |
+    #img-cell, .img-cell{ position: relative; }
+
+    #img-cell #icon, .img-cell #icon{
+      color: transparent !important;
+      opacity: 0 !important;
+      --icon-primary-color: var(--hemma-badge-icon-color) !important;
+      --paper-item-icon-color: var(--hemma-badge-icon-color) !important;
+      --state-icon-color: var(--hemma-badge-icon-color) !important;
+      --card-mod-icon-color: var(--hemma-badge-icon-color) !important;
+    }
+
+    #img-cell::before,
+    .img-cell::before{
+      content: '';
+      position: absolute;
+      inset: 2px;
+      z-index: 5;
+      background-color: var(--hemma-badge-icon-color, var(--primary-text-color)) !important;
+
+      -webkit-mask: url('/local/hemma/icons/person.svg') no-repeat center / 85% 85%;
+      mask: url('/local/hemma/icons/person.svg') no-repeat center / 85% 85%;
+
+      transform: translateZ(0);
+    }
+
+  styles:
+    card:
+      - background: >
+          [[[
+            return entity?.state === 'presence'
+              ? 'var(--badge-active-color, rgba(255,255,255,0.85))'
+              : 'var(--badge-background, rgba(0,0,0,0.18))';
+          ]]]
+      - display: >
+          [[[
+            const v = variables?.enabled;
+            const enabled = (v === undefined || v === null) ? true :
+              (typeof v === 'boolean') ? v :
+              (typeof v === 'number') ? v !== 0 :
+              !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+            const hasAny = !!(variables?.entity_1 || variables?.entity_2 || variables?.entity_3 || variables?.entity_4);
+            return (enabled && hasAny) ? 'inline-grid' : 'none';
+          ]]]
+      - --badge-title-color: >
+          [[[
+            return entity?.state === 'presence' ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+          ]]]
+      - --badge-sub-color: >
+          [[[
+            return entity?.state === 'presence' ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
+          ]]]
+      - --hemma-badge-icon-color: >
+          [[[
+            if (entity?.state === 'presence') return 'rgba(0,0,0,0.75)';
+            const isHome = (eid) => {
+              if (!eid) return false;
+              const s = String(hass.states[eid]?.state || '').toLowerCase().replace(/_/g, ' ');
+              return s === 'home' || s === 'just arrived';
+            };
+            const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
+            const homeCount = entities.filter(isHome).length;
+            if (homeCount === entities.length) return 'var(--hemma-badge-presence-home-color)';
+            if (homeCount === 0)               return 'var(--badge-title-inactive)';
+            return 'var(--hemma-badge-presence-away-color)';
+          ]]]
+      - --icon-primary-color: var(--hemma-badge-icon-color)
+      - --paper-item-icon-color: var(--hemma-badge-icon-color)
+      - --state-icon-color: var(--hemma-badge-icon-color)
+      - --card-mod-icon-color: var(--hemma-badge-icon-color)
+
+    icon:
+      - color: transparent
+
+  name: >
+    [[[
+      const entities = [
+        variables?.entity_1, variables?.entity_2,
+        variables?.entity_3, variables?.entity_4
+      ].filter(Boolean);
+
+      if (!entities.length) return '';
+
+      const getState = (eid) =>
+        String(hass.states[eid]?.state || '').toLowerCase().replace(/_/g, ' ');
+      const getName = (eid) =>
+        String(hass.states[eid]?.attributes?.friendly_name || '').split(' ')[0] || 'Person';
+      const isHome = (eid) => { const s = getState(eid); return s === 'home' || s === 'just arrived'; };
+
+      const homeCount   = entities.filter(isHome).length;
+      const awayEntities = entities.filter(e => !isHome(e));
+
+      let title, status;
+      if (entities.length === 1) {
+        title  = getName(entities[0]);
+        status = isHome(entities[0]) ? 'Home' : 'Away';
+      } else {
+        title = 'People';
+        if (homeCount === entities.length)  status = 'All Home';
+        else if (homeCount === 0)           status = 'All Away';
+        else                                status = `${awayEntities.length} Away`;
+      }
+
+      const esc = (t) => String(t || '').replaceAll('"', '&quot;');
+      return `
+        <div class="badge-wrap">
+          <div class="badge-title">${esc(title)}</div>
+          <div class="badge-sub">${esc(status)}</div>
+        </div>
+      `;
+    ]]]

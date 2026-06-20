@@ -1,0 +1,86 @@
+hemma_updates:
+  template:
+    - hemma_entity
+    - hemma_popup_updates
+
+  variables:
+    icon: updates
+
+  icon_tap_action:
+    action: more-info
+
+  hold_action:
+    action: more-info
+
+  state_display: |
+    [[[
+      const n = Number(entity.state);
+      if (!Number.isFinite(n) || n <= 0) return 'Up to date';
+      if (n === 1) return '1 Update';
+      return `${n} Updates`;
+    ]]]
+
+  # Active
+  state:
+    - operator: template
+      value: |
+        [[[
+          const n = Number(entity.state);
+          return Number.isFinite(n) && n > 0;
+        ]]]
+      styles:
+        card:
+          - "--hemma-active-overlay-opacity": "1"
+          - "--hemma-active-overlay-dur": "0s"
+          - --hemma-entity-top-gradient: none
+          - box-shadow: var(--button-card-box-shadow-active, var(--button-card-box-shadow)) !important
+        name:
+          - color: var(--hemma-entity-name-active, var(--primary-text-color))
+        state:
+          - color: var(--hemma-entity-state-active-color)
+        img_cell:
+          - opacity: "1 !important"
+          - filter: none !important
+          - background: "var(--hemma-color-teal, #00c3d0) !important"
+        entity_picture:
+          - opacity: "1 !important"
+          - filter: none !important
+
+  extra_styles: |
+    #img-cell {
+      position: relative;
+      border-radius: 50% !important;
+      background: var(--hemma-icon-circle-bg, rgba(255,255,255,0.10)) !important;
+      width: 44px !important;
+      height: 44px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+    }
+    #img-cell::before { opacity: 0 !important; }
+    #img-cell img {
+      width: 68% !important;
+      height: 68% !important;
+      max-width: 68% !important;
+      max-height: 68% !important;
+      object-fit: contain !important;
+      flex: none !important;
+    }
+    #img-cell ha-icon {
+      --mdc-icon-size: 26px !important;
+      flex: none !important;
+      color: rgba(255,255,255,1.0) !important;
+    }
+    #icon { color: rgba(255,255,255,1.0) !important; }
+    @media (max-width: 767px) and (orientation: portrait) {
+      #img-cell { width: 38px !important; height: 38px !important; }
+      #img-cell ha-icon { --mdc-icon-size: 23px !important; }
+      #toggle { filter: invert(var(--hemma-toggle-invert, 0)); }
+    }
+    @media (hover: hover) {
+      #img-cell:hover { filter: brightness(1.15); transform: scale(1.03); transition: filter 0.15s ease, transform 0.15s ease; }
+    }
+    @media (hover: none) {
+      #img-cell:active { filter: brightness(1.15); transform: scale(1.03); }
+    }

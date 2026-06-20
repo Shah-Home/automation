@@ -16,3 +16,6 @@ hemma_nav_button:
     card:
       - background: transparent
       - pointer-events: all
+      - box-shadow: none !important
+      - border: none !important
+      - backdrop-filter: none

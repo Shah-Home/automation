@@ -1,0 +1,225 @@
+hemma_motion:
+  template:
+    - hemma_entity
+
+  show_name: true
+  show_state: true
+  show_entity_picture: true
+
+  entity: |
+    [[[
+      return (
+        variables.sensor_1 ||
+        variables.sensor_2 ||
+        variables.sensor_3 ||
+        variables.sensor_4 ||
+        variables.sensor_5 ||
+        variables.sensor_6 ||
+        null
+      );
+    ]]]
+
+  variables:
+    default_name: Motion
+    sensor_1: null
+    label_1: null
+    sensor_2: null
+    label_2: null
+    sensor_3: null
+    label_3: null
+    sensor_4: null
+    label_4: null
+    sensor_5: null
+    label_5: null
+    sensor_6: null
+    label_6: null
+
+  triggers_update:
+    - '[[[ return variables.sensor_1 || "" ]]]'
+    - '[[[ return variables.sensor_2 || "" ]]]'
+    - '[[[ return variables.sensor_3 || "" ]]]'
+    - '[[[ return variables.sensor_4 || "" ]]]'
+    - '[[[ return variables.sensor_5 || "" ]]]'
+    - '[[[ return variables.sensor_6 || "" ]]]'
+
+  tap_action:
+    action: more-info
+    entity: |
+      [[[
+        const sensors = [
+          { id: variables.sensor_1, label: variables.label_1 },
+          { id: variables.sensor_2, label: variables.label_2 },
+          { id: variables.sensor_3, label: variables.label_3 },
+          { id: variables.sensor_4, label: variables.label_4 },
+          { id: variables.sensor_5, label: variables.label_5 },
+          { id: variables.sensor_6, label: variables.label_6 },
+        ].filter(s => s.id);
+        const active = sensors.find(s => states[s.id]?.state === 'on');
+        if (active) return active.id;
+
+        if (sensors.length > 0) {
+          return sensors.slice().sort((a, b) =>
+            new Date(states[b.id]?.last_changed || 0) - new Date(states[a.id]?.last_changed || 0)
+          )[0].id;
+        }
+        return entity?.entity_id || null;
+      ]]]
+
+  hold_action:
+    action: more-info
+
+  icon_tap_action:
+    action: more-info
+    entity: |
+      [[[
+        const sensors = [
+          { id: variables.sensor_1, label: variables.label_1 },
+          { id: variables.sensor_2, label: variables.label_2 },
+          { id: variables.sensor_3, label: variables.label_3 },
+          { id: variables.sensor_4, label: variables.label_4 },
+          { id: variables.sensor_5, label: variables.label_5 },
+          { id: variables.sensor_6, label: variables.label_6 },
+        ].filter(s => s.id);
+        const active = sensors.find(s => states[s.id]?.state === 'on');
+        if (active) return active.id;
+        if (sensors.length > 0) {
+          return sensors.slice().sort((a, b) =>
+            new Date(states[b.id]?.last_changed || 0) - new Date(states[a.id]?.last_changed || 0)
+          )[0].id;
+        }
+        return entity?.entity_id || null;
+      ]]]
+
+  entity_picture: |
+    [[[
+      return '/local/hemma/icons/motion.svg';
+    ]]]
+
+  # In multi-sensor mode (no entity), shows active room label or default_name.
+  # In single-sensor mode, card-level name: overrides this template.
+  name: |
+    [[[
+      const sensors = [
+        { id: variables.sensor_1, label: variables.label_1 },
+        { id: variables.sensor_2, label: variables.label_2 },
+        { id: variables.sensor_3, label: variables.label_3 },
+        { id: variables.sensor_4, label: variables.label_4 },
+        { id: variables.sensor_5, label: variables.label_5 },
+        { id: variables.sensor_6, label: variables.label_6 },
+      ].filter(s => s.id);
+      if (sensors.length === 0) return variables.default_name || 'Motion';
+      const active = sensors.find(s => states[s.id]?.state === 'on');
+      return active ? active.label : (variables.default_name || 'Motion');
+    ]]]
+
+  state_display: |
+    [[[
+      const sensors = [
+        variables.sensor_1, variables.sensor_2, variables.sensor_3,
+        variables.sensor_4, variables.sensor_5, variables.sensor_6,
+      ].filter(Boolean);
+      if (sensors.length > 0) {
+        return sensors.some(id => states[id]?.state === 'on') ? 'Detected' : 'Clear';
+      }
+      return entity?.state === 'on' ? 'Detected' : 'Clear';
+    ]]]
+
+  # Multi-sensor active state — fires when any variable sensor is on.
+  # Base hemma_entity state condition handles single-sensor (entity.state === 'on').
+  state:
+    - operator: template
+      value: |
+        [[[
+          const sensors = [
+            variables.sensor_1, variables.sensor_2, variables.sensor_3,
+            variables.sensor_4, variables.sensor_5, variables.sensor_6,
+          ].filter(Boolean);
+          if (sensors.length === 0) return false;
+          return sensors.some(id => states[id]?.state === 'on');
+        ]]]
+      styles:
+        card:
+          - "--hemma-active-overlay-opacity": "1"
+          - "--hemma-active-overlay-dur": "0s"
+          - --hemma-entity-top-gradient: none
+          - box-shadow: var(--button-card-box-shadow-active, var(--button-card-box-shadow)) !important
+        name:
+          - color: var(--hemma-entity-name-active, var(--primary-text-color))
+        state:
+          - color: var(--hemma-entity-name-active, var(--primary-text-color))
+          - opacity: '1'
+        icon:
+          - color: var(--hemma-entity-name-active, var(--primary-text-color))
+        img_cell:
+          - opacity: "1 !important"
+          - filter: none !important
+          - background: "var(--hemma-popup-primary-color, #00c3d0) !important"
+        entity_picture:
+          - opacity: "1 !important"
+          - filter: none !important
+
+  styles:
+    state:
+      - color: |
+          [[[
+            const sensors = [
+              variables.sensor_1, variables.sensor_2, variables.sensor_3,
+              variables.sensor_4, variables.sensor_5, variables.sensor_6,
+            ].filter(Boolean);
+            const active = sensors.length > 0
+              ? sensors.some(id => states[id]?.state === 'on')
+              : entity?.state === 'on';
+            return active
+              ? 'var(--hemma-entity-name-active, var(--primary-text-color))'
+              : 'var(--hemma-entity-state, var(--secondary-text-color))';
+          ]]]
+      - opacity: |
+          [[[
+            const sensors = [
+              variables.sensor_1, variables.sensor_2, variables.sensor_3,
+              variables.sensor_4, variables.sensor_5, variables.sensor_6,
+            ].filter(Boolean);
+            const active = sensors.length > 0
+              ? sensors.some(id => states[id]?.state === 'on')
+              : entity?.state === 'on';
+            return active ? '1' : '0.55';
+          ]]]
+
+  extra_styles: |
+    #img-cell {
+      position: relative;
+      border-radius: 50% !important;
+      background: var(--hemma-icon-circle-bg, rgba(255,255,255,0.10)) !important;
+      width: 44px !important;
+      height: 44px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+    }
+    #img-cell::before { opacity: 0 !important; }
+    #img-cell img {
+      width: 68% !important;
+      height: 68% !important;
+      max-width: 68% !important;
+      max-height: 68% !important;
+      object-fit: contain !important;
+      flex: none !important;
+    }
+    #img-cell ha-icon {
+      --mdc-icon-size: 26px !important;
+      flex: none !important;
+      color: rgba(255,255,255,1.0) !important;
+    }
+    #icon { color: rgba(255,255,255,1.0) !important; }
+    @media (max-width: 767px) and (orientation: portrait) {
+      #img-cell { width: 38px !important; height: 38px !important; }
+      #img-cell ha-icon { --mdc-icon-size: 23px !important; }
+      #toggle { filter: invert(var(--hemma-toggle-invert, 0)); }
+    }
+    @media (hover: hover) {
+      #img-cell:hover { filter: brightness(1.15); transform: scale(1.03); transition: filter 0.15s ease, transform 0.15s ease; }
+    }
+    @media (hover: none) {
+      #img-cell:active { filter: brightness(1.15); transform: scale(1.03); }
+    }

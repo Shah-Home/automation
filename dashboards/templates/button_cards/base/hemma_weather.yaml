@@ -1,29 +1,37 @@
-# Weather Widget (Mobile portrait hero row)
+# Weather Widget
 # ============================================================================
-# CONFIGURABLE VARIABLES:
-#   temp_unit: 'F' or 'C' (default: 'F')
+# MODES:
+#   hero_mode: false (default) — compact, right-aligned, used in the mobile
+#              portrait 'weather' area
+#   hero_mode: true            — large, left-aligned, used as the desktop/tablet
+#              temperature widget (Home dashboard only)
 #
-# TEMPERATURE THRESHOLDS (keep in sync with hemma_temperature.yaml):
-#   Fahrenheit (default)     Celsius (temp_unit: 'C')
-#   Very Cold:   <= 65°F     Very Cold:   <= 18°C
-#   Cool:        <= 70°F     Cool:        <= 21°C
-#   Comfortable: <= 76°F     Comfortable: <= 24°C
-#   Warm:        <= 81°F     Warm:        <= 27°C
-#   Hot:         <= 85°F     Hot:         <= 29°C
-#   Very Hot:    > 85°F      Very Hot:    > 29°C
+# CONFIGURABLE VARIABLES:
+#   weather_temp_sensor:    entity_id of current temp sensor override
 # ============================================================================
 hemma_weather:
   variables:
     show_icon: true
-    weather_mode: ''
     weather_temp_sensor: ''
-    temp_sensor: ''
-    temp_unit: 'F'
+    hero_mode: false
 
   show_icon: true
   show_name: true
   show_label: true
-  show_state: false
+
+  show_entity_picture: >
+    [[[
+      if (variables?.hero_mode) return false;
+      if (variables?.show_icon === false) return false;
+
+      const condRaw = String(entity?.state || '').toLowerCase();
+      const knownStates = new Set([
+        'sunny','clear-night','partlycloudy','cloudy','overcast',
+        'rainy','pouring','snowy','snow','snowy-rainy','hail',
+        'lightning','lightning-rainy','fog','windy','windy-variant','exceptional'
+      ]);
+      return knownStates.has(condRaw);
+    ]]]
 
   tap_action:
     action: more-info
@@ -31,12 +39,12 @@ hemma_weather:
   triggers_update:
     - '[[[ return entity?.entity_id ]]]'
     - '[[[ return variables?.weather_temp_sensor ]]]'
-    - '[[[ return variables?.temp_sensor ]]]'
 
   styles:
     card:
       - background: none
       - box-shadow: none
+      - backdrop-filter: none
       - border: 0
       - padding: 0
       - margin: 0
@@ -45,26 +53,63 @@ hemma_weather:
       - overflow: visible
       - "--mdc-ripple-press-opacity": 0
       - "-webkit-tap-highlight-color": transparent
+      - --weather-icon-size: |
+          [[[
+            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isTablet = !isMobile && window.matchMedia('(max-width: 1024px)').matches;
+            if (isMobile) return 'var(--weather-icon-size-mobile, 26px)';
+            if (isTablet) return 'var(--weather-icon-size-tablet, 34px)';
+            return 'var(--weather-icon-size-desktop, 34px)';
+          ]]]
 
     grid:
-      # Matches the hemma_room.yaml weather widget layout
-      - grid-template-areas: '"n i" "l i"'
-      - grid-template-columns: max-content max-content
-      - grid-template-rows: min-content min-content
-      - column-gap: 4px
-      - row-gap: 0px
-      - justify-content: end
-      - justify-items: end
+      - grid-template-areas: >
+          [[[
+            return variables.hero_mode ? '"n"' : '"n i" "l i"';
+          ]]]
+      - grid-template-columns: >
+          [[[
+            return variables.hero_mode ? 'max-content' : 'max-content max-content';
+          ]]]
+      - grid-template-rows: >
+          [[[
+            return variables.hero_mode ? 'min-content' : 'min-content min-content';
+          ]]]
+      - column-gap: |
+          [[[
+            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            return isMobile ? '7px' : '5px';
+          ]]]
+      - row-gap: 2px
+      - justify-content: >
+          [[[
+            return variables.hero_mode ? 'start' : 'end';
+          ]]]
+      - justify-items: >
+          [[[
+            return variables.hero_mode ? 'start' : 'end';
+          ]]]
       - align-items: start
       - overflow: visible
       - min-width: 0
       - margin-right: 0
 
     name:
-      - justify-self: end
-      - text-align: right
-      - font-size: var(--hero-weather-title-size, 12px)
-      - font-weight: 700
+      - justify-self: >
+          [[[
+            return variables.hero_mode ? 'start' : 'end';
+          ]]]
+      - text-align: >
+          [[[
+            return variables.hero_mode ? 'left' : 'right';
+          ]]]
+      - font-size: |
+          [[[
+            if (variables.hero_mode) return 'var(--hero-weather-hero-temp-size, 28px)';
+            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            return isMobile ? 'var(--hero-weather-title-size-mobile, 15px)' : 'var(--hero-weather-title-size, 15px)';
+          ]]]
+      - font-weight: 600
       - letter-spacing: -0.2px
       - line-height: 1
       - white-space: nowrap
@@ -73,39 +118,49 @@ hemma_weather:
       - max-width: 100%
       - opacity: 0.95
 
+    icon:
+      - width: var(--weather-icon-size, 34px)
+      - height: var(--weather-icon-size, 34px)
+      - align-self: center
+
+    img_cell:
+      - width: var(--weather-icon-size, 34px)
+      - overflow: visible
+      - align-self: center
+      - position: relative
+
+    entity_picture:
+      - grid-area: i
+      - position: absolute
+      - top: 50%
+      - left: 50%
+      - transform: translate(-50%, -50%)
+      - width: auto
+      - height: var(--weather-icon-size, 34px)
+      - object-fit: contain
+      - border-radius: 0
+
     label:
+      - grid-area: l
       - justify-self: end
       - text-align: right
-      - font-size: var(--hero-weather-sub-size, 12px)
+      - font-size: |
+          [[[
+            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            return isMobile ? 'var(--hero-weather-sub-size-mobile, 13px)' : 'var(--hero-weather-sub-size, 12px)';
+          ]]]
       - font-weight: 500
-      - line-height: 1.2
-      - margin-top: -2px
-      - opacity: 0.76
+      - line-height: 1.1
+      - margin-top: -3px
       - white-space: nowrap
       - overflow: visible
       - text-overflow: ellipsis
       - max-width: 100%
-
-    icon:
-      - width: var(--hero-weather-icon-size, 30px)
-      - height: var(--hero-weather-icon-size, 30px)
-      - opacity: 0.92
+      - opacity: 0.76
 
   name: >
     [[[
-      const mode = String(variables.weather_mode || '').toLowerCase();
-      const isRoom = (mode === 'room');
-
       let tempVal = null;
-
-      if (isRoom && variables.temp_sensor) {
-        const s = states[variables.temp_sensor];
-        if (s && !['unknown','unavailable',''].includes(String(s.state))) {
-          const n = Number(s.state);
-          if (!Number.isNaN(n)) tempVal = Math.round(n);
-        }
-        return (tempVal === null) ? '' : `${tempVal}°`;
-      }
 
       const tempEid = variables.weather_temp_sensor;
       const w = entity;
@@ -123,81 +178,46 @@ hemma_weather:
         if (!Number.isNaN(n)) tempVal = Math.round(n);
       }
 
-      if (tempVal === null && variables.temp_sensor) {
-        const s = states[variables.temp_sensor];
-        const n = Number(s?.state);
-        if (!Number.isNaN(n)) tempVal = Math.round(n);
+      if (variables?.hero_mode) {
+        if (tempVal === null) return '';
+
+        let iconHtml = '';
+        if (variables?.show_icon !== false) {
+          const condRaw = String(w?.state || '').toLowerCase();
+          const svgMap = {
+            'sunny':           'clear-day',
+            'clear-night':     'clear-night',
+            'partlycloudy':    'partly-cloudy-day',
+            'cloudy':          'cloudy',
+            'overcast':        'cloudy',
+            'rainy':           'rain',
+            'pouring':         'rain-heavy',
+            'snowy':           'snow',
+            'snow':            'snow',
+            'snowy-rainy':     'eather-mixed',
+            'hail':            'rain-heavy',
+            'lightning':       'thunder',
+            'lightning-rainy': 'lightning-rainy',
+            'fog':             'fog',
+            'windy':           'wind',
+            'windy-variant':   'wind',
+            'exceptional':     'weather-mixed'
+          };
+          const file = svgMap[condRaw];
+          if (file) {
+            iconHtml = `<img src="/local/hemma/weather/${file}.svg" style="width:auto;height:var(--weather-icon-size,34px);object-fit:contain;opacity:0.92;flex-shrink:0;" />`;
+          }
+        }
+
+        return `<span style="display:inline-flex;align-items:center;gap:4px;">${tempVal}°${iconHtml}</span>`;
       }
 
       return (tempVal === null) ? '' : `${tempVal}°`;
     ]]]
 
-  label: >
-    [[[
-      const mode = String(variables.weather_mode || '').toLowerCase();
-      const isRoom = (mode === 'room');
-      const unit = String(variables.temp_unit || 'F').toUpperCase();
-
-      const thresholds = (unit === 'C')
-        ? { veryCold: 18, cool: 21, comfortable: 24, warm: 27, hot: 29 }
-        : { veryCold: 65, cool: 70, comfortable: 76, warm: 81, hot: 85 };
-
-      const getComfortLabel = (v) => {
-        if (v <= thresholds.veryCold) return 'Very Cold';
-        if (v <= thresholds.cool) return 'Cool';
-        if (v <= thresholds.comfortable) return 'Comfortable';
-        if (v <= thresholds.warm) return 'Warm';
-        if (v <= thresholds.hot) return 'Hot';
-        return 'Very Hot';
-      };
-
-      if (isRoom && variables.temp_sensor) {
-        const s = states[variables.temp_sensor];
-        if (!s || ['unknown','unavailable',''].includes(String(s.state))) return '';
-
-        const v = Number(s.state);
-        if (Number.isNaN(v)) return '';
-
-        return getComfortLabel(v);
-      }
-
-      const w = entity;
-      const condRaw = String(w?.state || '').toLowerCase();
-      if (!condRaw || ['unknown','unavailable'].includes(condRaw)) return '';
-
-      // Use HA localization if available, else prettify
-      if (hass?.localize) {
-        const t = hass.localize(`state.weather.${condRaw}`);
-        if (t && !t.includes(`state.weather.${condRaw}`)) return t;
-      }
-
-      const weatherMap = {
-        'partlycloudy': 'Partly Cloudy',
-        'clear-night': 'Clear Night',
-        'snowy-rainy': 'Snowy Rainy',
-        'lightning-rainy': 'Lightning Rainy',
-        'windy-variant': 'Windy Variant'
-      };
-
-      if (weatherMap[condRaw]) return weatherMap[condRaw];
-
-      return condRaw
-        .replace(/_/g,' ')
-        .replace(/-/g,' ')
-        .replace(/\b\w/g, c => c.toUpperCase());
-    ]]]
-
   icon: >
     [[[
-      const show = (variables?.show_icon !== false);
-      if (!show) return 'mdi:blank';
-
-      const mode = String(variables.weather_mode || '').toLowerCase();
-      const isRoom = (mode === 'room');
-
-      if (isRoom) {
-        return 'mdi:home-thermometer-outline';
-      }
+      if (variables?.show_icon === false) return 'mdi:blank';
 
       const w = entity;
       const condRaw = String(w?.state || '').toLowerCase();
@@ -223,4 +243,96 @@ hemma_weather:
       };
 
       return iconMap[condRaw] || w?.attributes?.icon || 'mdi:weather-partly-cloudy';
+    ]]]
+
+  entity_picture: >
+    [[[
+      if (variables?.hero_mode) return null;
+      if (variables?.show_icon === false) return null;
+
+      const condRaw = String(entity?.state || '').toLowerCase();
+
+      const svgMap = {
+        'sunny':           'clear-day',
+        'clear-night':     'clear-night',
+        'partlycloudy':    'partly-cloudy-day',
+        'cloudy':          'cloudy',
+        'overcast':        'cloudy',
+        'rainy':           'rain',
+        'pouring':         'rain-heavy',
+        'snowy':           'snow',
+        'snow':            'snow',
+        'snowy-rainy':     'weather-mixed',
+        'hail':            'rain-heavy',
+        'lightning':       'thunder',
+        'lightning-rainy': 'lightning-rainy',
+        'fog':             'fog',
+        'windy':           'wind',
+        'windy-variant':   'wind',
+        'exceptional':     'weather-mixed'
+      };
+
+      const file = svgMap[condRaw];
+      if (!file) return null;
+
+      return `/local/hemma/weather/${file}.svg`;
+    ]]]
+
+  label: >
+    [[[
+      if (variables?.hero_mode) return '';
+
+      const condKey = String(entity?.state || '').toLowerCase().trim();
+      if (!condKey || ['unknown', 'unavailable'].includes(condKey)) return '';
+
+      if (hass?.localize) {
+        const loc = hass.localize(`state.weather.${condKey}`);
+        if (loc && !loc.includes(`state.weather.${condKey}`)) return loc;
+      }
+
+      const fallbackMap = {
+        'partlycloudy':    'Partly Cloudy',
+        'clear-night':     'Clear Night',
+        'snowy-rainy':     'Snowy Rainy',
+        'lightning-rainy': 'Lightning Rainy',
+        'windy-variant':   'Windy Variant'
+      };
+      return fallbackMap[condKey]
+        || condKey.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    ]]]
+
+  extra_styles: >
+    [[[
+      let css = `
+        :host ha-card,
+        :host(:hover) ha-card,
+        :host(:focus) ha-card,
+        :host(:focus-within) ha-card,
+        :host(:active) ha-card {
+          background: transparent !important;
+          background-color: transparent !important;
+          box-shadow: none !important;
+          border: 0 !important;
+          filter: none !important;
+          transform: none !important;
+          opacity: 1 !important;
+          --ha-card-box-shadow: none !important;
+        }
+
+        :host ha-card:hover,
+        :host(:hover) ha-card:hover {
+          box-shadow: none !important;
+          --ha-card-box-shadow: none !important;
+        }
+
+        ha-ripple {
+          display: none !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+        }
+      `;
+      if (variables?.hero_mode) {
+        css += '#icon { display: none !important; } #label { display: none !important; }';
+      }
+      return css;
     ]]]

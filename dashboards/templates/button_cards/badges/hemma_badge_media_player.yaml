@@ -1,0 +1,520 @@
+# Media Player Badge
+hemma_badge_media_player:
+  template: [hemma_badge_base]
+  show_icon: false
+  show_entity_picture: true
+  show_name: true
+  show_state: false
+  show_label: false
+
+  variables:
+    enabled: true
+    entity: null
+    pause_timeout_minutes: 5
+    group_entities: null
+
+  entity: '[[[ return variables.entity || entity?.entity_id ]]]'
+
+  triggers_update:
+    - '[[[ return variables.entity || entity?.entity_id; ]]]'
+
+  styles:
+    card:
+      - padding: 0 8px 0 8px !important
+      - background: rgba(0,0,0,0.18) !important
+      - -webkit-backdrop-filter: blur(14px) saturate(1.2) !important
+      - backdrop-filter: blur(14px) saturate(1.2) !important
+      - border-radius: 9999px !important
+      - overflow: hidden !important
+      - border: none !important
+      - width: fit-content !important
+      - max-width: var(--badge-media-max-width-current, none) !important
+      - min-height: calc(var(--badge-min-height-current, var(--badge-min-height, 50px)) + 3px) !important
+      - align-items: center !important
+      - justify-content: flex-start !important
+      - text-align: left !important
+      - gap: 6px !important
+      - isolation: isolate
+      - margin: 0 !important
+      - display: inline-grid
+      - justify-self: start !important
+      - align-self: start !important
+      - place-self: start !important
+      - --badge-icon-size-current: var(--badge-media-icon-size-current, var(--badge-media-icon-size, 44px))
+
+      - --hemma-badge-opacity: >
+          [[[
+            const enabled = (v) => {
+              if (v === undefined || v === null) return true;
+              if (typeof v === 'boolean') return v;
+              if (typeof v === 'number') return v !== 0;
+              const s = String(v).trim().toLowerCase();
+              return !['false','0','no','off','disabled'].includes(s);
+            };
+
+            if (!enabled(variables.enabled)) return '0';
+
+            const eid = variables.entity || entity?.entity_id;
+            const s = eid ? states[eid] : null;
+            if (!s) return '0';
+
+            const st = String(s.state || '');
+            if (['unavailable','unknown','off','standby'].includes(st)) return '0';
+
+            const a = s.attributes || {};
+            const title  = String(a.media_title || '').trim();
+            const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+            const hasContent = !!(title || artist);
+
+            if (['playing','buffering'].includes(st)) return hasContent ? '1' : '0';
+
+            if (st === 'paused') {
+              if (!hasContent) return '0';
+              const timeout = Number(variables.pause_timeout_minutes ?? 5);
+              if (timeout <= 0) return '1';
+              return ((new Date() - new Date(s.last_changed)) / 60000) > timeout ? '0' : '1';
+            }
+
+            if (['idle','on'].includes(st)) return hasContent ? '1' : '0';
+
+            return '0';
+          ]]]
+
+      - --hemma-badge-ptr: >
+          [[[
+            const enabled = (v) => {
+              if (v === undefined || v === null) return true;
+              if (typeof v === 'boolean') return v;
+              if (typeof v === 'number') return v !== 0;
+              const s = String(v).trim().toLowerCase();
+              return !['false','0','no','off','disabled'].includes(s);
+            };
+
+            if (!enabled(variables.enabled)) return 'none';
+
+            const eid = variables.entity || entity?.entity_id;
+            const s = eid ? states[eid] : null;
+            if (!s) return 'none';
+
+            const st = String(s.state || '');
+            if (['unavailable','unknown','off','standby'].includes(st)) return 'none';
+
+            const a = s.attributes || {};
+            const title  = String(a.media_title || '').trim();
+            const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+            const hasContent = !!(title || artist);
+
+            if (['playing','buffering'].includes(st)) return hasContent ? 'auto' : 'none';
+
+            if (st === 'paused') {
+              if (!hasContent) return 'none';
+              const timeout = Number(variables.pause_timeout_minutes ?? 5);
+              if (timeout <= 0) return 'auto';
+              return ((new Date() - new Date(s.last_changed)) / 60000) > timeout ? 'none' : 'auto';
+            }
+
+            if (['idle','on'].includes(st)) return hasContent ? 'auto' : 'none';
+
+            return 'none';
+          ]]]
+
+      - --bg-url: >
+          [[[
+            const cacheKey = '_hemmaMpBgUrl';
+            const eid = variables.entity || entity?.entity_id;
+            const a = eid ? (states[eid]?.attributes || {}) : {};
+
+            const raw =
+              a.entity_picture ||
+              a.media_image_url ||
+              a.media_album_cover_url ||
+              a.image_url;
+
+            if (raw) {
+              const url = String(raw).startsWith('/') ? `${location.origin}${raw}` : raw;
+              const wrapped = `url("${url}")`;
+              this[cacheKey] = wrapped;
+              return wrapped;
+            }
+            return this[cacheKey] || 'none';
+          ]]]
+
+    grid:
+      - grid-template-areas: '"i info controls"'
+      - grid-template-columns: min-content minmax(0, 1fr) min-content
+      - column-gap: 11px
+      - align-items: center
+
+    entity_picture:
+      - grid-area: i
+      - width: var(--badge-media-icon-size-current, var(--badge-media-icon-size, 44px)) !important
+      - height: var(--badge-media-icon-size-current, var(--badge-media-icon-size, 44px)) !important
+      - min-width: var(--badge-media-icon-size-current, var(--badge-media-icon-size, 44px)) !important
+      - min-height: var(--badge-media-icon-size-current, var(--badge-media-icon-size, 44px)) !important
+      - border-radius: 9999px !important
+      - object-fit: cover !important
+      - box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14) !important
+      - z-index: 6
+
+    name:
+      - grid-area: info
+      - padding: 0 7px 0 0 !important
+      - margin-top: 2px !important
+      - min-width: 0
+      - max-width: 100%
+      - overflow: hidden !important
+      - text-align: left !important
+      - justify-self: start
+      - z-index: 6
+
+    custom_fields:
+      controls:
+        - grid-area: controls
+        - z-index: 30
+
+  entity_picture: >
+    [[[
+      const eid = variables.entity || entity?.entity_id;
+      const a = eid ? (states[eid]?.attributes || {}) : {};
+      const raw =
+        a.entity_picture ||
+        a.media_image_url ||
+        a.media_album_cover_url ||
+        a.image_url;
+
+      if (raw) return String(raw).startsWith('/') ? `${location.origin}${raw}` : raw;
+
+      const appName = String(a.app_name || a.source || '').toLowerCase();
+      const appId = String(a.app_id || '').toLowerCase();
+      if (appName.includes('youtube') || appId.includes('youtube'))
+        return '/local/hemma/icons/youtube.png';
+
+      return null;
+    ]]]
+
+  name: >
+    [[[
+      const eid = variables.entity || entity?.entity_id;
+      const a = eid ? (states[eid]?.attributes || {}) : {};
+      const rawTitle = String(a.media_title || '').trim();
+      let artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+      let title = rawTitle;
+
+      if (!artist && a.media_content_type === 'tvshow') {
+        const series = String(a.media_series_title || '').trim();
+        const season  = a.media_season  ? `S${String(a.media_season).padStart(2,'0')}`  : '';
+        const episode = a.media_episode ? `E${String(a.media_episode).padStart(2,'0')}` : '';
+        const ep = [season, episode].filter(Boolean).join('');
+        artist = [series, ep].filter(Boolean).join(' · ');
+      }
+
+      if (!artist) {
+        const parts = rawTitle.split(/\s+[-–—]\s+/);
+        if (parts.length >= 3) {
+          title = parts[parts.length - 1];
+          artist = parts.slice(0, parts.length - 1).join(' – ');
+        }
+      }
+
+      const esc = (s) => String(s ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+
+      const groupCount = Array.isArray(variables.group_entities) ? variables.group_entities.length + 1 : 0;
+      const countPill = groupCount > 1 ? `<span class="group-count"><span class="gc-plus">+</span>${groupCount}</span>` : '';
+
+      return `
+        <div class="badge-wrap">
+          <div class="badge-title">${esc(title || a.friendly_name || 'Media')}${countPill}</div>
+          <div class="badge-sub">${esc(artist || '')}</div>
+        </div>
+      `;
+    ]]]
+
+  tap_action:
+    action: more-info
+    entity: '[[[ return variables.entity || entity?.entity_id ]]]'
+
+  hold_action:
+    action: none
+
+  custom_fields:
+    controls:
+      card:
+        type: custom:button-card
+        show_icon: false
+        show_name: false
+        show_state: false
+        styles:
+          card:
+            - background: transparent
+            - box-shadow: none
+            - padding: 0
+            - margin: 0
+            - border-radius: 9999px
+            - border: none !important
+            - box-shadow: none !important
+            - backdrop-filter: none !important
+          grid:
+            - grid-template-areas: '"play next"'
+            - grid-template-columns: min-content min-content
+            - column-gap: 8px
+            - align-items: center
+
+        custom_fields:
+          play:
+            card:
+              type: custom:button-card
+              entity: '[[[ return variables.entity ]]]'
+              icon: >
+                [[[
+                  const eid = variables.entity;
+                  const st = eid ? String(states[eid]?.state || '') : '';
+                  return (st === 'playing') ? 'mdi:pause' : 'mdi:play';
+                ]]]
+              show_icon: true
+              show_name: false
+              styles:
+                card:
+                  - width: var(--badge-media-btn-size-current, var(--badge-media-btn-size, 44px))
+                  - height: var(--badge-media-btn-size-current, var(--badge-media-btn-size, 44px))
+                  - border-radius: 9999px
+                  - background: rgba(255,255,255,0.10)
+                  - box-shadow: none !important
+                  - border: none !important
+                  - padding: 6px
+                  - transform: none !important
+                grid:
+                  - place-items: center
+                icon:
+                  - color: rgba(255,255,255,0.92)
+                  - width: var(--badge-media-btn-icon-size-current, var(--badge-media-btn-icon-size, 28px))
+                  - height: var(--badge-media-btn-icon-size-current, var(--badge-media-btn-icon-size, 28px))
+              tap_action:
+                action: call-service
+                service: media_player.media_play_pause
+                service_data:
+                  entity_id: '[[[ return [variables.entity, ...(variables.group_entities||[])].filter(Boolean) ]]]'
+              extra_styles: |
+                ha-ripple,
+                mwc-ripple {
+                  display: none !important;
+                }
+                ha-card{
+                  transition: background-color .22s ease,
+                              box-shadow .24s ease,
+                              transform .14s ease,
+                              filter .18s ease !important;
+                  transform: none !important;
+                }
+                ha-card:hover{ background: rgba(255,255,255,0.14) !important; }
+                ha-card:active{
+                  background: rgba(255,255,255,0.18) !important;
+                  filter: brightness(1.06) !important;
+                  transform: none !important;
+                }
+
+          next:
+            card:
+              type: custom:button-card
+              icon: mdi:skip-next
+              show_icon: true
+              show_name: false
+              styles:
+                card:
+                  - width: var(--badge-media-btn-size-current, var(--badge-media-btn-size, 44px))
+                  - height: var(--badge-media-btn-size-current, var(--badge-media-btn-size, 44px))
+                  - border-radius: 9999px
+                  - background: rgba(255,255,255,0.10)
+                  - padding: 6px
+                  - transform: none !important
+                  - box-shadow: none !important
+                  - border: none !important
+                grid:
+                  - place-items: center
+                icon:
+                  - color: rgba(255,255,255,0.92)
+                  - width: var(--badge-media-btn-icon-size-current, var(--badge-media-btn-icon-size, 28px))
+                  - height: var(--badge-media-btn-icon-size-current, var(--badge-media-btn-icon-size, 28px))
+              tap_action:
+                action: call-service
+                service: media_player.media_next_track
+                service_data:
+                  entity_id: '[[[ return [variables.entity, ...(variables.group_entities||[])].filter(Boolean) ]]]'
+              extra_styles: |
+                ha-ripple,
+                mwc-ripple {
+                  display: none !important;
+                }
+                ha-card{
+                  transition: background-color .22s ease,
+                              box-shadow .24s ease,
+                              transform .14s ease,
+                              filter .18s ease !important;
+                  transform: none !important;
+                }
+                ha-card:hover{ background: rgba(255,255,255,0.14) !important; }
+                ha-card:active{
+                  background: rgba(255,255,255,0.18) !important;
+                  filter: brightness(1.06) !important;
+                  transform: none !important;
+                }
+
+  extra_styles: |
+    ha-ripple,
+    mwc-ripple {
+      display: none !important;
+    }
+
+    :host{
+      --hemma-badge-title: var(--badge-font-size-current, var(--badge-font-size, 15px));
+      --hemma-badge-sub: calc(var(--hemma-badge-title) - 2px);
+
+      display: inline-block !important;
+      width: fit-content !important;
+      max-width: 100% !important;
+      justify-self: start !important;
+      align-self: start !important;
+      pointer-events: none !important;
+      padding-top: 2px !important;
+      margin-left: 1px !important;
+    }
+
+    :host ha-card{
+      cursor: pointer;
+      pointer-events: var(--hemma-badge-ptr, none);
+      opacity: 1 !important;
+      transform: none !important;
+      transition: box-shadow 0.2s ease !important;
+    }
+
+    :host ha-card:not(#hemma-badge-shadow-suppress):hover{
+      box-shadow: inset 0 0 0 9999px rgba(255,255,255,0.08) !important;
+    }
+
+    :host ha-card:not(#hemma-badge-shadow-suppress):active{
+      box-shadow: inset 0 0 0 9999px rgba(255,255,255,0.16) !important;
+    }
+
+    :host ha-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      border-radius: inherit;
+      background: var(--bg-url);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(26px) saturate(2.0);
+      opacity: .62;
+      transform: scale(1.25);
+    }
+
+    :host ha-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      border-radius: inherit;
+      border: 1px solid rgba(255,255,255,0.5) !important;
+      background:
+        radial-gradient(
+          ellipse at 50% -20%,
+          rgba(255,255,255,0.32) 0%,
+          rgba(255,255,255,0.15) 45%,
+          transparent 68%
+        ),
+        radial-gradient(
+          ellipse at 50% 120%,
+          rgba(255,255,255,0.18) 0%,
+          transparent 50%
+        );
+      mix-blend-mode: overlay;
+      opacity: 1 !important;
+    }
+
+    @media (max-width: 767px) and (orientation: portrait) {
+      :host {
+        --badge-media-max-width-current: calc(100vw - 2 * var(--hero-gutter, 16px));
+      }
+    }
+
+    #container{
+      height: auto !important;
+      min-height: 0 !important;
+      align-items: center !important;
+      align-content: center !important;
+    }
+
+    .badge-wrap{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:2px;
+      min-width:0;
+      max-width:100%;
+      overflow:hidden;
+      padding-top: 0 !important;
+      padding-bottom: 2px !important;
+      line-height: normal !important;
+    }
+
+    .badge-title{
+      font-size: var(--hemma-badge-title);
+      font-weight: 700;
+      line-height: 1.1;
+      color: rgba(255,255,255,0.96);
+      text-shadow: 0 0 3px rgba(0,0,0,0.25);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:100%;
+      text-align:left;
+    }
+
+    .badge-sub{
+      font-size: var(--hemma-badge-sub);
+      font-weight: 500;
+      line-height: 1.14;
+      opacity: .82;
+      color: rgba(255,255,255,0.90);
+      text-shadow: 0 0 3px rgba(0,0,0,0.20);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:100%;
+      text-align:left;
+    }
+
+    #img-cell, #name, #custom_fields{
+      position: relative;
+      z-index: 6;
+    }
+
+    .group-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 2px 5px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.22);
+      color: rgba(255,255,255,0.95);
+      margin-left: 6px;
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+      letter-spacing: 0.02em;
+    }
+
+    .gc-plus {
+      position: relative;
+      top: -1px;
+      margin-right: 1px;
+    }

@@ -15,7 +15,6 @@ hemma_badge_presence:
 
   extra_styles: >
     [[[
-      // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
       const v = variables?.enabled;
       const enabled = (v === undefined || v === null) ? true :
         (typeof v === 'boolean') ? v :
@@ -98,9 +97,9 @@ hemma_badge_presence:
       const esc = (t) => String(t || '').replaceAll('"','&quot;');
 
       return `
-        <div class="mp-wrap">
-          <div class="mp-title">${esc(friendly)}</div>
-          <div class="mp-sub">${esc(status)}</div>
+        <div class="badge-wrap">
+          <div class="badge-title">${esc(friendly)}</div>
+          <div class="badge-sub">${esc(status)}</div>
         </div>
       `;
     ]]]
