@@ -1,0 +1,219 @@
+# Base Badge Template
+hemma_badge_base:
+  classes:
+    card:
+      - hemma-badge
+  styles:
+    card:
+      - background: var(--badge-background, rgba(0,0,0,0.18))
+      - backdrop-filter: blur(var(--badge-blur, 14px))
+      - -webkit-backdrop-filter: blur(var(--badge-blur, 14px))
+      - box-shadow: none
+      - --ha-card-box-shadow: none
+      - --ha-shadow-light-hover: none
+      - --ha-shadow-dark-hover: none
+      - --hemma-badge-hover-shadow: none
+      - border: none !important
+      - border-radius: var(--badge-br, 9999px)
+      - padding: var(--badge-padding-current, var(--badge-padding, 6px 14px))
+      - min-height: var(--badge-min-height-current, var(--badge-min-height, 44px))
+      - display: >
+          [[[
+            const v = variables?.enabled;
+            if (v === undefined || v === null) return 'inline-grid';
+            if (typeof v === 'boolean') return v ? 'inline-grid' : 'none';
+            if (typeof v === 'number') return v !== 0 ? 'inline-grid' : 'none';
+            const s = String(v).trim().toLowerCase();
+            if (['false','0','no','off','disabled'].includes(s)) return 'none';
+            return 'inline-grid';
+          ]]]
+      - align-items: center
+      - gap: var(--badge-col-gap-current, var(--badge-col-gap, 10px))
+      - width: fit-content
+      - margin-inline-start: 0
+      - margin-inline-end: 0
+      - margin-block-start: 0
+      - margin-block-end: 0
+      - position: relative
+      - isolation: isolate
+      - --badge-title-color: var(--primary-text-color)
+      - --badge-sub-color: var(--secondary-text-color)
+      - background-clip: padding-box
+      - overflow: hidden
+      - transition: background-color .22s ease,
+                    box-shadow .24s ease,
+                    transform .24s ease,
+                    filter .18s ease,
+                    opacity .35s ease
+
+    grid:
+      - grid-template-areas: '"i l"'
+      - grid-template-columns: min-content minmax(0, 1fr)
+      - column-gap: var(--badge-col-gap-current, var(--badge-col-gap, 10px))
+      - row-gap: 0
+      - align-items: center
+
+    name:
+      - grid-area: l
+      - min-width: 0
+      - color: var(--badge-title-color, var(--secondary-text-color))
+      - font-weight: 700
+      - font-size: var(--badge-font-size-current, var(--badge-font-size, 13px))
+      - line-height: 1.2
+      - text-align: left
+      - justify-self: start
+      - z-index: 4
+
+    icon:
+      - grid-area: i
+      - width: var(--badge-icon-size-current, var(--badge-icon-size, 30px))
+      - height: var(--badge-icon-size-current, var(--badge-icon-size, 30px))
+      - color: var(--primary-text-color)
+      - z-index: 4
+
+    img_cell:
+      - width: var(--badge-icon-size-current, var(--badge-icon-size, 30px)) !important
+      - height: var(--badge-icon-size-current, var(--badge-icon-size, 30px)) !important
+      - border-radius: 9999px !important
+      - overflow: hidden !important
+      - display: block !important
+
+    entity_picture:
+      - grid-area: i
+      - width: var(--badge-icon-size-current, var(--badge-icon-size, 28px))
+      - height: var(--badge-icon-size-current, var(--badge-icon-size, 28px))
+      - border-radius: 50%
+      - z-index: 4
+      - object-fit: cover
+
+    label:
+      - font-size: var(--badge-font-size-current, var(--badge-font-size, 13px))
+
+    state:
+      - font-size: var(--badge-font-size-current, var(--badge-font-size, 13px))
+
+  extra_styles: |
+    :host{
+      --badge-sub-opacity: .82;
+      --badge-after-z:  2;
+      --badge-before-z: 3;
+      --hemma-badge-hover-shadow: none;
+    }
+
+    @media (max-width: 767px) and (orientation: portrait) {
+      ha-card {
+        min-height: var(--badge-min-height-current, 43px) !important;
+        padding: var(--badge-padding-current, 1px 14px 1px 6px) !important;
+      }
+      #img-cell, .img-cell {
+        width: var(--badge-icon-size-current, 32px) !important;
+        height: var(--badge-icon-size-current, 32px) !important;
+      }
+      #name { font-size: var(--badge-font-size-current, 13px) !important; }
+      .badge-title { font-size: var(--badge-font-size-current, 13px) !important; }
+      .badge-sub { font-size: calc(var(--badge-font-size-current, 13px) - 1px) !important; }
+    }
+
+    @media (max-height: 600px) and (orientation: landscape) {
+      ha-card {
+        min-height: var(--badge-min-height-current, 36px) !important;
+        padding: var(--badge-padding-current, 1px 12px 1px 6px) !important;
+      }
+      #img-cell, .img-cell {
+        width: var(--badge-icon-size-current, 26px) !important;
+        height: var(--badge-icon-size-current, 26px) !important;
+      }
+      #name { font-size: var(--badge-font-size-current, 12px) !important; }
+      .badge-title { font-size: var(--badge-font-size-current, 12px) !important; }
+      .badge-sub { font-size: calc(var(--badge-font-size-current, 12px) - 1px) !important; }
+    }
+
+    ha-card {
+      opacity: var(--hemma-row-fade, 1);
+      transform: translateY(calc((1 - var(--hemma-row-fade, 1)) * -10px))
+                 translateX(calc((1 - var(--hemma-row-fade, 1)) * -2px));
+      box-shadow: none !important;
+      transition: background-color .22s ease,
+                  box-shadow .24s ease,
+                  transform .24s ease,
+                  filter .18s ease,
+                  opacity .35s ease !important;
+    }
+
+    ha-card:not(#hemma-badge-shadow-suppress):hover {
+      box-shadow: none !important;
+      opacity: 0.99 !important;
+    }
+
+    ha-card::after{  z-index: var(--badge-after-z, 2) !important; }
+    ha-card::before{ z-index: var(--badge-before-z, 3) !important; }
+
+    #img-cell{
+      width:  var(--badge-icon-size-current, var(--badge-icon-size, 30px)) !important;
+      height: var(--badge-icon-size-current, var(--badge-icon-size, 30px)) !important;
+      border-radius: 9999px !important;
+      overflow: hidden !important;
+      display: block !important;
+    }
+
+    #img-cell img,
+    #img-cell ha-img{
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+      border-radius: inherit !important;
+    }
+
+    #icon{
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: none !important;
+    }
+
+    #icon ha-icon,
+    #icon ha-svg-icon,
+    #img-cell{
+      pointer-events: none !important;
+    }
+
+    #name{
+      display:flex !important;
+      align-items:center !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+      line-height: normal !important;
+    }
+
+    .badge-wrap{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap: 1px;
+      min-width:0;
+      max-width:100%;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    .badge-title{
+      font-size: var(--badge-font-size-current, 13px);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--badge-title-color, var(--secondary-text-color));
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .badge-sub{
+      font-size: calc(var(--badge-font-size-current, 13px) - 1px);
+      font-weight: 500;
+      line-height: 1.2;
+      opacity: var(--badge-sub-opacity, .82);
+      color: var(--badge-sub-color, var(--secondary-text-color));
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }

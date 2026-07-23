@@ -6,46 +6,98 @@ hemma_room:
     - hemma_shared
 
   triggers_update:
-    - '[[[ return variables.motion_sensor ]]]'
-    - '[[[ return variables.temp_sensor ]]]'
+    - '[[[ return variables.temp_sensor_1 ]]]'
+    - '[[[ return variables.temp_sensor_2 ]]]'
+    - '[[[ return variables.temp_sensor_3 ]]]'
+    - '[[[ return variables.temp_sensor_4 ]]]'
+    - '[[[ return variables.temp_sensor_5 ]]]'
     - '[[[ return variables.quality_sensor ]]]'
     - '[[[ return variables.humidity_sensor ]]]'
     - '[[[ return variables.presence_entity_1 ]]]'
     - '[[[ return variables.presence_entity_2 ]]]'
+    - '[[[ return variables.presence_entity_3 ]]]'
+    - '[[[ return variables.presence_entity_4 ]]]'
     - '[[[ return variables.media_player_1 ]]]'
     - '[[[ return variables.media_player_2 ]]]'
     - '[[[ return variables.media_player_3 ]]]'
     - '[[[ return variables.media_player_4 ]]]'
+    - '[[[ return variables.media_player_5 ]]]'
+    - '[[[ return variables.media_player_6 ]]]'
+    - '[[[ return variables.media_player_7 ]]]'
+    - '[[[ return variables.media_player_8 ]]]'
+    - '[[[ return variables.media_player_9 ]]]'
+    - '[[[ return variables.media_player_10 ]]]'
+    - '[[[ return variables.psn_1 ]]]'
+    - '[[[ return variables.psn_2 ]]]'
+    - '[[[ return variables.discord_steam_image ]]]'
+    - '[[[ return variables.discord_steam_game ]]]'
+    - '[[[ return variables.discord_steam_online ]]]'
+    - '[[[ return variables.discord_steam_details ]]]'
+    - '[[[ return variables.plex_binary_1 ]]]'
+    - '[[[ return variables.plex_stream_1 ]]]'
+    - '[[[ return variables.plex_binary_2 ]]]'
+    - '[[[ return variables.plex_stream_2 ]]]'
+    - '[[[ return variables.light_entity_1 ]]]'
+    - '[[[ return variables.light_entity_2 ]]]'
+    - '[[[ return variables.light_entity_3 ]]]'
+    - '[[[ return variables.light_entity_4 ]]]'
+    - '[[[ return variables.light_entity_5 ]]]'
+    - '[[[ return variables.light_entity_6 ]]]'
+    - '[[[ return variables.light_entity_7 ]]]'
+    - '[[[ return variables.light_entity_8 ]]]'
+    - '[[[ return variables.light_entity_9 ]]]'
+    - '[[[ return variables.light_entity_10 ]]]'
     - '[[[ return variables.image ]]]'
     - '[[[ return variables.image_night ]]]'
     - '[[[ return variables.image_position ]]]'
+    - '[[[ return variables.mobile_background_entity || "sensor.hemma_mobile_dynamic_background" ]]]'
     - '[[[ return variables.show_weather ]]]'
     - '[[[ return variables.weather_entity ]]]'
     - '[[[ return variables.weather_temp_sensor ]]]'
+    - '[[[ return variables.climate_entity_1 ]]]'
+    - '[[[ return variables.climate_entity_2 ]]]'
+    - '[[[ return variables.climate_entity_3 ]]]'
     - input_boolean.hemma_mobile_navigation
+    - input_select.hemma_expanded_row
 
   variables:
     image:
     image_night:
     image_position:
+    mobile_background: false
+    mobile_background_entity: sensor.hemma_mobile_dynamic_background
 
-    show_quality: false
-    quality_sensor:
+    show_climate: false
+    show_climate_inline: false  # true = show individual badges (temp/humidity/air quality) directly on the top row instead of the group badge
+    climate_entity_1:
+    climate_entity_2:
+    climate_entity_3:
 
-    show_humidity: false
+    temp_sensor_1:
+    temp_sensor_2:
+    temp_sensor_3:
+    temp_sensor_4:
+    temp_sensor_5:
+    temp_unit: 'F'  # 'F' or 'C' — sets comfort-level thresholds on the temperature sub-badge
+
     humidity_sensor:
 
-    show_temp: false
-    temp_sensor:
-
-    show_motion: false
-    motion_sensor:
+    quality_sensor:
+    aqi_room_name:
+    aqi_entity_pm25:
+    aqi_entity_pm10:
+    aqi_entity_voc:
+    aqi_entity_co2:
+    aqi_entity_temp:
+    aqi_entity_humidity:
 
     show_presence: false
     presence_entity_1:
     presence_entity_2:
+    presence_entity_3:
+    presence_entity_4:
 
-    show_media_badge: false
+    show_media: false
     pause_timeout_minutes: 5
 
     show_media_player_1: false
@@ -60,126 +112,54 @@ hemma_room:
     show_media_player_4: false
     media_player_4:
 
+    show_media_player_5: false
+    media_player_5:
+
+    show_media_player_6: false
+    media_player_6:
+
+    show_media_player_7: false
+    media_player_7:
+
+    show_media_player_8: false
+    media_player_8:
+
+    show_media_player_9: false
+    media_player_9:
+
+    show_media_player_10: false
+    media_player_10:
+
+    show_plex_1: false
+    plex_binary_1:
+    plex_stream_1:
+
+    show_plex_2: false
+    plex_binary_2:
+    plex_stream_2:
+
+    show_psn_1: false
+    psn_1:
+
+    show_psn_2: false
+    psn_2:
+
+    show_lights: false
+    light_group_entity:
+    light_entity_1:
+    light_entity_2:
+    light_entity_3:
+    light_entity_4:
+    light_entity_5:
+    light_entity_6:
+    light_entity_7:
+    light_entity_8:
+    light_entity_9:
+    light_entity_10:
+
     show_weather: false
-    weather_mode:
     weather_entity:
     weather_temp_sensor:
-
-    # =========================================================================
-    # ACTIVE MEDIA PLAYER SELECTOR
-    # =========================================================================
-    # Automatically selects the first active media player from up to 4 sources.
-    # You typically don't need to modify this unless changing media player logic.
-    # =========================================================================
-    active_media_player: >
-      [[[
-        const enabled = (v) => {
-          if (v === undefined || v === null) return false;
-          if (typeof v === 'boolean') return v;
-          if (typeof v === 'number')  return v !== 0;
-          const s = String(v).trim().toLowerCase();
-          if (['false','0','no','off','disabled'].includes(s)) return false;
-          if (['true','1','yes','on','enabled'].includes(s))   return true;
-          return !!s;
-        };
-
-        const isMediaActive = (eid) => {
-          if (!eid) return false;
-
-          const s  = states[eid];
-          const st = String(s?.state || '');
-          const a  = s?.attributes || {};
-
-          if (!s || ['unavailable', 'unknown'].includes(st)) return false;
-          if (['off', 'standby'].includes(st)) return false;
-
-          const title   = String(a.media_title || '').trim();
-          const artist  = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
-          const hasContent = !!(title || artist);
-
-          if (st === 'playing' || st === 'buffering') return true;
-          if (st === 'paused') return hasContent;
-          if (st === 'idle' || st === 'on') return hasContent;
-
-          return false;
-        };
-
-        const list = [
-          [variables.show_media_player_1, variables.media_player_1],
-          [variables.show_media_player_2, variables.media_player_2],
-          [variables.show_media_player_3, variables.media_player_3],
-          [variables.show_media_player_4, variables.media_player_4],
-        ];
-
-        for (const [flag, eid] of list) {
-          if (enabled(flag) && eid && isMediaActive(eid)) return eid;
-        }
-
-        return '';
-      ]]]
-
-    # Media player styles
-    _hemma_mp_styles_base: !include /config/dashboards/templates/includes/hemma_media_player_styles.yaml
-
-    _hemma_mp_styles: >
-      [[[
-        let baseStyles = variables._hemma_mp_styles_base || '';
-
-        const eid = variables.active_media_player;
-        if (!eid) return baseStyles;
-
-        const a = states[eid]?.attributes || {};
-        const appName = String(a.app_name || a.source || '').toLowerCase();
-        const appId = String(a.app_id || '').toLowerCase();
-        const isYT = (appName.includes('youtube') || appId.includes('youtube'));
-
-        if (!isYT) return baseStyles;
-
-        const ytStyles = `
-
-          ha-icon.media-player-icon-fallback {
-            background: url("/local/hemma/icons/youtube.png") center/cover no-repeat !important;
-            border-radius: 50% !important;
-            width: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
-            height: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
-            min-width: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
-            min-height: var(--badge-icon-size-current, var(--hemma-mp-img, 36px)) !important;
-            color: transparent !important;
-            --mdc-icon-size: 0px !important;
-            opacity: 1 !important;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14) !important;
-            flex-shrink: 0 !important;
-            margin-right: 2px !important;
-          }
-
-          ha-icon.media-player-icon-fallback::before,
-          ha-icon.media-player-icon-fallback::after {
-            display: none !important;
-          }
-
-          /* Mobile Portrait YouTube icon sizing */
-          @media (max-width: 767px) and (orientation: portrait) {
-            ha-icon.media-player-icon-fallback {
-              width: 32px !important;
-              height: 32px !important;
-              min-width: 32px !important;
-              min-height: 32px !important;
-            }
-          }
-
-          /* Mobile Landscape YouTube icon sizing */
-          @media (max-height: 600px) and (orientation: landscape) {
-            ha-icon.media-player-icon-fallback {
-              width: 26px !important;
-              height: 26px !important;
-              min-width: 26px !important;
-              min-height: 26px !important;
-            }
-          }
-        `;
-
-        return baseStyles + ytStyles;
-      ]]]
 
   tap_action: { action: none }
   hold_action: { action: none }
@@ -201,30 +181,114 @@ hemma_room:
           ]]]
       - padding-left: var(--hero-gutter)
       - padding-right: var(--hero-gutter)
-      - padding-bottom: calc(130px + env(safe-area-inset-bottom))
+      - padding-bottom: >
+          [[[
+            const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+            const isPhonePortrait =
+              (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+              mm('(max-width: 767px)') &&
+              mm('(orientation: portrait)');
+
+            return isPhonePortrait
+              ? `calc(var(--hemma-nav-height, 112px) + env(safe-area-inset-bottom, 0px) + var(--hemma-entity-mobile-gap-above-nav, 20px))`
+              : `calc(130px + env(safe-area-inset-bottom))`;
+          ]]]
       - box-shadow: none !important
-      - transform: translateZ(0)
-      - will-change: transform
-      - --hero-img-filter: blur(4px)
       - --hero-img-scale: 1.08
       - --hero-img: >
-          [[[
+          [[[ 
+            const w = window?.innerWidth || 1024;
+            const h = window?.innerHeight || 800;
+            const isMobile = (w <= 767 || h <= 500);
+            const isDark =
+              typeof hass?.themes?.darkMode === 'boolean'
+                ? hass.themes.darkMode
+                : window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (isMobile && (variables.mobile_background ?? false)) {
+              const phaseEntity = variables.mobile_background_entity || 'sensor.hemma_mobile_dynamic_background';
+              const phaseRaw = String(states[phaseEntity]?.state || 'day').toLowerCase();
+
+              let phase = 'day';
+              if (['morning', 'dawn'].includes(phaseRaw)) phase = 'morning';
+              else if (['day', 'midday', 'afternoon', 'goldenhour'].includes(phaseRaw)) phase = 'day';
+              else if (['night', 'sunset', 'evening'].includes(phaseRaw)) phase = 'night';
+
+              return `url("/local/hemma/mobile/mobile-${phase}${isDark ? '-dark' : ''}.jpg")`;
+            }
+
             const base = variables.image || 'default';
-            const isDark = !!(hass?.themes?.darkMode);
             const picked = isDark ? (variables.image_night || `${base}-night`) : base;
-            const url = `/local/hemma/rooms/${picked}.jpg`;
-            return `url("${url}")`;
+            return `url("/local/hemma/rooms/${picked}.jpg")`;
           ]]]
       - --hero-img-pos: >
           [[[
             return variables.image_position || 'center center';
           ]]]
-      - --hemma-time-right: >
+      - --hemma-time-nav-open: >
+          [[[
+            const navOpen = states['input_boolean.hemma_mobile_navigation']?.state === 'on';
+            return navOpen ? 'none' : 'block';
+          ]]]
+      - --hemma-time-reserve: >
           [[[
             const w = window?.innerWidth || 1024;
             const h = window?.innerHeight || 800;
-            const isTablet = (w >= 768 && w <= 1249 && h > 500);
-            return isTablet ? 'calc(var(--hero-gutter) - 20px)' : 'var(--hemma-nav-margin-current, 4vw)';
+            const isTablet = (w >= 768 && w <= 1400 && h > 500);
+            return isTablet ? '140px' : '160px';
+          ]]]
+      - --hemma-room-nav: >
+          [[[
+            const k = variables.image || 'default';
+            const prev = window._hemmaRoomNav;
+            if (!prev || prev.key !== k) {
+              window._hemmaRoomNav = { key: k };
+              const isActive = eid => {
+                if (!eid) return false;
+                const s = hass.states[eid];
+                if (!s) return false;
+                const st = (s.state || '').toLowerCase();
+                if (['playing','buffering','on'].includes(st)) return true;
+                if (st === 'paused') {
+                  const a = s.attributes || {};
+                  const hasContent = !!(
+                    String(a.media_title || '').trim() ||
+                    String(a.media_artist || a.artist || a.media_album_artist || '').trim()
+                  );
+                  if (!hasContent) return false;
+                  const timeout = Number(variables.pause_timeout_minutes ?? 5);
+                  if (timeout <= 0) return true;
+                  return ((new Date() - new Date(s.last_changed)) / 60000) <= timeout;
+                }
+                return false;
+              };
+              const mediaEids = [
+                variables.show_media_player_1 && variables.media_player_1,
+                variables.show_media_player_2 && variables.media_player_2,
+                variables.show_media_player_3 && variables.media_player_3,
+                variables.show_media_player_4 && variables.media_player_4,
+                variables.show_media_player_5 && variables.media_player_5,
+                variables.show_media_player_6 && variables.media_player_6,
+                variables.show_media_player_7 && variables.media_player_7,
+                variables.show_media_player_8 && variables.media_player_8,
+                variables.show_media_player_9 && variables.media_player_9,
+                variables.show_media_player_10 && variables.media_player_10,
+                variables.show_plex_1 && variables.plex_binary_1,
+                variables.show_plex_2 && variables.plex_binary_2,
+                variables.show_psn_1 && variables.psn_1,
+                variables.show_psn_2 && variables.psn_2,
+              ].filter(Boolean);
+              const _steamOnline = variables.show_discord_steam && variables.discord_steam_online && variables.discord_steam_game &&
+                (hass.states[variables.discord_steam_online]?.state || '').toLowerCase() === 'online';
+              const _steamGame = String(hass.states[variables.discord_steam_game]?.state || '').toLowerCase();
+              const steamActive = _steamOnline && !!_steamGame && _steamGame !== 'unknown' && _steamGame !== 'unavailable';
+              const opt = (mediaEids.some(isActive) || steamActive) ? 'media' : 'none';
+              hass.callService('input_select', 'select_option', {
+                entity_id: 'input_select.hemma_expanded_row',
+                option: opt
+              });
+            }
+            return k;
           ]]]
 
     name:
@@ -243,97 +307,43 @@ hemma_room:
     grid: []  # Inherits from hemma_shared
 
     custom_fields:
-      motion_detection:
-        - display: >
-            [[[
-              return variables.show_motion && variables.motion_sensor ? 'block' : 'none';
-            ]]]
-        - position: fixed
-        - right: 0
-        - left: 0
-        - bottom: 0
-        - transform: >
-            [[[
-              return states[variables.motion_sensor]?.state === 'on'
-                ? 'translateY(0)'
-                : 'translateY(100%)';
-            ]]]
-        - transition: transform 0.5s
-        - padding: 18px
-        - color: white
-        - font-size: 13px
-        - text-transform: uppercase
-        - letter-spacing: 2px
-        - font-weight: 700
-        - background: rgba(255,255,255,0.08)
-        - backdrop-filter: blur(10px)
-        - z-index: 999
-
       temperature:
         - grid-area: temperature
         - display: >
             [[[
-              const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
-              const isPhonePortrait =
-                (mm('(pointer: coarse)') || mm('(hover: none)')) &&
-                mm('(max-width: 767px)') &&
-                mm('(orientation: portrait)');
-              return isPhonePortrait ? 'none' : 'flex';
+              const w = window?.innerWidth || 1024;
+              const h = window?.innerHeight || 800;
+              const isMobileSize = w <= 767 || h <= 500;
+              return (!isMobileSize && !!variables.show_weather) ? 'block' : 'none';
             ]]]
-        - align-items: center
-        - height: var(--hero-temp-reserve, 22px)
-        - overflow: hidden
+        - position: absolute
+        - top: >
+            calc(
+              var(--hero-top)
+              + var(--hero-temp-reserve, 22px)
+              + var(--hero-header-gap-current, 6px)
+              - var(--hero-weather-hero-height, 48px)
+              + var(--hero-weather-hero-nudge, -12px))
+        - left: >
+            calc(
+              var(--hero-gutter)
+              + var(--hero-room-name-margin-left-current, 0px)
+              + var(--hemma-header-temp-nudge, 0px))
+        - z-index: 5
         - pointer-events: auto
         - cursor: pointer
-        - position: relative
-        - z-index: 5
+        - overflow: visible
         - color: var(--primary-text-color)
-        - justify-self: start
-        - margin: 0
-        - padding-left: 0
         - background: transparent !important
         - background-color: transparent !important
-        - margin-left: >
-            calc(
-              var(--hero-room-name-margin-left-current, 0px) +
-              var(--hemma-header-temp-nudge, 0px))
-        - font-size: var(--hero-temp-font-size, var(--hero-temp-font-size-desktop, 16px))
 
       time:
         - position: fixed
-        - top: >
-            [[[
-              const w = window?.innerWidth || 1024;
-              const h = window?.innerHeight || 800;
-
-              const isMobile = (w <= 767 || h <= 500);
-              const isTablet = (w >= 768 && w <= 1249 && h > 500);
-
-              const nudge =
-                isMobile ? 'var(--hemma-time-nudge-mobile, 8px)' :
-                isTablet ? 'var(--hemma-time-nudge-tablet, 36px)' :
-                '0px';
-
-              return `calc(env(safe-area-inset-top, 0px) + var(--hemma-nav-top-current, 46px) - ${nudge})`;
-            ]]]
-        - right: >
-            [[[
-              return `var(--hemma-time-right, var(--hemma-nav-margin-current, 4vw))`;
-            ]]]
         - z-index: 10
         - pointer-events: auto
         - "--mdc-ripple-press-opacity": 0
         - "-webkit-tap-highlight-color": transparent
-        - display: >
-            [[[
-              const navOpen = states['input_boolean.hemma_mobile_navigation']?.state === 'on';
-              const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
-              const isTouch = mm('(pointer: coarse)') || mm('(hover: none)');
-              const w = window?.innerWidth || 1024;
-              const h = window?.innerHeight || 800;
-              const isTablet = (w >= 768 && w <= 1249 && h > 500);
-              return (!navOpen && isTouch && isTablet) ? 'block' : 'none';
-            ]]]
+        - "--ha-card-padding": "0px"
 
       weather:
         - grid-area: weather
@@ -344,23 +354,23 @@ hemma_room:
                 (mm('(pointer: coarse)') || mm('(hover: none)')) &&
                 mm('(max-width: 767px)') &&
                 mm('(orientation: portrait)');
-              const mode = String(variables.weather_mode || '').toLowerCase();
-              const isOutdoor = (mode === 'outdoor');
-              const isRoom = (mode === 'room');
-              const hasOutdoorData = isOutdoor && !!(variables.weather_entity || variables.weather_temp_sensor);
-              const hasRoomData = isRoom && !!variables.temp_sensor;
-              const ok = !!variables.show_weather && (hasOutdoorData || hasRoomData);
+              const hasData = !!(variables.weather_entity || variables.weather_temp_sensor);
+              const ok = !!variables.show_weather && hasData;
               return (isPhonePortrait && ok) ? 'block' : 'none';
             ]]]
         - position: absolute
         - top: >
-            calc(var(--hero-top) - 20px +
-            (var(--hero-room-name-size-current, 48px) * var(--hero-room-name-line-height-current, 1.2)) - 15px)
+            calc(
+              var(--hero-top)
+              + var(--hero-room-name-size-current, 38px) * var(--hero-room-name-line-height-current, 1.1)
+              - var(--hero-weather-title-size, 16px)
+              - var(--hero-weather-sub-size, 13px) * 1.1
+              - 1px
+              + var(--hemma-weather-bottom-nudge, 0px))
         - left: var(--hero-gutter, var(--page-gutter-mobile, 11px))
-        - right: var(--hero-gutter, var(--page-gutter-mobile, 11px))
+        - right: calc(var(--hero-gutter, var(--page-gutter-mobile, 11px)) + 6px)
         - z-index: 10
         - text-align: right
-        - align-self: start
         - justify-self: end
         - margin: 0
         - width: auto
@@ -377,14 +387,16 @@ hemma_room:
         - margin-left: >
             calc(
               var(--hero-room-name-margin-left-current, 0px) +
-              var(--hemma-header-badge-nudge, 0px)) !important
+              var(--hemma-header-badge-nudge, 0px))
         - margin-right: auto !important
         - width: max-content
         - max-width: 100%
-        - margin-top: 0
+        - margin-top: var(--hero-header-gap-current, 6px)
         - margin-bottom: 0
         - padding-left: 0
         - pointer-events: auto
+        - touch-action: pan-x
+        - overscroll-behavior-x: contain
         - height: auto !important
         - display: >
             [[[
@@ -393,88 +405,281 @@ hemma_room:
                 : 'block';
             ]]]
 
+      badges_climate:
+        - grid-area: badges_climate
+        - justify-self: start !important
+        - align-self: start !important
+        - place-self: start !important
+        - text-align: left !important
+        - margin-left: >
+            calc(
+              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hemma-header-badge-nudge, 0px))
+        - margin-right: auto !important
+        - width: max-content
+        - max-width: 100%
+        - margin-top: >
+            [[[
+              if (!variables.show_climate || variables.show_climate_inline) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              return states['input_select.hemma_expanded_row']?.state === 'climate'
+                ? 'var(--hero-header-gap-current, 6px)' : '0';
+            ]]]
+        - margin-bottom: 0
+        - padding-left: 0
+        - pointer-events: auto
+        - height: auto !important
+        - display: >
+            [[[
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
+              if (!variables.show_climate || variables.show_climate_inline) return 'none';
+              return 'block';
+            ]]]
+        - max-height: >
+            [[[
+              if (!variables.show_climate || variables.show_climate_inline) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              return states['input_select.hemma_expanded_row']?.state === 'climate' ? '200px' : '0';
+            ]]]
+        - overflow-x: auto
+        - overflow-y: hidden
+        - touch-action: pan-x
+        - overscroll-behavior-x: contain
+        - --hemma-row-fade: >
+            [[[
+              if (!variables.show_climate || variables.show_climate_inline) return 0;
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
+              return states['input_select.hemma_expanded_row']?.state === 'climate' ? 1 : 0;
+            ]]]
+        - transition: >
+            [[[
+              const isExpanded = states['input_select.hemma_expanded_row']?.state === 'climate';
+              if (isExpanded) return 'max-height 0s, margin-top 0s';
+              const isSwitching = states['input_select.hemma_expanded_row']?.state !== 'none';
+              return isSwitching
+                ? 'max-height 0s, margin-top 0s'
+                : 'max-height 0s 0.35s, margin-top 0s 0.35s';
+            ]]]
+        - pointer-events: >
+            [[[
+              return states['input_select.hemma_expanded_row']?.state === 'climate' ? 'auto' : 'none';
+            ]]]
+
+      badges_presence:
+        - grid-area: badges_presence
+        - justify-self: start !important
+        - align-self: start !important
+        - place-self: start !important
+        - text-align: left !important
+        - margin-left: >
+            calc(
+              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hemma-header-badge-nudge, 0px))
+        - margin-right: auto !important
+        - width: max-content
+        - max-width: 100%
+        - margin-top: >
+            [[[
+              if (!variables.show_presence) return '0';
+              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              return states['input_select.hemma_expanded_row']?.state === 'presence'
+                ? 'var(--hero-header-gap-current, 6px)' : '0';
+            ]]]
+        - margin-bottom: 0
+        - padding-left: 0
+        - height: auto !important
+        - display: >
+            [[[
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
+              if (!variables.show_presence) return 'none';
+              if (variables.presence_entity_1 && !variables.presence_entity_2) return 'none';
+              return 'block';
+            ]]]
+        - max-height: >
+            [[[
+              if (!variables.show_presence) return '0';
+              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              return states['input_select.hemma_expanded_row']?.state === 'presence' ? '200px' : '0';
+            ]]]
+        - overflow-x: auto
+        - overflow-y: hidden
+        - touch-action: pan-x
+        - overscroll-behavior-x: contain
+        - --hemma-row-fade: >
+            [[[
+              if (!variables.show_presence) return 0;
+              if (variables.presence_entity_1 && !variables.presence_entity_2) return 0;
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
+              return states['input_select.hemma_expanded_row']?.state === 'presence' ? 1 : 0;
+            ]]]
+        - transition: >
+            [[[
+              const isExpanded = states['input_select.hemma_expanded_row']?.state === 'presence';
+              if (isExpanded) return 'max-height 0s, margin-top 0s';
+              const isSwitching = states['input_select.hemma_expanded_row']?.state !== 'none';
+              return isSwitching
+                ? 'max-height 0s, margin-top 0s'
+                : 'max-height 0s 0.35s, margin-top 0s 0.35s';
+            ]]]
+        - pointer-events: >
+            [[[
+              return states['input_select.hemma_expanded_row']?.state === 'presence' ? 'auto' : 'none';
+            ]]]
+
       badges_media:
         - grid-area: badges_media
         - justify-self: start !important
         - align-self: start !important
         - place-self: start !important
         - text-align: left !important
-        - margin-top: 0px !important
+        - margin-top: >
+            [[[
+              if (!variables.show_media) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              return states['input_select.hemma_expanded_row']?.state === 'media'
+                ? 'var(--hero-header-gap-current, 6px)' : '0';
+            ]]]
         - margin-right: auto !important
         - margin-left: >
             calc(
               var(--hero-room-name-margin-left-current, 0px) +
-              var(--hemma-header-badge-nudge, 0px)
-            ) !important
-        - padding-left: 0 !important
+              var(--hemma-header-badge-nudge, 0px) +
+              var(--hemma-header-media-badge-nudge-current, 0px))
+        - padding-left: 0
         - padding-top: 0px !important
         - padding-bottom: 0px !important
         - height: auto !important
+        - opacity: var(--hemma-row-fade, 0)
+        - transform: translateY(calc((1 - var(--hemma-row-fade, 0)) * -8px))
         - min-height: 0 !important
         - width: max-content
         - max-width: 100%
-        - pointer-events: auto
         - display: >
             [[[
-              const navOpen = states['input_boolean.hemma_mobile_navigation']?.state === 'on';
-              if (navOpen) return 'none';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
+              if (!variables.show_media) return 'none';
+              return 'block';
+            ]]]
+        - max-height: >
+            [[[
+              if (!variables.show_media) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              return states['input_select.hemma_expanded_row']?.state === 'media' ? '500px' : '0';
+            ]]]
+        - overflow-x: auto
+        - overflow-y: hidden
+        - touch-action: pan-x
+        - overscroll-behavior-x: contain
+        - --hemma-row-fade: >
+            [[[
+              if (!variables.show_media) return 0;
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
+              return states['input_select.hemma_expanded_row']?.state === 'media' ? 1 : 0;
+            ]]]
+        - transition: >
+            [[[
+              const currentState = states['input_select.hemma_expanded_row']?.state;
+              const isExpanded = currentState === 'media';
 
-              const enabled = (v) => {
-                if (v === undefined || v === null) return false;
-                if (typeof v === 'boolean') return v;
-                if (typeof v === 'number')  return v !== 0;
-                const s = String(v).trim().toLowerCase();
-                if (['false','0','no','off','disabled'].includes(s)) return false;
-                if (['true','1','yes','on','enabled'].includes(s))   return true;
-                return !!s;
-              };
+              if (isExpanded) {
+                // Suppress animation within 3s of page load — covers the
+                // hemma_auto_expand_media_row automation that fires on HA start
+                if (!window.hemmaPageLoadTime) window.hemmaPageLoadTime = Date.now();
+                if (Date.now() - window.hemmaPageLoadTime < 3000) return 'none';
 
-              const isMediaActive = (eid) => {
-                if (!eid) return false;
+                // After 3s, only animate for genuine user taps (last_changed < 1.5s ago)
+                const lastChanged = states['input_select.hemma_expanded_row']?.last_changed;
+                const msSince = lastChanged ? (Date.now() - new Date(lastChanged).getTime()) : Infinity;
+                return msSince < 1500
+                  ? 'max-height 0s, margin-top 0s, opacity 0.25s ease, transform 0.25s ease'
+                  : 'none';
+              }
 
-                const s  = states[eid];
-                const st = String(s?.state || '');
-                const a  = s?.attributes || {};
+              const isSwitching = currentState !== 'none';
 
-                if (!s || ['unavailable', 'unknown'].includes(st)) return false;
-                if (['off', 'standby'].includes(st)) return false;
+              return isSwitching
+                ? 'max-height 0s, margin-top 0s, opacity 0.22s ease, transform 0.22s ease'
+                : 'max-height 0s 0.35s, margin-top 0s 0.35s, opacity 0.22s ease, transform 0.22s ease';
+            ]]]
+        - pointer-events: >
+            [[[
+              return states['input_select.hemma_expanded_row']?.state === 'media' ? 'auto' : 'none';
+            ]]]
 
-                const title   = String(a.media_title || '').trim();
-                const artist  = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
-                const hasContent = !!(title || artist);
-
-                if (st === 'playing' || st === 'buffering') return true;
-                if (st === 'paused') return hasContent;
-                if (st === 'idle' || st === 'on') return hasContent;
-
-                return false;
-              };
-
-              const anyNowPlaying =
-                (enabled(variables.show_media_player_1) && isMediaActive(variables.media_player_1)) ||
-                (enabled(variables.show_media_player_2) && isMediaActive(variables.media_player_2)) ||
-                (enabled(variables.show_media_player_3) && isMediaActive(variables.media_player_3)) ||
-                (enabled(variables.show_media_player_4) && isMediaActive(variables.media_player_4));
-
-              const anyPsn =
-                (enabled(variables.show_psn_1) && states[variables.psn_1]) ||
-                (enabled(variables.show_psn_2) && states[variables.psn_2]);
-
-              const anyPlex =
-                enabled(variables.show_media_plex) && states[variables.media_plex_binary]?.state === 'on';
-
-              return (anyNowPlaying || anyPsn || anyPlex) ? 'block' : 'none';
+      badges_lights:
+        - grid-area: badges_lights
+        - justify-self: start !important
+        - align-self: start !important
+        - place-self: start !important
+        - text-align: left !important
+        - margin-left: >
+            calc(
+              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hemma-header-badge-nudge, 0px))
+        - margin-right: auto !important
+        - width: max-content
+        - max-width: 100%
+        - margin-top: >
+            [[[
+              if (!variables.show_lights) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              return states['input_select.hemma_expanded_row']?.state === 'lights'
+                ? 'var(--hero-header-gap-current, 6px)' : '0';
+            ]]]
+        - margin-bottom: 0
+        - padding-left: 0
+        - pointer-events: auto
+        - height: auto !important
+        - display: >
+            [[[
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
+              if (!variables.show_lights) return 'none';
+              return 'block';
+            ]]]
+        - max-height: >
+            [[[
+              if (!variables.show_lights) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              return states['input_select.hemma_expanded_row']?.state === 'lights' ? '200px' : '0';
+            ]]]
+        - overflow-x: auto
+        - overflow-y: hidden
+        - touch-action: pan-x
+        - overscroll-behavior-x: contain
+        - --hemma-row-fade: >
+            [[[
+              if (!variables.show_lights) return 0;
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
+              return states['input_select.hemma_expanded_row']?.state === 'lights' ? 1 : 0;
+            ]]]
+        - transition: >
+            [[[
+              const isExpanded = states['input_select.hemma_expanded_row']?.state === 'lights';
+              if (isExpanded) return 'max-height 0s, margin-top 0s';
+              const isSwitching = states['input_select.hemma_expanded_row']?.state !== 'none';
+              return isSwitching
+                ? 'max-height 0s, margin-top 0s'
+                : 'max-height 0s 0.35s, margin-top 0s 0.35s';
+            ]]]
+        - pointer-events: >
+            [[[
+              return states['input_select.hemma_expanded_row']?.state === 'lights' ? 'auto' : 'none';
             ]]]
 
       navigation:
-        - position: absolute
-        - top: "-8px"
+        - position: fixed
+        - top: 46px
         - left: 0
         - right: 0
+        - z-index: 50
+        - overflow: visible
+        - pointer-events: auto
+        - touch-action: none
         - "--mdc-ripple-press-opacity": 0
         - "-webkit-tap-highlight-color": transparent
         - filter: none
-        - pointer-events: auto
 
       menu:
         - position: fixed
@@ -501,7 +706,8 @@ hemma_room:
         - width: 0
         - height: 0
         - opacity: 0
-        - overflow: hidden
+        - overflow-x: auto
+        - overflow-y: hidden
         - position: fixed
         - pointer-events: none
 
@@ -515,39 +721,42 @@ hemma_room:
       card: !include /config/dashboards/templates/includes/hemma_navigation.yaml
 
     preload: |
-      [[[
+      [[[ 
         const base = variables.image || 'default';
         const night = variables.image_night || `${base}-night`;
         const dayUrl = `/local/hemma/rooms/${base}.jpg`;
         const nightUrl = `/local/hemma/rooms/${night}.jpg`;
+        const mobile = [
+          '/local/hemma/mobile/mobile-morning.jpg',
+          '/local/hemma/mobile/mobile-morning-dark.jpg',
+          '/local/hemma/mobile/mobile-day.jpg',
+          '/local/hemma/mobile/mobile-day-dark.jpg',
+          '/local/hemma/mobile/mobile-night.jpg',
+          '/local/hemma/mobile/mobile-night-dark.jpg'
+        ];
 
         return `
           <img src="${dayUrl}" alt="" />
           <img src="${nightUrl}" alt="" />
+          ${mobile.map(src => `<img src="${src}" alt="" />`).join('')}
         `;
       ]]]
 
-    # Temperature
     temperature:
       card:
         type: custom:button-card
-        template: hemma_temperature
+        template: hemma_weather
+        entity: '[[[ return variables.weather_entity ]]]'
         variables:
-          weather_mode: '[[[ return variables.weather_mode ]]]'
-          show_weather: '[[[ return variables.show_weather ]]]'
-          weather_entity: '[[[ return variables.weather_entity ]]]'
+          hero_mode: true
           weather_temp_sensor: '[[[ return variables.weather_temp_sensor ]]]'
-          show_temp: '[[[ return variables.show_temp ]]]'
-          temp_sensor: '[[[ return variables.temp_sensor ]]]'
     weather:
       card:
         type: custom:button-card
         template: hemma_weather
         entity: '[[[ return variables.weather_entity ]]]'
         variables:
-          weather_mode: '[[[ return variables.weather_mode ]]]'
           weather_temp_sensor: '[[[ return variables.weather_temp_sensor ]]]'
-          temp_sensor: '[[[ return variables.temp_sensor ]]]'
 
     time:
       card:
@@ -568,130 +777,1291 @@ hemma_room:
           align-items: center
           grid-column-gap: var(--badge-gap-current, var(--badge-gap, 10px))
 
+        card_mod:
+          style: |
+            ha-card {
+              overflow: visible !important;
+            }
+
         cards:
           - type: custom:button-card
-            template: hemma_badge_presence
-            entity: '[[[ return variables.presence_entity_1 ]]]'
+            template: hemma_badge_climate_group
             variables:
-              enabled: '[[[ return variables.show_presence ]]]'
+              enabled: '[[[ return variables.show_climate && !variables.show_climate_inline ]]]'
+              temp_sensor: '[[[ return variables.temp_sensor_1 ]]]'
+              temp_sensor_2: '[[[ return variables.temp_sensor_2 ]]]'
+              temp_sensor_3: '[[[ return variables.temp_sensor_3 ]]]'
+              temp_sensor_4: '[[[ return variables.temp_sensor_4 ]]]'
+              temp_sensor_5: '[[[ return variables.temp_sensor_5 ]]]'
+              humidity_sensor: '[[[ return variables.humidity_sensor ]]]'
+              quality_sensor: '[[[ return variables.quality_sensor ]]]'
+              climate_entity: '[[[ return variables.climate_entity_1 ]]]'
+              climate_entity_2: '[[[ return variables.climate_entity_2 ]]]'
+              climate_entity_3: '[[[ return variables.climate_entity_3 ]]]'
 
           - type: custom:button-card
-            template: hemma_badge_presence
-            entity: '[[[ return variables.presence_entity_2 ]]]'
+            template: hemma_badge_temp
+            entity: '[[[ return variables.temp_sensor_1 ]]]'
             variables:
-              enabled: '[[[ return variables.show_presence ]]]'
-
-          - type: custom:button-card
-            template: hemma_badge_air_quality
-            entity: '[[[ return variables.quality_sensor ]]]'
-            variables:
-              enabled: '[[[ return variables.show_quality ]]]'
+              enabled: '[[[ return !!(variables.show_climate && variables.show_climate_inline && variables.temp_sensor_1) ]]]'
+              temp_unit: '[[[ return variables.temp_unit ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
 
           - type: custom:button-card
             template: hemma_badge_humidity
             entity: '[[[ return variables.humidity_sensor ]]]'
             variables:
-              enabled: '[[[ return variables.show_humidity ]]]'
+              enabled: '[[[ return !!(variables.show_climate && variables.show_climate_inline && variables.humidity_sensor) ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
 
-    badges_media:
+          - type: custom:button-card
+            template: hemma_badge_air_quality
+            entity: '[[[ return variables.quality_sensor ]]]'
+            variables:
+              enabled: '[[[ return !!(variables.show_climate && variables.show_climate_inline && variables.quality_sensor) ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light_group
+            variables:
+              enabled: '[[[ return variables.show_lights ]]]'
+              light_group_entity: '[[[ return variables.show_lights ? variables.light_group_entity : null ]]]'
+              entity_1: '[[[ return variables.show_lights ? variables.light_entity_1 : null ]]]'
+              entity_2: '[[[ return variables.show_lights ? variables.light_entity_2 : null ]]]'
+              entity_3: '[[[ return variables.show_lights ? variables.light_entity_3 : null ]]]'
+              entity_4: '[[[ return variables.show_lights ? variables.light_entity_4 : null ]]]'
+              entity_5: '[[[ return variables.show_lights ? variables.light_entity_5 : null ]]]'
+              entity_6: '[[[ return variables.show_lights ? variables.light_entity_6 : null ]]]'
+              entity_7: '[[[ return variables.show_lights ? variables.light_entity_7 : null ]]]'
+              entity_8: '[[[ return variables.show_lights ? variables.light_entity_8 : null ]]]'
+              entity_9: '[[[ return variables.show_lights ? variables.light_entity_9 : null ]]]'
+              entity_10: '[[[ return variables.show_lights ? variables.light_entity_10 : null ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_presence_group
+            variables:
+              enabled: '[[[ return variables.show_presence && !!variables.presence_entity_2 ]]]'
+              entity_1: '[[[ return variables.presence_entity_1 ]]]'
+              entity_2: '[[[ return variables.presence_entity_2 ]]]'
+              entity_3: '[[[ return variables.presence_entity_3 ]]]'
+              entity_4: '[[[ return variables.presence_entity_4 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_presence
+            entity: '[[[ return variables.presence_entity_1 ]]]'
+            variables:
+              enabled: '[[[ return !!(variables.show_presence && variables.presence_entity_1 && !variables.presence_entity_2) ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_media_group
+            variables:
+              enabled: '[[[ return variables.show_media ]]]'
+              pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+              entity_1: '[[[ return variables.show_media_player_1 ? variables.media_player_1 : null ]]]'
+              entity_2: '[[[ return variables.show_media_player_2 ? variables.media_player_2 : null ]]]'
+              entity_3: '[[[ return variables.show_media_player_3 ? variables.media_player_3 : null ]]]'
+              entity_4: '[[[ return variables.show_media_player_4 ? variables.media_player_4 : null ]]]'
+              entity_5: '[[[ return variables.show_plex_1 ? variables.plex_binary_1 : null ]]]'
+              entity_6: '[[[ return variables.show_psn_1 ? variables.psn_1 : null ]]]'
+              entity_7: '[[[ return variables.show_psn_2 ? variables.psn_2 : null ]]]'
+              entity_8: '[[[ return variables.show_media_player_5 ? variables.media_player_5 : null ]]]'
+              entity_9: '[[[ return variables.show_media_player_6 ? variables.media_player_6 : null ]]]'
+              entity_10: '[[[ return variables.show_media_player_7 ? variables.media_player_7 : null ]]]'
+              entity_11: '[[[ return variables.show_media_player_8 ? variables.media_player_8 : null ]]]'
+              entity_12: '[[[ return variables.show_media_player_9 ? variables.media_player_9 : null ]]]'
+              entity_13: '[[[ return variables.show_media_player_10 ? variables.media_player_10 : null ]]]'
+              entity_14: '[[[ return variables.show_plex_2 ? variables.plex_binary_2 : null ]]]'
+              steam_online_entity: '[[[ return variables.show_discord_steam ? variables.discord_steam_online : null ]]]'
+              steam_game_entity: '[[[ return variables.show_discord_steam ? variables.discord_steam_game : null ]]]'
+
+    badges_climate:
       card:
         type: custom:layout-card
         layout_type: custom:grid-layout
 
         layout:
-          grid-template-columns: 1fr
-          grid-auto-flow: row
-          grid-auto-rows: min-content
-          justify-items: start
+          grid-auto-flow: column
+          grid-auto-columns: max-content
+          grid-template-columns: none
           justify-content: start
-          align-items: start
-          align-content: start
-          grid-row-gap: var(--hero-header-gap-current, 6px)
-
-        card_mod:
-          style:
-            grid-layout$: |
-              :host {
-                --layout-padding: 0 !important;
-                --layout-margin: 0 !important;
-              }
-              #root {
-                padding: 0 !important;
-                margin: 0 !important;
-                gap: var(--hero-header-gap-current, 6px) !important;
-              }
-              #root > * {
-                margin: 0 !important;
-                padding: 0 !important;
-              }
-              #root > *[hidden],
-              #root > *:has([hidden]),
-              #root > *:has([style*="display: none"]),
-              #root > *:has([style*="display:none"]),
-              #root > *:has(card-mod[style*="display: none"]),
-              #root > *:has(card-mod[style*="display:none"]) {
-                display: none !important;
-              }
+          justify-items: start
+          align-items: center
+          grid-column-gap: var(--badge-gap-current, var(--badge-gap, 10px))
 
         cards:
-          # Now Playing (active media badge)
-          - type: custom:navbar-card
-            desktop:
-              min_width: 1
-              hidden: >
+          - type: custom:button-card
+            template: hemma_badge_temp
+            entity: '[[[ return variables.temp_sensor_1 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_climate && !!variables.temp_sensor_1 ]]]'
+              temp_unit: '[[[ return variables.temp_unit ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
                 [[[
-                  const amp = variables.active_media_player;
-                  if (!amp || amp === '') return true;
-                  const s = states[amp];
-                  if (!s || ['unavailable', 'unknown', 'off', 'standby'].includes(s.state)) return true;
-
-                  const a = s.attributes || {};
-                  const title = String(a.media_title || '').trim();
-                  const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
-                  const hasContent = !!(title || artist);
-
-                  if (['playing', 'buffering'].includes(s.state)) {
-                    return !hasContent;
-                  }
-
-                  if (s.state === 'paused') {
-                    if (!hasContent) return true;
-                    const pauseTimeoutMin = variables.pause_timeout_minutes ?? 5;
-                    if (pauseTimeoutMin <= 0) return !hasContent; // 0 = no timeout
-                    const lastChanged = new Date(s.last_changed);
-                    const now = new Date();
-                    const minutesPaused = (now - lastChanged) / 60000;
-                    return minutesPaused > pauseTimeoutMin;
-                  }
-
-                  if (['idle', 'on'].includes(s.state)) {
-                    return !hasContent;
-                  }
-
-                  return true;
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
                 ]]]
-              show_labels: false
-              show_popup_label_backgrounds: false
-              styles: ''
 
-            mobile: { hidden: true }
-            routes: []
-            media_player:
-              entity: '[[[ return variables.active_media_player ]]]'
-              show: true
-              album_cover_background: true
-              tap_action:
-                action: more-info
-                entity: '[[[ return variables.active_media_player ]]]'
-              hold_action: { action: none }
-            styles: '[[[ return variables._hemma_mp_styles ]]]'
-            card_mod:
-              style: |
-                :host {
-                  display: contents !important;
-                }
+          - type: custom:button-card
+            template: hemma_badge_humidity
+            entity: '[[[ return variables.humidity_sensor ]]]'
+            variables:
+              enabled: '[[[ return variables.show_climate && !!variables.humidity_sensor ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
 
-    motion_detection: |
-      [[[
-        return "Motion detected"
-      ]]]
+          - type: custom:button-card
+            template: hemma_badge_air_quality
+            entity: '[[[ return variables.quality_sensor ]]]'
+            variables:
+              enabled: '[[[ return variables.show_climate && !!variables.quality_sensor ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
+    badges_presence:
+      card:
+        type: custom:layout-card
+        layout_type: custom:grid-layout
+
+        layout:
+          grid-auto-flow: column
+          grid-auto-columns: max-content
+          grid-template-columns: none
+          justify-content: start
+          justify-items: start
+          align-items: center
+          grid-column-gap: var(--badge-gap-current, var(--badge-gap, 10px))
+
+        cards:
+          - type: custom:button-card
+            template: hemma_badge_presence
+            entity: '[[[ return variables.presence_entity_1 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_presence && !!variables.presence_entity_1 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_presence
+            entity: '[[[ return variables.presence_entity_2 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_presence && !!variables.presence_entity_2 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_presence
+            entity: '[[[ return variables.presence_entity_3 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_presence && !!variables.presence_entity_3 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_presence
+            entity: '[[[ return variables.presence_entity_4 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_presence && !!variables.presence_entity_4 ]]]'
+
+    badges_media:
+      card:
+        type: custom:button-card
+        show_icon: false
+        show_name: false
+        show_state: false
+        show_label: false
+        show_entity_picture: false
+        tap_action:
+          action: none
+        hold_action:
+          action: none
+
+        extra_styles: |
+          ha-card {
+            will-change: auto !important;
+            isolation: auto !important;
+            contain: none !important;
+          }
+          #container {
+            will-change: auto !important;
+            isolation: auto !important;
+          }
+          #mp1, #mp2, #mp3, #mp4,
+          #mp5, #mp6, #mp7, #mp8,
+          #mp9, #mp10,
+          #plex, #plex_2,
+          #activity1, #activity2 {
+            overflow: hidden;
+          }
+
+        styles:
+          card:
+            - background: transparent !important
+            - box-shadow: none !important
+            - backdrop-filter: none !important
+            - -webkit-backdrop-filter: none !important
+            - padding: 0 !important
+            - margin-top: 3px !important
+            - border-radius: 0 !important
+            - border: none !important
+            - overflow: visible !important
+            - width: max-content !important
+          grid:
+            - display: flex !important
+            - flex-direction: row !important
+            - flex-wrap: nowrap !important
+            - gap: 0 !important
+            - align-items: flex-start !important
+            - justify-content: flex-start !important
+            - overflow: visible !important
+            - padding: 0 !important
+            - margin: 0 !important
+            - width: max-content !important
+          custom_fields:
+            mp1:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_1 || !variables.media_player_1) return '0px';
+                    const s = states[variables.media_player_1]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_1 || !variables.media_player_1) return '0px';
+                    const s = states[variables.media_player_1]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_1 || !variables.media_player_1) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_1]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            mp2:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_2 || !variables.media_player_2) return '0px';
+                    const s = states[variables.media_player_2]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_2 || !variables.media_player_2) return '0px';
+                    const s = states[variables.media_player_2]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_2 || !variables.media_player_2) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_2]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            mp3:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_3 || !variables.media_player_3) return '0px';
+                    const s = states[variables.media_player_3]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_3 || !variables.media_player_3) return '0px';
+                    const s = states[variables.media_player_3]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_3 || !variables.media_player_3) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_3]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            mp4:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_4 || !variables.media_player_4) return '0px';
+                    const s = states[variables.media_player_4]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_4 || !variables.media_player_4) return '0px';
+                    const s = states[variables.media_player_4]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_4 || !variables.media_player_4) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_4]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            mp5:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_5 || !variables.media_player_5) return '0px';
+                    const s = states[variables.media_player_5]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_5 || !variables.media_player_5) return '0px';
+                    const s = states[variables.media_player_5]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_5 || !variables.media_player_5) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_5]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            mp6:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_6 || !variables.media_player_6) return '0px';
+                    const s = states[variables.media_player_6]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_6 || !variables.media_player_6) return '0px';
+                    const s = states[variables.media_player_6]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_6 || !variables.media_player_6) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_6]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            mp7:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_7 || !variables.media_player_7) return '0px';
+                    const s = states[variables.media_player_7]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_7 || !variables.media_player_7) return '0px';
+                    const s = states[variables.media_player_7]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_7 || !variables.media_player_7) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_7]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            mp8:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_8 || !variables.media_player_8) return '0px';
+                    const s = states[variables.media_player_8]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_8 || !variables.media_player_8) return '0px';
+                    const s = states[variables.media_player_8]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_8 || !variables.media_player_8) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_8]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            mp9:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_9 || !variables.media_player_9) return '0px';
+                    const s = states[variables.media_player_9]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7,variables.show_media_player_8&&variables.media_player_8].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_9 || !variables.media_player_9) return '0px';
+                    const s = states[variables.media_player_9]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7,variables.show_media_player_8&&variables.media_player_8].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_9 || !variables.media_player_9) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_9]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            mp10:
+              - max-width: >
+                  [[[
+                    if (!variables.show_media_player_10 || !variables.media_player_10) return '0px';
+                    const s = states[variables.media_player_10]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7,variables.show_media_player_8&&variables.media_player_8,variables.show_media_player_9&&variables.media_player_9].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return '450px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_media_player_10 || !variables.media_player_10) return '0px';
+                    const s = states[variables.media_player_10]; if (!s) return '0px';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
+                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
+                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
+                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
+                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7,variables.show_media_player_8&&variables.media_player_8,variables.show_media_player_9&&variables.media_player_9].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
+                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_media_player_10 || !variables.media_player_10) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.media_player_10]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '');
+                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const a = s.attributes || {};
+                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
+                    return 'max-width 0.001s ease, margin-right 0.001s ease';
+                  ]]]
+            plex:
+              - max-width: >
+                  [[[
+                    if (!variables.show_plex_1 || !variables.plex_binary_1) return '0px';
+                    const s = states[variables.plex_binary_1];
+                    return (s && s.state === 'on') ? '600px' : '0px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_plex_1 || !variables.plex_binary_1) return '0px';
+                    const s = states[variables.plex_binary_1];
+                    return (s && s.state === 'on') ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_plex_1 || !variables.plex_binary_1) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.plex_binary_1];
+                    return (s && s.state === 'on') ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                  ]]]
+            plex_2:
+              - max-width: >
+                  [[[
+                    if (!variables.show_plex_2 || !variables.plex_binary_2) return '0px';
+                    const s = states[variables.plex_binary_2];
+                    return (s && s.state === 'on') ? '600px' : '0px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_plex_2 || !variables.plex_binary_2) return '0px';
+                    const s = states[variables.plex_binary_2];
+                    return (s && s.state === 'on') ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_plex_2 || !variables.plex_binary_2) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.plex_binary_2];
+                    return (s && s.state === 'on') ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                  ]]]
+            activity1:
+              - max-width: >
+                  [[[
+                    if (!variables.show_psn_1 || !variables.psn_1) return '0px';
+                    const s = states[variables.psn_1]; if (!s) return '0px';
+                    const st = String(s.state || '').toLowerCase();
+                    const a = s.attributes || {};
+                    if (['playing','buffering','paused'].includes(st)) return '450px';
+                    const title = String(a.media_title || a.title || '').trim();
+                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                    const app = String(a.app_name || a.source || '').trim();
+                    return (title || artist || app) ? '450px' : '0px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_psn_1 || !variables.psn_1) return '0px';
+                    const s = states[variables.psn_1]; if (!s) return '0px';
+                    const st = String(s.state || '').toLowerCase();
+                    const a = s.attributes || {};
+                    if (['playing','buffering','paused'].includes(st)) return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                    const title = String(a.media_title || a.title || '').trim();
+                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                    const app = String(a.app_name || a.source || '').trim();
+                    return (title || artist || app) ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_psn_1 || !variables.psn_1) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.psn_1]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '').toLowerCase();
+                    const a = s.attributes || {};
+                    if (['playing','buffering','paused'].includes(st)) return 'max-width 0.001s ease, margin-right 0.001s ease';
+                    const title = String(a.media_title || a.title || '').trim();
+                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                    const app = String(a.app_name || a.source || '').trim();
+                    return (title || artist || app) ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                  ]]]
+            activity2:
+              - max-width: >
+                  [[[
+                    if (!variables.show_psn_2 || !variables.psn_2) return '0px';
+                    const s = states[variables.psn_2]; if (!s) return '0px';
+                    const st = String(s.state || '').toLowerCase();
+                    const a = s.attributes || {};
+                    if (['playing','buffering','paused'].includes(st)) return '450px';
+                    const title = String(a.media_title || a.title || '').trim();
+                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                    const app = String(a.app_name || a.source || '').trim();
+                    return (title || artist || app) ? '450px' : '0px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_psn_2 || !variables.psn_2) return '0px';
+                    const s = states[variables.psn_2]; if (!s) return '0px';
+                    const st = String(s.state || '').toLowerCase();
+                    const a = s.attributes || {};
+                    if (['playing','buffering','paused'].includes(st)) return 'var(--badge-gap-current, var(--badge-gap, 10px))';
+                    const title = String(a.media_title || a.title || '').trim();
+                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                    const app = String(a.app_name || a.source || '').trim();
+                    return (title || artist || app) ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_psn_2 || !variables.psn_2) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const s = states[variables.psn_2]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const st = String(s.state || '').toLowerCase();
+                    const a = s.attributes || {};
+                    if (['playing','buffering','paused'].includes(st)) return 'max-width 0.001s ease, margin-right 0.001s ease';
+                    const title = String(a.media_title || a.title || '').trim();
+                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
+                    const app = String(a.app_name || a.source || '').trim();
+                    return (title || artist || app) ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                  ]]]
+            activity_steam:
+              - max-width: >
+                  [[[
+                    if (!variables.show_discord_steam || !variables.discord_steam_online || !variables.discord_steam_game) return '0px';
+                    const online = states[variables.discord_steam_online]; if (!online) return '0px';
+                    if (String(online.state || '').toLowerCase() !== 'online') return '0px';
+                    const g = String(states[variables.discord_steam_game]?.state || '').toLowerCase();
+                    return (g && g !== 'unknown' && g !== 'unavailable') ? '450px' : '0px';
+                  ]]]
+              - margin-right: >
+                  [[[
+                    if (!variables.show_discord_steam || !variables.discord_steam_online || !variables.discord_steam_game) return '0px';
+                    const online = states[variables.discord_steam_online]; if (!online) return '0px';
+                    if (String(online.state || '').toLowerCase() !== 'online') return '0px';
+                    const g = String(states[variables.discord_steam_game]?.state || '').toLowerCase();
+                    return (g && g !== 'unknown' && g !== 'unavailable') ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
+                  ]]]
+              - transition: >
+                  [[[
+                    if (!variables.show_discord_steam || !variables.discord_steam_online || !variables.discord_steam_game) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const online = states[variables.discord_steam_online]; if (!online) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    if (String(online.state || '').toLowerCase() !== 'online') return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                    const g = String(states[variables.discord_steam_game]?.state || '').toLowerCase();
+                    return (g && g !== 'unknown' && g !== 'unavailable') ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
+                  ]]]
+        custom_fields:
+          mp1:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_1 ]]]'
+                entity: '[[[ return variables.media_player_1 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          mp2:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_2 ]]]'
+                entity: '[[[ return variables.media_player_2 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          mp3:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_3 ]]]'
+                entity: '[[[ return variables.media_player_3 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          mp4:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_4 ]]]'
+                entity: '[[[ return variables.media_player_4 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          mp5:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_5 ]]]'
+                entity: '[[[ return variables.media_player_5 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          mp6:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_6 ]]]'
+                entity: '[[[ return variables.media_player_6 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          mp7:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_7 ]]]'
+                entity: '[[[ return variables.media_player_7 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          mp8:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_8 ]]]'
+                entity: '[[[ return variables.media_player_8 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          mp9:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_9 ]]]'
+                entity: '[[[ return variables.media_player_9 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          mp10:
+            card:
+              type: custom:button-card
+              template: hemma_badge_media_player
+              variables:
+                enabled: '[[[ return variables.show_media_player_10 ]]]'
+                entity: '[[[ return variables.media_player_10 ]]]'
+                pause_timeout_minutes: '[[[ return variables.pause_timeout_minutes ]]]'
+          plex:
+            card:
+              type: custom:button-card
+              template: hemma_badge_plex
+              entity: '[[[ return variables.plex_binary_1 ]]]'
+              variables:
+                enabled: '[[[ return variables.show_plex_1 ]]]'
+                session_entity: '[[[ return variables.plex_stream_1 ]]]'
+
+          plex_2:
+            card:
+              type: custom:button-card
+              template: hemma_badge_plex
+              entity: '[[[ return variables.plex_binary_2 ]]]'
+              variables:
+                enabled: '[[[ return variables.show_plex_2 ]]]'
+                session_entity: '[[[ return variables.plex_stream_2 ]]]'
+          activity1:
+            card:
+              type: custom:button-card
+              template: hemma_badge_activity
+              entity: '[[[ return variables.psn_1 ]]]'
+              variables:
+                enabled: '[[[ return variables.show_psn_1 ]]]'
+          activity2:
+            card:
+              type: custom:button-card
+              template: hemma_badge_activity
+              entity: '[[[ return variables.psn_2 ]]]'
+              variables:
+                enabled: '[[[ return variables.show_psn_2 ]]]'
+          activity_steam:
+            card:
+              type: custom:button-card
+              template: hemma_badge_activity
+              entity: '[[[ return variables.discord_steam_image ]]]'
+              entity_picture: >
+                [[[
+                  const s = states[variables.discord_steam_image];
+                  const url = s?.attributes?.entity_picture || s?.state;
+                  const bad = !url || ['unknown','unavailable',''].includes(String(url).toLowerCase()) || !String(url).startsWith('http');
+                  if (!bad) this._discordImgUrl = url;
+                  return this._discordImgUrl || null;
+                ]]]
+              variables:
+                enabled: >
+                  [[[
+                    if (!variables.show_discord_steam) return false;
+                    const online = states[variables.discord_steam_online];
+                    if (!online || String(online.state || '').toLowerCase() !== 'online') return false;
+                    const g = String(states[variables.discord_steam_game]?.state || '').toLowerCase();
+                    return !!(g && g !== 'unknown' && g !== 'unavailable');
+                  ]]]
+              styles:
+                card:
+                  - --hemma-badge-opacity: >
+                      [[[
+                        if (!variables.show_discord_steam) return '0';
+                        const online = states[variables.discord_steam_online];
+                        if (!online || String(online.state || '').toLowerCase() !== 'online') return '0';
+                        const g = String(states[variables.discord_steam_game]?.state || '').toLowerCase();
+                        return (g && g !== 'unknown' && g !== 'unavailable') ? '1' : '0';
+                      ]]]
+                  - --hemma-badge-ptr: >
+                      [[[
+                        if (!variables.show_discord_steam) return 'none';
+                        const online = states[variables.discord_steam_online];
+                        if (!online || String(online.state || '').toLowerCase() !== 'online') return 'none';
+                        const g = String(states[variables.discord_steam_game]?.state || '').toLowerCase();
+                        return (g && g !== 'unknown' && g !== 'unavailable') ? 'auto' : 'none';
+                      ]]]
+                  - --bg-url: >
+                      [[[
+                        const s = states[variables.discord_steam_image];
+                        const raw = s?.attributes?.entity_picture || s?.state;
+                        const bad = !raw || ['unknown','unavailable',''].includes(String(raw).toLowerCase()) || !String(raw).startsWith('http');
+                        if (!bad) {
+                          this._discordBgUrl = `url("${raw}")`;
+                        }
+                        return this._discordBgUrl || 'none';
+                      ]]]
+              name: >
+                [[[
+                  const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+                  const game = String(states[variables.discord_steam_game]?.state || '').trim();
+                  const details = String(states[variables.discord_steam_details]?.state || '').trim();
+                  const gameOk = game && !['unknown','unavailable'].includes(game.toLowerCase());
+                  const detailsOk = details && !['unknown','unavailable'].includes(details.toLowerCase());
+                  const title = 'PC';
+                  const sub = gameOk ? (detailsOk ? `${game} — ${details}` : game) : 'Online';
+                  return `<div class="badge-wrap"><div class="badge-title">${esc(title)}</div><div class="badge-sub">${esc(sub)}</div></div>`;
+                ]]]
+    badges_lights:
+      card:
+        type: custom:layout-card
+        layout_type: custom:grid-layout
+
+        layout:
+          grid-auto-flow: column
+          grid-auto-columns: max-content
+          grid-template-columns: none
+          justify-content: start
+          justify-items: start
+          align-items: center
+          grid-column-gap: var(--badge-gap-current, var(--badge-gap, 10px))
+
+        cards:
+          # When light_entity_2 is not set and light_entity_1 is an HA light group,
+          # the sub-badges automatically expand to show each member of the group.
+          # To use individual entities directly, set light_entity_1, light_entity_2, etc.
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[0] || null) : (g || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[0];
+                  return variables.show_lights && !!g;
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[1] || null) : (variables.light_entity_2 || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[1];
+                  return variables.show_lights && !!variables.light_entity_2;
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[2] || null) : (variables.light_entity_3 || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[2];
+                  return variables.show_lights && !!variables.light_entity_3;
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[3] || null) : (variables.light_entity_4 || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[3];
+                  return variables.show_lights && !!variables.light_entity_4;
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[4] || null) : (variables.light_entity_5 || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[4];
+                  return variables.show_lights && !!variables.light_entity_5;
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[5] || null) : (variables.light_entity_6 || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[5];
+                  return variables.show_lights && !!variables.light_entity_6;
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[6] || null) : (variables.light_entity_7 || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[6];
+                  return variables.show_lights && !!variables.light_entity_7;
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[8] || null) : (variables.light_entity_8 || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[8];
+                  return variables.show_lights && !!variables.light_entity_8;
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[9] || null) : (variables.light_entity_9 || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[9];
+                  return variables.show_lights && !!variables.light_entity_9;
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_light
+            entity: >
+              [[[
+                const g = variables.light_entity_1;
+                const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                return expand ? (m[10] || null) : (variables.light_entity_10 || null);
+              ]]]
+            variables:
+              enabled: >
+                [[[
+                  const g = variables.light_entity_1;
+                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
+                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
+                  if (expand) return variables.show_lights && !!m[10];
+                  return variables.show_lights && !!variables.light_entity_10;
+                ]]]
+
+  extra_styles: |
+    #mp1, #mp2, #mp3, #mp4,
+    #plex, #plex_2,
+    #activity1, #activity2 {
+      overflow: hidden;
+    }
+
+    #badges,
+    #badges_climate,
+    #badges_presence,
+    #badges_media,
+    #badges_lights {
+      overflow-x: hidden !important;
+      overflow-y: hidden !important;
+      overscroll-behavior-x: contain !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+
+    #badges::-webkit-scrollbar,
+    #badges_climate::-webkit-scrollbar,
+    #badges_presence::-webkit-scrollbar,
+    #badges_media::-webkit-scrollbar,
+    #badges_lights::-webkit-scrollbar {
+      display: none;
+    }
+
+    @media (max-width: 767px) and (orientation: portrait) {
+      #badges,
+      #badges_climate,
+      #badges_presence,
+      #badges_media,
+      #badges_lights {
+        overflow-x: auto !important;
+        width: calc(100% + 2 * var(--hero-gutter) - var(--hemma-header-badge-nudge, 0px)) !important;
+        max-width: none !important;
+        margin-left: calc(-1 * var(--hero-gutter) + var(--hemma-header-badge-nudge, 0px)) !important;
+        padding-left: var(--hero-gutter) !important;
+        padding-right: var(--hero-gutter) !important;
+        box-sizing: border-box !important;
+      }
+
+      #badges_media {
+        padding-left: calc(var(--hero-gutter) + var(--hemma-header-media-badge-nudge-current, 0px)) !important;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 600px) {
+      #badges,
+      #badges_climate,
+      #badges_presence,
+      #badges_media,
+      #badges_lights {
+        max-width: calc(100vw - (2 * var(--hemma-entity-col-width-landscape, 200px)) - 8px - var(--hemma-tiles-right-pad-landscape, 0px) - var(--hero-gutter, 18px) - var(--hemma-landscape-badge-stop-pad, 60px)) !important;
+        overflow-x: auto !important;
+        box-sizing: border-box !important;
+      }
+    }
+
+    #time {
+      display: none;
+    }
+
+    @media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+      #time {
+        display: var(--hemma-time-nav-open, block);
+        top: calc(env(safe-area-inset-top, 0px) + var(--hemma-nav-top-current, 60px) - 8px);
+        right: clamp(8px, 4vw, 48px);
+      }
+    }
+
+    @media (min-width: 600px) and (max-width: 767px) and (min-height: 501px) {
+      #time {
+        display: var(--hemma-time-nav-open, block);
+        top: calc(env(safe-area-inset-top, 0px) + var(--hemma-nav-top-current, 46px) - var(--hemma-time-nudge-small-tablet, 43px));
+        right: calc(env(safe-area-inset-right, 0px) + 8px);
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1400px) and (min-height: 501px) and (pointer: coarse),
+           (min-width: 768px) and (max-width: 1400px) and (min-height: 501px) and (hover: none) {
+      #time {
+        display: var(--hemma-time-nav-open, block);
+        top: calc(env(safe-area-inset-top, 0px) + var(--hemma-nav-top-current, 46px) - var(--hemma-time-nudge-tablet, 36px));
+        right: max(calc(var(--hero-gutter) - 20px), 4px);
+      }
+    }

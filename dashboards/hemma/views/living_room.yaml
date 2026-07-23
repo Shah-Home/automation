@@ -32,9 +32,6 @@ cards:
       show_motion: true
       motion_sensor: binary_sensor.living_room_presence
 
-  # DESKTOP NAVBAR
-  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
-
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 

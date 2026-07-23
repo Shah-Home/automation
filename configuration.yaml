@@ -20,6 +20,25 @@ template: !include sensors.yaml
 
 lovelace:
   mode: storage
+  resources:
+    - type: module
+      url: /hacsfiles/button-card/button-card.js
+    - type: module
+      url: /hacsfiles/kiosk-mode/kiosk-mode.js
+    - type: module
+      url: /local/hemma/scripts/layout-card-modified.js
+    - type: module
+      url: /local/hemma/scripts/navbar-popup-caret.js
+    - type: module
+      url: /local/hemma/scripts/navbar-sidebar-offset.js
+    - type: module
+      url: /local/hemma/scripts/navbar-scroll.js
+    - type: module
+      url: /local/hemma/scripts/swipe-card-patch.js
+    - type: module
+      url: /local/hemma/scripts/hemma-smart-row.js
+    - type: css
+      url: /local/hemma/fonts/hanken-grotesk.css
   dashboards:
     dashboard-hemma:
       mode: yaml

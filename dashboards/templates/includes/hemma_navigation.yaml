@@ -645,36 +645,4 @@ card:
                 }
               }));
             ]]]
-
-    # Time (right)
-    - type: custom:layout-card
-      layout_type: custom:grid-layout
-      layout:
-        grid-template-columns: max-content
-        grid-template-rows: min-content
-        justify-content: end
-        justify-items: end
-        align-items: start
-
-      card_mod:
-        style: |
-          :host{
-            justify-self: end !important;
-            width: max-content !important;
-          }
-          ha-card{
-            background: transparent !important;
-            box-shadow: none !important;
-            border: 0 !important;
-            width: max-content !important;
-          }
-
-      cards:
-        - type: custom:button-card
-          template: hemma_time
-          styles:
-            card:
-              - padding-top: 3px
-              - width: 100%
-              - justify-self: end
-              - text-align: right
+            

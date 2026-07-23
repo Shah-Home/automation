@@ -1,17 +1,23 @@
 # Humidity Badge
-# Shows humidity sensor with color-coded status
+# Shows humidity sensor with color-coded status.
+# Tap: opens hemma_climate_popup (shared climate popup).
 hemma_badge_humidity:
-  template: [hemma_badge_base]
+  template: [hemma_badge_base, hemma_popup_base, hemma_climate_popup]
 
   variables:
     enabled: true
+    room_name: null
+    entity_quality: null
+    entity_temp: null
+    entity_humidity: null
+    sensors: null
 
-  tap_action: { action: more-info }
   icon: mdi:water-percent
 
   extra_styles: >
     [[[
-      // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
+      const SVG_URL = '/local/hemma/icons/humidity.svg';
+
       const ev = variables?.enabled;
       const enabled = (ev === undefined || ev === null) ? true :
         (typeof ev === 'boolean') ? ev :
@@ -24,14 +30,26 @@ hemma_badge_humidity:
       const v       = parseFloat(stRaw);
       const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st) || Number.isNaN(v);
 
-      return `:host{display:${hide ? 'none' : 'inline-block'} !important;}`;
+      return `
+        :host{display:${hide ? 'none' : 'inline-block'} !important;}
+        #img-cell, .img-cell { position: relative; }
+        #img-cell #icon, .img-cell #icon { color: transparent !important; opacity: 0 !important; }
+        #img-cell::before, .img-cell::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-color: var(--hemma-icon-color, var(--primary-text-color));
+          -webkit-mask: url('${SVG_URL}') no-repeat center / 85% 85%;
+          mask: url('${SVG_URL}') no-repeat center / 85% 85%;
+          transform: translateZ(0);
+        }
+      `;
     ]]]
 
   styles:
     card:
       - display: >
           [[[
-            // Robust enabled check (see hemma_badge_base.yaml for pattern docs)
             const ev = variables?.enabled;
             const enabled = (ev === undefined || ev === null) ? true :
               (typeof ev === 'boolean') ? ev :
@@ -46,32 +64,34 @@ hemma_badge_humidity:
 
             return hide ? 'none' : 'inline-grid';
           ]]]
-    icon:
-      - color: >
+      - --hemma-icon-color: >
           [[[
             const v = parseFloat(entity?.state);
             if (isNaN(v)) return 'var(--disabled-text-color)';
-            if (v <= 29.99) return '#ffb254';
-            if (v >= 61)    return '#4bd1fa';
-            return '#45dced';
+            if (v <= 29.99) return 'var(--hemma-badge-humidity-dry-color)';
+            if (v >= 61)    return 'var(--hemma-badge-humidity-high-color)';
+            return 'var(--hemma-badge-climate-color)';
           ]]]
+    icon:
+      - color: transparent
 
   name: >
     [[[
       const v = parseFloat(entity?.state);
       let label = 'Unknown';
       if (!isNaN(v)) {
-        if (v <= 29.99)      label = 'Very Dry';
-        else if (v >= 61)    label = 'High';
-        else                 label = 'Good';
+        if (v <= 29.99)   label = 'Very Dry';
+        else if (v >= 61) label = 'High';
+        else              label = 'Good';
       }
 
       const esc = (t) => String(t || '').replaceAll('"','&quot;');
+      const vStr = !isNaN(v) ? ` · ${Math.round(v)}%` : '';
 
       return `
-        <div class="mp-wrap">
-          <div class="mp-title">Humidity</div>
-          <div class="mp-sub">${esc(label)}</div>
+        <div class="badge-wrap">
+          <div class="badge-title">Humidity</div>
+          <div class="badge-sub">${esc(label)}${vStr}</div>
         </div>
       `;
     ]]]

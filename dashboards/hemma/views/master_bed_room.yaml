@@ -29,9 +29,6 @@ cards:
       # show_motion: true
       # motion_sensor: binary_sensor.master_bedroom_motion
 
-  # DESKTOP NAVBAR
-  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
-
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 

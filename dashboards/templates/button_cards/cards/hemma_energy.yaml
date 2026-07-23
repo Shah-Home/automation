@@ -1,0 +1,58 @@
+hemma_energy:
+  template:
+    - hemma_entity
+    - hemma_popup_energy
+
+  show_name: true
+  show_state: true
+  show_entity_picture: true
+
+  variables:
+    icon: energy
+    high_threshold: 500
+    room_name: null
+    entity_power: null
+    entity_usage_today: null
+    entity_usage_month: null
+    entity_cost_today: null
+    entity_cost_month: null
+
+  icon_tap_action:
+    action: more-info
+
+  hold_action:
+    action: more-info
+
+  name: Current Consumption
+
+  state_display: |
+    [[[
+      const w = parseFloat(entity?.state);
+      if (!Number.isFinite(w)) return '— W';
+      return Math.round(w) + ' W';
+    ]]]
+
+  state:
+    - operator: template
+      value: |
+        [[[
+          const w = parseFloat(entity?.state);
+          return Number.isFinite(w) && w >= Number(variables.high_threshold ?? 500);
+        ]]]
+      styles:
+        card:
+          - "--hemma-active-overlay-opacity": "1"
+          - "--hemma-active-overlay-dur": "0s"
+          - --hemma-entity-top-gradient: none
+          - box-shadow: var(--button-card-box-shadow-active, var(--button-card-box-shadow)) !important
+        name:
+          - color: var(--hemma-entity-name-active, var(--primary-text-color))
+        state:
+          - color: var(--hemma-entity-state-active-color)
+        img_cell:
+          - opacity: "1 !important"
+          - filter: none !important
+          - background: "var(--hemma-popup-yellow-color, #ffd600) !important"
+        entity_picture:
+          - opacity: "1 !important"
+          - filter: none !important

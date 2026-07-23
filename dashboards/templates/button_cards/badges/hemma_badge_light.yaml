@@ -1,0 +1,287 @@
+# Light Badge
+# Shows individual light entity with on/off state and brightness.
+# Tap/hold for more-info dialog.
+hemma_badge_light:
+  template: [hemma_badge_base]
+
+  variables:
+    enabled: true
+
+  show_state: false
+  show_label: false
+  show_icon: true
+  icon: mdi:lightbulb
+
+  tap_action:
+    action: call-service
+    service: script.turn_on
+    service_data:
+      entity_id: script.hemma_light_smart_toggle
+      variables:
+        light_entity: '[[[ return entity.entity_id ]]]'
+
+  hold_action:
+    action: |
+      [[[
+        const isMobile = window.matchMedia('(max-width: 767px)').matches;
+        const hasBrowserMod = typeof window.browser_mod !== 'undefined';
+        const members = entity?.entity_id ? states[entity.entity_id]?.attributes?.entity_id : null;
+        const isGroup = Array.isArray(members) && members.length > 0;
+        return (isMobile || !hasBrowserMod || !isGroup) ? 'more-info' : 'fire-dom-event';
+      ]]]
+    entity: '[[[ return entity.entity_id ]]]'
+    browser_mod:
+      service: browser_mod.popup
+      data:
+        title: ""
+        style: |
+          --popup-min-width: 800px;
+        popup_styles:
+          - style: all
+            styles: |
+              ha-dialog .content .container,
+              ha-dialog .container {
+                padding: 28px 10px 16px 10px !important;
+              }
+        content:
+          type: custom:layout-card
+          layout_type: custom:grid-layout
+          card_mod:
+            style: |
+              ha-card,
+              ha-card:hover,
+              ha-card:focus-within,
+              ha-card:active {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                filter: none !important;
+              }
+          layout:
+            grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.05fr)
+            grid-template-rows: auto
+            grid-template-areas: |
+              "main list"
+            column-gap: 18px
+            row-gap: 18px
+          cards:
+            - type: custom:more-info-card
+              view_layout:
+                grid-area: main
+              entity: "[[[ return entity.entity_id ]]]"
+              card_mod:
+                style:
+                  $: |
+                    h1.card-header {
+                      display: block !important;
+                      margin: 0 !important;
+                      padding: 8px 0 24px 0 !important;
+                      width: 100% !important;
+                      text-align: center !important;
+                      font-size: 32px !important;
+                      font-weight: 600 !important;
+                      line-height: 1.2 !important;
+                      color: var(--primary-text-color) !important;
+                    }
+
+                  .: |
+                    ha-card,
+                    ha-card:hover,
+                    ha-card:focus-within,
+                    ha-card:active {
+                      background: transparent !important;
+                      border: none !important;
+                      box-shadow: none !important;
+                      filter: none !important;
+                      backdrop-filter: none !important;
+                      -webkit-backdrop-filter: none !important;
+                      transform: none !important;
+                    }
+
+                    state-card-content,
+                    div.action {
+                      display: none !important;
+                    }
+
+                    more-info-content {
+                      opacity: 0;
+                      animation: revealMoreInfo 0s linear 0.5s forwards;
+                    }
+
+                    @keyframes revealMoreInfo {
+                      to { opacity: 1; }
+                    }
+
+                  more-info-content:
+                    $: |
+                      hui-section,
+                      hui-grid-section {
+                        display: none !important;
+                      }
+
+            - type: vertical-stack
+              view_layout:
+                grid-area: list
+              card_mod:
+                style: |
+                  ha-card,
+                  ha-card:hover,
+                  ha-card:focus-within,
+                  ha-card:active {
+                    background: transparent !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                    overflow-y: auto !important;
+                    filter: none !important;
+                  }
+              cards: |
+                [[[
+                  const expand = (eid, seen = new Set()) => {
+                    if (!eid || seen.has(eid)) return [];
+                    seen.add(eid);
+
+                    const s = states[eid];
+                    if (!s) return [];
+
+                    const members = s.attributes?.entity_id;
+                    return Array.isArray(members)
+                      ? members.flatMap(m => expand(m, seen))
+                      : [eid];
+                  };
+
+                  if (!entity) return [];
+
+                  const lights = [...new Set(expand(entity.entity_id))]
+                    .filter((eid) => eid.startsWith('light.') && eid !== entity.entity_id);
+
+                  return lights.map((eid) => ({
+                    type: 'custom:mushroom-light-card',
+                    entity: eid,
+                    fill_container: false,
+                    primary_info: 'name',
+                    secondary_info: 'state',
+                    icon_type: 'icon',
+                    show_brightness_control: true,
+                    show_color_temp_control: true,
+                    show_color_control: true,
+                    collapsible_controls: false,
+                    layout: 'horizontal',
+                    tap_action: { action: 'toggle' },
+                    hold_action: { action: 'more-info' },
+                    double_tap_action: { action: 'none' },
+                    card_mod: {
+                      style: `
+                        ha-card {
+                          background: var(--hemma-popup-entity-background, rgba(0, 0, 0, 0.4)) !important;
+                          box-shadow: none !important;
+                          border-radius: 9999px !important;
+                          margin-bottom: 8px !important;
+                          transition:
+                            background 0.18s ease,
+                            border-color 0.18s ease !important;
+                        }
+
+                        ha-card:hover,
+                        ha-card:focus-within,
+                        ha-card:active {
+                          background: var(--hemma-popup-entity-hover, rgba(0, 0, 0, 0.5)) !important;
+                          border-color: rgba(255, 255, 255, 0.08) !important;
+                          box-shadow: none !important;
+                        }
+                      `
+                    }
+                  }));
+                ]]]
+
+  double_tap_action:
+    action: none
+
+  extra_styles: >
+    [[[
+      const SVG_URL  = "/local/hemma/icons/light.svg";
+      const ICON_PCT = 85;
+
+      return `
+        #img-cell, .img-cell{ position: relative; }
+
+        #img-cell #icon, .img-cell #icon{
+          color: transparent !important;
+          opacity: 0 !important;
+        }
+
+        #img-cell::before,
+        .img-cell::before{
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-color: var(--hemma-icon-color, var(--primary-text-color)) !important;
+
+          -webkit-mask: url('${SVG_URL}') no-repeat center / ${ICON_PCT}% ${ICON_PCT}%;
+          mask: url('${SVG_URL}') no-repeat center / ${ICON_PCT}% ${ICON_PCT}%;
+
+          transform: translateZ(0);
+        }
+      `;
+    ]]]
+
+  styles:
+    card:
+      - display: >
+          [[[
+            const v = variables?.enabled;
+            const enabled = (v === undefined || v === null) ? true :
+              (typeof v === 'boolean') ? v :
+              (typeof v === 'number') ? v !== 0 :
+              !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+            const hasEnt = !!entity?.entity_id;
+            const stRaw  = String(entity?.state ?? '').trim();
+            const st     = stRaw.toLowerCase();
+            const hide   = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+            return hide ? 'none' : 'inline-grid';
+          ]]]
+      - --badge-title-color: >
+          [[[
+            return entity?.state === 'on'
+              ? 'var(--primary-text-color)'
+              : 'var(--badge-title-inactive)';
+          ]]]
+      - --badge-sub-color: >
+          [[[
+            return entity?.state === 'on'
+              ? 'var(--secondary-text-color)'
+              : 'color-mix(in oklab, var(--secondary-text-color) 70%, transparent)';
+          ]]]
+      - --hemma-icon-color: >
+          [[[
+            if (entity?.state !== 'on') return 'var(--badge-title-inactive)';
+            return 'var(--hemma-badge-light-color)';
+          ]]]
+    icon:
+      - color: transparent
+
+  name: >
+    [[[
+      const friendly = entity?.attributes?.friendly_name || 'Light';
+      const isOn     = entity?.state === 'on';
+      let sub;
+      if (!isOn) {
+        sub = 'Off';
+      } else {
+        const brightness = entity?.attributes?.brightness;
+        sub = brightness != null ? `${Math.round((brightness / 255) * 100)}%` : 'On';
+      }
+
+      const esc = (t) => String(t || '').replaceAll('"', '&quot;');
+      return `
+        <div class="badge-wrap">
+          <div class="badge-title">${esc(friendly)}</div>
+          <div class="badge-sub">${esc(sub)}</div>
+        </div>
+      `;
+    ]]]

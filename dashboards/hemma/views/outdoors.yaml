@@ -15,8 +15,6 @@ cards:
       weather_entity: weather.forecast_home
       temp_unit: "F"
 
-  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
-
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 
   - type: custom:layout-card
