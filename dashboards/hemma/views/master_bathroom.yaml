@@ -17,8 +17,6 @@ cards:
       weather_mode: room
       temp_unit: "F"
 
-  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
-
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 
   - type: custom:layout-card

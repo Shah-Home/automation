@@ -20,9 +20,6 @@ cards:
       # weather_temp_sensor: sensor.outdoor_temperature
       temp_unit: "F"
 
-  # DESKTOP NAVBAR
-  - !include /config/dashboards/templates/includes/hemma_navigation.yaml
-
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 
