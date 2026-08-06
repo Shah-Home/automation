@@ -2,11 +2,6 @@ homeassistant:
   packages: !include_dir_named packages
 
 # Loads default set of integrations. Do not remove.
-http:
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 172.30.33.0/24
-
 default_config:
 
 # Load frontend themes from the themes folder
