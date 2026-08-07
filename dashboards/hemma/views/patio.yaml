@@ -16,8 +16,7 @@ cards:
       show_weather: true
       weather_mode: outdoor
       weather_entity: weather.forecast_home
-      # TODO: {Parth Shah} Add outdoor temperature sensor if available
-      # weather_temp_sensor: sensor.outdoor_temperature
+
       temp_unit: "F"
 
   # MOBILE NAVBAR
@@ -37,10 +36,4 @@ cards:
         variables:
           icon: light
 
-      # TODO: {Parth Shah} Add outdoor sensors/devices if available
-      # - type: custom:button-card
-      #   template: hemma_entity
-      #   entity: sensor.outdoor_temperature
-      #   name: Temperature
-      #   variables:
-      #     icon: thermometer
+

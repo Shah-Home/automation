@@ -62,27 +62,11 @@ cards:
         variables:
           temp_sensor: sensor.living_room_thermostat_temperature
 
-      # TODO: {Parth Shah} Add front door lock if available
-      # - type: custom:button-card
-      #   template: hemma_entity
-      #   entity: lock.front_door
-      #   name: Front Door
-      #   variables:
-      #     icon: door
-      #     battery_entity: sensor.front_door_lock_battery
 
-      # All Lights - Using Main Floor Speakers group as proxy for now
-      # TODO: {Parth Shah} Create a light group containing all 4 switches
-      # - type: custom:button-card
-      #   template: hemma_light
-      #   entity: light.all_lights
-      #   name: All Lights
-      #   variables:
-      #     icon: light
 
       # Doorbell Camera
       - type: custom:button-card
-        template: hemma_entity
+        template: hemma_doorbell
         entity: camera.front_door_doorbell
         name: Doorbell
         variables:
@@ -91,7 +75,7 @@ cards:
 
       # Roomba Vacuum
       - type: custom:button-card
-        template: hemma_entity
+        template: hemma_vacuum
         entity: vacuum.cleaning_lady
         name: Cleaning Lady
         variables:

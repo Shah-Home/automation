@@ -22,7 +22,7 @@ cards:
     layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
     cards:
       - type: custom:button-card
-        template: hemma_entity
+        template: hemma_doorbell
         entity: camera.front_door_doorbell
         name: Front Door
         variables:
