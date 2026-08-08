@@ -8,7 +8,7 @@ cards:
     template: hemma_room
     name: Dining Room
     variables:
-      image: diningroom-night
+      image: diningroom
       image_position: center center
 
       # Luminance (FP2 illuminance) — shown as a badge in the climate row

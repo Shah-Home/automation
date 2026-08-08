@@ -8,7 +8,7 @@ cards:
     template: hemma_room
     name: Patio
     variables:
-      image: patio-night
+      image: patio
       image_position: center center
 
       # Weather for outdoor area

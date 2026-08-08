@@ -7,7 +7,7 @@ cards:
     template: hemma_room
     name: Master Bathroom
     variables:
-      image: masterbathroom-night
+      image: masterbathroom
       image_position: center center
 
       # Temperature & Humidity shown as badges in the hero header

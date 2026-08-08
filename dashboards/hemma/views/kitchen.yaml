@@ -8,7 +8,7 @@ cards:
     template: hemma_room
     name: Kitchen
     variables:
-      image: kitchen-night
+      image: kitchen
       image_position: center center
 
       show_weather: true
