@@ -12,18 +12,21 @@ cards:
       image_position: center center
 
       # Master Bedroom has full environmental monitoring
-      show_temp: true
-      temp_sensor: sensor.master_bedroom_temperature_sensor
+      show_climate: true
+      show_climate_inline: true
+      temp_sensor_1: sensor.master_bedroom_temperature_sensor
+      temp_unit: "F"
 
-      show_humidity: true
       humidity_sensor: sensor.master_bedroom_humidity_sensor
 
-      show_quality: true
       quality_sensor: sensor.master_bedroom_air_quality_sensor
+      aqi_room_name: Master Bedroom
+      aqi_entity_co2: sensor.master_bedroom_carbon_dioxide_sensor
+      aqi_entity_pm25: sensor.master_bedroom_pm2_5_sensor
+      aqi_entity_voc: sensor.master_bedroom_voc_index_sensor
 
       show_weather: true
       weather_mode: room
-      temp_unit: "F"
 
       # TODO: {Parth Shah} No motion sensor in master bedroom
       # show_motion: true
@@ -64,58 +67,5 @@ cards:
         variables:
           icon: purifier
 
-      # Air Quality Sensors
-      - type: custom:button-card
-        template: hemma_entity
-        entity: sensor.master_bedroom_carbon_dioxide_sensor
-        name: CO₂
-        state_display: |
-          [[[
-            const val = Number(entity?.state);
-            if (Number.isNaN(val)) return entity?.state || 'Unknown';
-            return `${val} ppm`;
-          ]]]
-        variables:
-          icon: co2
-
-      - type: custom:button-card
-        template: hemma_entity
-        entity: sensor.master_bedroom_pm2_5_sensor
-        name: PM2.5
-        state_display: |
-          [[[
-            const val = Number(entity?.state);
-            if (Number.isNaN(val)) return entity?.state || 'Unknown';
-            return `${val} µg/m³`;
-          ]]]
-        variables:
-          icon: pm25
-
-      - type: custom:button-card
-        template: hemma_entity
-        entity: sensor.master_bedroom_voc_index_sensor
-        name: VOC
-        state_display: |
-          [[[
-            const val = Number(entity?.state);
-            if (Number.isNaN(val)) return entity?.state || 'Unknown';
-            return `${val} index`;
-          ]]]
-        variables:
-          icon: voc
-
-      # Spotify placeholder — replace entity with media_player.spotify when integration is added
-      - type: custom:button-card
-        template: hemma_entity
-        entity: input_boolean.hemma_mobile_navigation
-        name: Spotify
-        state_display: "Coming Soon"
-        tap_action:
-          action: none
-        styles:
-          card:
-            - opacity: 0.5
-            - filter: grayscale(1)
-            - cursor: default
-        variables:
-          icon: spotify
+      # CO2, PM2.5, and VOC are now shown as badges in the hero header
+      # (climate row). See the hemma_room variables above.

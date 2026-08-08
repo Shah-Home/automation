@@ -13,10 +13,18 @@ hemma_room:
     - '[[[ return variables.temp_sensor_5 ]]]'
     - '[[[ return variables.quality_sensor ]]]'
     - '[[[ return variables.humidity_sensor ]]]'
+    - '[[[ return variables.aqi_entity_co2 ]]]'
+    - '[[[ return variables.aqi_entity_pm25 ]]]'
+    - '[[[ return variables.aqi_entity_voc ]]]'
+    - '[[[ return variables.luminance_sensor ]]]'
     - '[[[ return variables.presence_entity_1 ]]]'
     - '[[[ return variables.presence_entity_2 ]]]'
     - '[[[ return variables.presence_entity_3 ]]]'
     - '[[[ return variables.presence_entity_4 ]]]'
+    - '[[[ return variables.occupancy_sensor_1 ]]]'
+    - '[[[ return variables.occupancy_sensor_2 ]]]'
+    - '[[[ return variables.occupancy_sensor_3 ]]]'
+    - '[[[ return variables.occupancy_sensor_4 ]]]'
     - '[[[ return variables.media_player_1 ]]]'
     - '[[[ return variables.media_player_2 ]]]'
     - '[[[ return variables.media_player_3 ]]]'
@@ -91,11 +99,25 @@ hemma_room:
     aqi_entity_temp:
     aqi_entity_humidity:
 
+    # Luminance (illuminance) sensor — shown as a badge in the climate row
+    luminance_sensor:
+
     show_presence: false
     presence_entity_1:
     presence_entity_2:
     presence_entity_3:
     presence_entity_4:
+
+    # Occupancy sensors (binary_sensor.*_presence, e.g. FP2 zones) — shown as
+    # badges in the presence row. Distinct from presence_entity_* (person.*).
+    occupancy_sensor_1:
+    occupancy_sensor_2:
+    occupancy_sensor_3:
+    occupancy_sensor_4:
+    occupancy_label_1:
+    occupancy_label_2:
+    occupancy_label_3:
+    occupancy_label_4:
 
     show_media: false
     pause_timeout_minutes: 5
@@ -843,6 +865,62 @@ hemma_room:
                 ]]]
 
           - type: custom:button-card
+            template: hemma_badge_co2
+            entity: '[[[ return variables.aqi_entity_co2 ]]]'
+            variables:
+              enabled: '[[[ return !!(variables.show_climate && variables.show_climate_inline && variables.aqi_entity_co2) ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_pm25
+            entity: '[[[ return variables.aqi_entity_pm25 ]]]'
+            variables:
+              enabled: '[[[ return !!(variables.show_climate && variables.show_climate_inline && variables.aqi_entity_pm25) ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_voc
+            entity: '[[[ return variables.aqi_entity_voc ]]]'
+            variables:
+              enabled: '[[[ return !!(variables.show_climate && variables.show_climate_inline && variables.aqi_entity_voc) ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_luminance
+            entity: '[[[ return variables.luminance_sensor ]]]'
+            variables:
+              enabled: '[[[ return !!(variables.show_climate && variables.show_climate_inline && variables.luminance_sensor) ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
+          - type: custom:button-card
             template: hemma_badge_light_group
             variables:
               enabled: '[[[ return variables.show_lights ]]]'
@@ -953,6 +1031,62 @@ hemma_room:
                   return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
                 ]]]
 
+          - type: custom:button-card
+            template: hemma_badge_co2
+            entity: '[[[ return variables.aqi_entity_co2 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_climate && !!variables.aqi_entity_co2 ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_pm25
+            entity: '[[[ return variables.aqi_entity_pm25 ]]]'
+            variables:
+              enabled: '[[[ return variables.show_climate && !!variables.aqi_entity_pm25 ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_voc
+            entity: '[[[ return variables.aqi_entity_voc ]]]'
+            variables:
+              enabled: '[[[ return variables.show_climate && !!variables.aqi_entity_voc ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
+          - type: custom:button-card
+            template: hemma_badge_luminance
+            entity: '[[[ return variables.luminance_sensor ]]]'
+            variables:
+              enabled: '[[[ return variables.show_climate && !!variables.luminance_sensor ]]]'
+              room_name: '[[[ return variables.aqi_room_name ]]]'
+              entity_quality: '[[[ return variables.quality_sensor ]]]'
+              entity_temp: '[[[ return variables.aqi_entity_temp ]]]'
+              entity_humidity: '[[[ return variables.aqi_entity_humidity ]]]'
+              sensors: >-
+                [[[
+                  return [variables.aqi_entity_pm25,variables.aqi_entity_pm10,variables.aqi_entity_voc,variables.aqi_entity_co2].filter(Boolean);
+                ]]]
+
     badges_presence:
       card:
         type: custom:layout-card
@@ -991,6 +1125,34 @@ hemma_room:
             entity: '[[[ return variables.presence_entity_4 ]]]'
             variables:
               enabled: '[[[ return variables.show_presence && !!variables.presence_entity_4 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_occupancy
+            entity: '[[[ return variables.occupancy_sensor_1 ]]]'
+            variables:
+              enabled: '[[[ return !!variables.occupancy_sensor_1 ]]]'
+              label: '[[[ return variables.occupancy_label_1 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_occupancy
+            entity: '[[[ return variables.occupancy_sensor_2 ]]]'
+            variables:
+              enabled: '[[[ return !!variables.occupancy_sensor_2 ]]]'
+              label: '[[[ return variables.occupancy_label_2 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_occupancy
+            entity: '[[[ return variables.occupancy_sensor_3 ]]]'
+            variables:
+              enabled: '[[[ return !!variables.occupancy_sensor_3 ]]]'
+              label: '[[[ return variables.occupancy_label_3 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_occupancy
+            entity: '[[[ return variables.occupancy_sensor_4 ]]]'
+            variables:
+              enabled: '[[[ return !!variables.occupancy_sensor_4 ]]]'
+              label: '[[[ return variables.occupancy_label_4 ]]]'
 
     badges_media:
       card:

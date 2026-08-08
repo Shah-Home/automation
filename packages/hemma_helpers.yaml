@@ -269,18 +269,21 @@ script:
   hemma_light_smart_toggle:
     alias: "Hemma - Smart Light Toggle"
     description: >
-      Saves the current light state before turning off.
-      For light groups, snapshots each individual member so only
-      the lights that were on get restored (not the whole group).
+      Saves the current light/switch state before turning off.
+      For groups, snapshots each individual member so only
+      the members that were on get restored (not the whole group).
       Falls back to a plain turn_on if no saved state exists yet.
+      Domain-agnostic: uses light.turn_on/off for light.*, switch.turn_on/off
+      for switch.*, and homeassistant.toggle for anything else.
     mode: queued
     max: 5
     sequence:
       - variables:
           scene_id: "hemma_restore_{{ light_entity | replace('.', '_') }}"
           scene_entity: "scene.hemma_restore_{{ light_entity | replace('.', '_') }}"
+          domain: "{{ light_entity.split('.')[0] }}"
       - choose:
-          # Light is ON → snapshot current state then turn off
+          # Entity is ON → snapshot current state then turn off
           - conditions:
               - condition: template
                 value_template: "{{ states(light_entity) == 'on' }}"
@@ -291,12 +294,12 @@ script:
                   snapshot_entities: >-
                     {% set m = state_attr(light_entity, 'entity_id') %}
                     {% if m %}{{ m }}{% else %}{{ [light_entity] }}{% endif %}
-              - service: light.turn_off
+              - service: "{{ 'light.turn_off' if domain == 'light' else 'switch.turn_off' if domain == 'switch' else 'homeassistant.turn_off' }}"
                 data:
                   transition: 2
                 target:
                   entity_id: "{{ light_entity }}"
-        # Light is OFF → restore snapshot if it exists, otherwise turn on normally
+        # Entity is OFF → restore snapshot if it exists, otherwise turn on normally
         default:
           - choose:
               - conditions:
@@ -309,7 +312,7 @@ script:
                       entity_id: "{{ scene_entity }}"
                       transition: 2
             default:
-              - service: light.turn_on
+              - service: "{{ 'light.turn_on' if domain == 'light' else 'switch.turn_on' if domain == 'switch' else 'homeassistant.turn_on' }}"
                 data:
                   transition: 2
                 target:

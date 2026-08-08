@@ -1,0 +1,126 @@
+# VOC Badge
+# Shows VOC (volatile organic compounds) sensor with color-coded status.
+# Thresholds mirror hemma_popup_climate.yaml sensorThresh:
+#   - index sensors (entity_id ends with _index or unit is 'index'): good <6, moderate <8, high >=9
+#   - ppb sensors: good <100, moderate <200, high >=300
+# Tap: opens hemma_climate_popup (shared climate popup via hemma_popup_base).
+#      Falls back to more-info if browser_mod is unavailable.
+#
+# Variables (passed from hemma_room.yaml):
+#   enabled         - show/hide badge (default: true)
+#   room_name       - display name shown in popup header
+#   entity_quality  - AQ sensor entity_id (used for popup header)
+#   entity_temp     - temperature sensor entity_id (popup)
+#   entity_humidity - humidity sensor entity_id (popup)
+#   sensors         - array of AQ sensor IDs for popup detail rows
+# ============================================================================
+hemma_badge_voc:
+  template: [hemma_badge_base, hemma_popup_base, hemma_climate_popup]
+
+  variables:
+    enabled: true
+    room_name: null
+    entity_quality: null
+    entity_temp: null
+    entity_humidity: null
+    sensors: null
+
+  icon: mdi:chemical-weapon
+
+  extra_styles: >
+    [[[
+      const SVG_URL = '/local/hemma/icons/voc.svg';
+
+      const ev = variables?.enabled;
+      const enabled = (ev === undefined || ev === null) ? true :
+        (typeof ev === 'boolean') ? ev :
+        (typeof ev === 'number') ? ev !== 0 :
+        !['false','0','no','off','disabled'].includes(String(ev).trim().toLowerCase());
+
+      const hasEnt  = !!entity?.entity_id;
+      const stRaw   = String(entity?.state ?? '').trim();
+      const st      = stRaw.toLowerCase();
+      const v       = parseFloat(stRaw);
+      const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st) || Number.isNaN(v);
+
+      return `
+        :host{display:${hide ? 'none' : 'inline-block'} !important;}
+        #img-cell, .img-cell { position: relative; }
+        #img-cell #icon, .img-cell #icon { color: transparent !important; opacity: 0 !important; }
+        #img-cell::before, .img-cell::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-color: var(--hemma-icon-color, var(--primary-text-color));
+          -webkit-mask: url('${SVG_URL}') no-repeat center / 85% 85%;
+          mask: url('${SVG_URL}') no-repeat center / 85% 85%;
+          transform: translateZ(0);
+        }
+      `;
+    ]]]
+
+  styles:
+    card:
+      - display: >
+          [[[
+            const ev = variables?.enabled;
+            const enabled = (ev === undefined || ev === null) ? true :
+              (typeof ev === 'boolean') ? ev :
+              (typeof ev === 'number') ? ev !== 0 :
+              !['false','0','no','off','disabled'].includes(String(ev).trim().toLowerCase());
+
+            const hasEnt  = !!entity?.entity_id;
+            const stRaw   = String(entity?.state ?? '').trim();
+            const st      = stRaw.toLowerCase();
+            const v       = parseFloat(stRaw);
+            const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st) || Number.isNaN(v);
+
+            return hide ? 'none' : 'inline-grid';
+          ]]]
+      - --hemma-icon-color: >
+          [[[
+            const v = parseFloat(entity?.state);
+            if (isNaN(v)) return 'var(--disabled-text-color)';
+            const eid = (entity?.entity_id || '').toLowerCase();
+            const unit = (entity?.attributes?.unit_of_measurement || '').toLowerCase();
+            const isIndex = eid.endsWith('_index') || unit === 'index';
+            const good = isIndex ? 6 : 100;
+            const moderate = isIndex ? 8 : 200;
+            const high = isIndex ? 9 : 300;
+            if (v < good)         return 'var(--hemma-badge-air-quality-good-color)';
+            if (v < moderate)     return 'var(--hemma-badge-air-quality-moderate-color)';
+            if (v < high)         return 'var(--hemma-badge-air-quality-poor-color)';
+            return 'var(--hemma-badge-air-quality-bad-color)';
+          ]]]
+    icon:
+      - color: transparent
+
+  name: >
+    [[[
+      const v = parseFloat(entity?.state);
+      const eid = (entity?.entity_id || '').toLowerCase();
+      const unit = (entity?.attributes?.unit_of_measurement || '').toLowerCase();
+      const isIndex = eid.endsWith('_index') || unit === 'index';
+      const good = isIndex ? 6 : 100;
+      const moderate = isIndex ? 8 : 200;
+      const high = isIndex ? 9 : 300;
+      const unitStr = isIndex ? 'index' : (entity?.attributes?.unit_of_measurement || 'ppb');
+
+      let label = 'Unknown';
+      if (!isNaN(v)) {
+        if (v < good)         label = 'Good';
+        else if (v < moderate) label = 'Moderate';
+        else if (v < high)     label = 'High';
+        else                   label = 'Very High';
+      }
+
+      const esc = (t) => String(t || '').replaceAll('"','"');
+      const vStr = !isNaN(v) ? ` · ${Math.round(v)} ${unitStr}` : '';
+
+      return `
+        <div class="badge-wrap">
+          <div class="badge-title">VOC</div>
+          <div class="badge-sub">${esc(label)}${vStr}</div>
+        </div>
+      `;
+    ]]]

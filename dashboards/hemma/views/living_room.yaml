@@ -12,20 +12,26 @@ cards:
       image_position: center center
 
       # Room Sensors
-      show_temp: true
-      temp_sensor: sensor.living_room_thermostat_temperature
+      show_climate: true
+      show_climate_inline: true
+      temp_sensor_1: sensor.living_room_thermostat_temperature
+      temp_unit: "F"
 
-      show_humidity: true
       humidity_sensor: sensor.living_room_thermostat_humidity
 
-
+      # FP2 Presence Zones — shown as badges in the presence row
+      occupancy_sensor_1: binary_sensor.powder_room_presence
+      occupancy_label_1: Powder Room
+      occupancy_sensor_2: binary_sensor.leasure_presence
+      occupancy_label_2: Leisure Area
+      occupancy_sensor_3: binary_sensor.living_room_presence
+      occupancy_label_3: Living Room
 
       # Weather (room mode shows indoor conditions)
       show_weather: true
       weather_mode: room
-      temp_unit: "F"
 
-      # Motion/Presence
+      # Motion/Presence (hero motion indicator)
       show_motion: true
       motion_sensor: binary_sensor.living_room_presence
 
@@ -77,30 +83,8 @@ cards:
         variables:
           room: living room
 
-      # FP2 Presence Zones
-      - type: custom:button-card
-        template: hemma_motion
-        name: Living Room Presence
-        variables:
-          sensor_1: binary_sensor.powder_room_presence
-          label_1: Powder Room
-          sensor_2: binary_sensor.leasure_presence
-          label_2: Leisure Area
-          sensor_3: binary_sensor.living_room_presence
-          label_3: Living Room
+      # FP2 Presence Zones are now shown as badges in the hero header
+      # (presence row). See the hemma_room variables above.
 
-      # Spotify placeholder — replace entity with media_player.spotify when integration is added
-      - type: custom:button-card
-        template: hemma_entity
-        entity: input_boolean.hemma_mobile_navigation
-        name: Spotify
-        state_display: "Coming Soon"
-        tap_action:
-          action: none
-        styles:
-          card:
-            - opacity: 0.5
-            - filter: grayscale(1)
-            - cursor: default
-        variables:
-          icon: spotify
+      # Spotify is wired as a media badge via media_player.spotify when the
+      # integration is added (set show_media_player_N + media_player_N on the hero).
