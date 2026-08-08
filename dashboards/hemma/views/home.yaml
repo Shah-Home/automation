@@ -74,15 +74,3 @@ cards:
         name: Cleaning Lady
         variables:
           icon: vacuum
-
-      # Battery Health Monitor
-      # Auto-discovers all device_class: battery sensors (bathroom temp/humidity,
-      # doorbell, vacuum, etc.). Shows "Healthy" or "Needs Attention" (any <= 20%).
-      # Tap opens a popup listing every battery sensor with charge bars.
-      # To restrict to specific sensors, set entity_filter: [sensor.id1, sensor.id2].
-      - type: custom:button-card
-        template: hemma_battery
-        entity: sensor.living_room_thermostat_battery
-        name: Batteries
-        variables:
-          icon: battery
