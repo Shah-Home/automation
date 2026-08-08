@@ -1,0 +1,73 @@
+# Plex Activity Badge (PLACEHOLDER)
+# Shows a Plex streaming activity badge in the room hero header.
+#
+# This is a placeholder stub. When you set up your Plex server next year:
+#   1. Install the Plex HACS integration or plex_recently_added custom component.
+#   2. Point plex_binary_1/2 at a binary_sensor that is "on" when a stream is active.
+#   3. Point plex_stream_1/2 at a sensor exposing the active session metadata
+#      (title, user, player, etc.) and flesh out the name/state templates below.
+#   4. Set show_plex_1: true (and show_plex_2: true) in the relevant room view.
+#
+# Variables passed by hemma_room.yaml:
+#   enabled        - show_plex_1 / show_plex_2 (bool, default false)
+#   session_entity - plex_stream_1 / plex_stream_2 (sensor with session metadata)
+hemma_badge_plex:
+  template: [hemma_badge_base]
+  show_state: false
+  show_label: false
+  show_entity_picture: false
+  tap_action: { action: more-info }
+  hold_action: { action: more-info }
+
+  styles:
+    card:
+      - background: rgba(0,0,0,0.18) !important
+      - -webkit-backdrop-filter: blur(14px) saturate(1.2) !important
+      - backdrop-filter: blur(14px) saturate(1.2) !important
+      - justify-self: start
+      - align-self: start
+      - place-self: start
+      - margin-inline-start: 0px !important
+      - margin-left: 0px !important
+      - --badge-after-z: 0
+      - --badge-before-z: 1
+
+      - display: >
+          [[[
+            const v = variables?.enabled;
+            const isEnabled = () => {
+              if (v === undefined || v === null) return false;
+              if (typeof v === 'boolean') return v;
+              if (typeof v === 'number')  return v !== 0;
+              const s = String(v).trim().toLowerCase();
+              return ['true','1','yes','on','enabled'].includes(s);
+            };
+            if (!isEnabled()) return 'none';
+            const s = entity?.state;
+            return (s && s === 'on') ? 'flex' : 'none';
+          ]]]
+
+  name: >
+    [[[
+      const v = variables?.enabled;
+      const isEnabled = () => {
+        if (v === undefined || v === null) return false;
+        if (typeof v === 'boolean') return v;
+        if (typeof v === 'number')  return v !== 0;
+        const s = String(v).trim().toLowerCase();
+        return ['true','1','yes','on','enabled'].includes(s);
+      };
+      if (!isEnabled()) return '';
+      const s = entity?.state;
+      if (!s || s !== 'on') return '';
+
+      // Placeholder: when session_entity is wired, surface its metadata here.
+      const session = variables.session_entity ? states[variables.session_entity] : null;
+      const a = session?.attributes || {};
+      const title = String(a.title || a.media_title || '').trim();
+      const user = String(a.user || a.username || '').trim();
+      const esc = (str) => String(str ?? '').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"').replace(/'/g,'&#39;');
+      const sub = user ? `Streaming · ${user}` : 'Streaming';
+      const main = title || 'Plex';
+      return `<div class="badge-wrap"><div class="badge-title">${esc(main)}</div><div class="badge-sub">${esc(sub)}</div></div>`;
+    ]]]
