@@ -12,13 +12,15 @@ cards:
       image_night: home-night
       image_position: center center
 
-
-
       show_weather: true
       weather_mode: room
       temp_unit: "F"
 
-      # Presence from FP2 zones
+      # Presence from FP2 zones — shown as a badge in the presence row
+      occupancy_sensor_1: binary_sensor.cooking_area_presence
+      occupancy_label_1: Cooking Area
+
+      # Hero motion indicator
       show_motion: true
       motion_sensor: binary_sensor.cooking_area_presence
 
