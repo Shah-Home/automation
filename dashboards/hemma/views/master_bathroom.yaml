@@ -26,6 +26,4 @@ cards:
     class: hemma-entities
     layout_type: custom:grid-layout
     layout: !include /config/dashboards/templates/includes/hemma_entity_layout.yaml
-    cards:
-      # Temperature and Humidity are now shown as badges in the hero header
-      # (climate row). See the hemma_room variables above.
+    cards: []

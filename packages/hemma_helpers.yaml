@@ -1,37 +1,24 @@
 # packages/hemma_helpers.yaml
 # ============================================================================
-# REQUIRED: Hemma Dashboard Helper Entities
+# Hemma Dashboard Helper Entities
 #
-# These helper entities are required for the Hemma dashboard to function.
-# Place this file in your /config/packages/ directory and ensure packages
-# are enabled in your configuration.yaml:
-#
+# Enable packages in configuration.yaml:
 #   homeassistant:
 #     packages: !include_dir_named packages
 #
-# ENTITIES CREATED:
-#   - input_boolean.hemma_thermostat_overlay: Thermostat card temperature adjustment overlay
-#   - input_boolean.hemma_mobile_navigation: Mobile nav menu state
-#   - input_boolean.hemma_motion_badges: Show/hide motion sensor badges on navbar
-#   - input_select.hemma_expanded_row: Which sub-badge row is expanded (none/climate/presence/media)
-#   - input_number.hemma_thermostat_target_temperature: Thermostat target temp
-#   - input_select.hemma_thermostat_mode: Heat/Cool mode selector
-#   - sensor.hemma_mobile_dynamic_background: Shared dynamic mobile backgrounds (morning/afternoon/night)
+# ACTIVE HELPERS (used by current dashboard templates):
+#   input_boolean.hemma_thermostat_overlay  - Thermostat card temp adjustment overlay
+#   input_boolean.hemma_mobile_navigation   - Mobile nav menu open/close state
+#   input_select.hemma_expanded_row         - Which sub-badge row is expanded (none/climate/presence/media/lights)
+#   input_number.hemma_thermostat_target_temperature - Thermostat target temp
+#   input_select.hemma_thermostat_mode      - Heat/Cool mode selector
+#   sensor.hemma_mobile_dynamic_background  - Dynamic mobile background phase (morning/afternoon/night)
+#   sensor.plex_recently_added_count       - Plex recently-added count (placeholder, awaiting Plex server)
 #
-# NETWORK RESTART CONFIRMATION (used by hemma_popup_network action tiles):
-#   - input_boolean.hemma_restart_confirm_1: Confirm state for action button 1
-#   - input_boolean.hemma_restart_confirm_2: Confirm state for action button 2
-#   - input_boolean.hemma_restart_done_1: Done/success state for action button 1 (auto-clears after 3s)
-#   - input_boolean.hemma_restart_done_2: Done/success state for action button 2 (auto-clears after 3s)
-#   - script.hemma_restart_toggle: Handles Restart → Confirm → Done flow for network action tiles
-#
-#   Wire up in your popup variables:
-#     action_1_confirm_helper: input_boolean.hemma_restart_confirm_1
-#     action_1_done_helper: input_boolean.hemma_restart_done_1
-#     action_2_confirm_helper: input_boolean.hemma_restart_confirm_2
-#     action_2_done_helper: input_boolean.hemma_restart_done_2
-#
-# OPTIONAL: Adjust min/max values for input_number to match your climate needs.
+# PLACEHOLDER HELPERS (defined for future use, not yet wired to templates):
+#   input_boolean.hemma_motion_badges      - Toggle motion sensor navbar badges
+#   input_text.hemma_motion_*              - Motion sensor entity IDs for navbar badges
+#   See inline comments on each helper below for how to wire them up.
 # ============================================================================
 
 input_boolean:
@@ -43,33 +30,17 @@ input_boolean:
     name: Mobile Navigation
     initial: off
 
-  hemma_lock_overlay:
-    name: Lock Overlay
-    initial: off
-
+  # Show/hide motion sensor badges on the navbar. To use: reference this
+  # in hemma_navigation.yaml to conditionally render motion badge slots.
   hemma_motion_badges:
     name: Motion Badges
     initial: on
 
-  hemma_restart_confirm_1:
-    name: Network Restart Confirm 1
-    initial: off
-
-  hemma_restart_confirm_2:
-    name: Network Restart Confirm 2
-    initial: off
-
-  hemma_restart_done_1:
-    name: Network Restart Done 1
-    initial: off
-
-  hemma_restart_done_2:
-    name: Network Restart Done 2
-    initial: off
-
 input_text:
   # Motion sensor entity IDs for navbar badges (desktop + mobile).
-  # Leave initial as "" to disable the badge for that room.
+  # Set initial to a binary_sensor entity ID to enable, or "" to disable.
+  # To use: reference these in hemma_navigation.yaml badge slots, e.g.
+  #   entity: "{{ states('input_text.hemma_motion_living_room') }}"
   hemma_motion_living_room:
     name: "Hemma Motion - Living Room"
     initial: "binary_sensor.living_room_hub_motion"
@@ -78,7 +49,7 @@ input_text:
     initial: "binary_sensor.hue_motion_sensor_motion"
   hemma_motion_kitchen:
     name: "Hemma Motion - Kitchen"
-    initial: ""   # set to your kitchen motion sensor entity ID to enable
+    initial: ""
 
 input_number:
   hemma_thermostat_target_temperature:
@@ -203,10 +174,11 @@ template:
             var(--hemma-badge-climate-color)
           {% endif %}
 
-      # Counts Plex items added in the last 7 days — drives the Recently Added badge.
-      # Requires the plex_recently_added HACS custom component:
-      # https://github.com/NemesisRE/sensor.plex_recently_added
-      # Configure sensor.recently_added_movies and sensor.recently_added_tv in your sensor config.
+      # Placeholder: Counts Plex items added in the last 7 days.
+      # To use: install the plex_recently_added HACS custom component
+      # (https://github.com/NemesisRE/sensor.plex_recently_added) and configure
+      # sensor.recently_added_movies and sensor.recently_added_tv in your sensor config.
+      # Then wire a hemma_plex_recently_added badge card to this sensor.
       - name: "Plex Recently Added Count"
         unique_id: plex_recently_added_count
         state: >
@@ -225,47 +197,6 @@ template:
           {{ ns.count }}
 
 script:
-  hemma_restart_toggle:
-    alias: "Hemma - Restart Toggle"
-    description: >
-      One-button handler: first tap enters confirm mode, second tap
-      restarts the device and shows a done state, tapping done dismisses it.
-    mode: single
-    fields:
-      button_entity:
-        required: true
-      helper_entity:
-        required: true
-      done_entity:
-        required: false
-    sequence:
-      - choose:
-          - conditions:
-              - "{{ done_entity | default('') != '' and is_state(done_entity | default('x'), 'on') }}"
-            sequence:
-              - service: input_boolean.turn_off
-                target:
-                  entity_id: "{{ done_entity }}"
-          - conditions:
-              - "{{ is_state(helper_entity, 'on') }}"
-            sequence:
-              - service: button.press
-                target:
-                  entity_id: "{{ button_entity }}"
-              - if:
-                  - "{{ done_entity | default('') != '' }}"
-                then:
-                  - service: input_boolean.turn_on
-                    target:
-                      entity_id: "{{ done_entity }}"
-              - service: input_boolean.turn_off
-                target:
-                  entity_id: "{{ helper_entity }}"
-        default:
-          - service: input_boolean.turn_on
-            target:
-              entity_id: "{{ helper_entity }}"
-
   hemma_light_smart_toggle:
     alias: "Hemma - Smart Light Toggle"
     description: >
@@ -334,30 +265,6 @@ script:
           milliseconds: 400
 
 automation:
-  - alias: "Hemma - Auto clear restart done state 1"
-    id: hemma_auto_clear_restart_done_1
-    trigger:
-      - platform: state
-        entity_id: input_boolean.hemma_restart_done_1
-        to: "on"
-    action:
-      - delay: "00:00:03"
-      - service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.hemma_restart_done_1
-
-  - alias: "Hemma - Auto clear restart done state 2"
-    id: hemma_auto_clear_restart_done_2
-    trigger:
-      - platform: state
-        entity_id: input_boolean.hemma_restart_done_2
-        to: "on"
-    action:
-      - delay: "00:00:03"
-      - service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.hemma_restart_done_2
-
   # Auto-expand the media row when media is actively playing.
   # Triggers on HA startup (handles page-load defaults) and whenever
   # any media player begins playing. Only acts if the row is currently

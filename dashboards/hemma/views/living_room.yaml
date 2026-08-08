@@ -31,10 +31,6 @@ cards:
       show_weather: true
       weather_mode: room
 
-      # Motion/Presence (hero motion indicator)
-      show_motion: true
-      motion_sensor: binary_sensor.living_room_presence
-
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 
@@ -50,10 +46,9 @@ cards:
         entity: climate.living_room_thermostat
         name: Thermostat
         variables:
-          temp_sensor:
-            sensor.living_room_thermostat_temperature
+          temp_sensor: sensor.living_room_thermostat_temperature
 
-            # Living Room TV (Google Cast)
+      # Living Room TV (Google Cast)
       - type: custom:button-card
         template: hemma_media
         entity: media_player.living_room_tv
@@ -82,9 +77,6 @@ cards:
         name: Clean Living Room
         variables:
           room: living room
-
-      # FP2 Presence Zones are now shown as badges in the hero header
-      # (presence row). See the hemma_room variables above.
 
       # Spotify is wired as a media badge via media_player.spotify when the
       # integration is added (set show_media_player_N + media_player_N on the hero).

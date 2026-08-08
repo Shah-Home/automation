@@ -20,10 +20,6 @@ cards:
       occupancy_sensor_1: binary_sensor.cooking_area_presence
       occupancy_label_1: Cooking Area
 
-      # Hero motion indicator
-      show_motion: true
-      motion_sensor: binary_sensor.cooking_area_presence
-
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 

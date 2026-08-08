@@ -14,10 +14,6 @@ cards:
       image: home
       image_position: center center
 
-      # Temperature - Using Living Room thermostat as whole-home temp
-      show_temp: true
-      temp_sensor: sensor.living_room_thermostat_temperature
-
       # Presence Badges - Your person entities
       show_presence: true
       presence_entity_1: person.parth_shah
@@ -39,11 +35,9 @@ cards:
       show_weather: true
       weather_mode: outdoor
       weather_entity: weather.forecast_home
-      # TODO: {Parth Shah} Add outdoor temperature sensor if available
-      # weather_temp_sensor: sensor.outdoor_temperature
 
       # Temperature Unit
-      temp_unit: "F" # Fahrenheit (based on your US location)
+      temp_unit: "F"
 
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -80,3 +74,15 @@ cards:
         name: Cleaning Lady
         variables:
           icon: vacuum
+
+      # Battery Health Monitor
+      # Auto-discovers all device_class: battery sensors (bathroom temp/humidity,
+      # doorbell, vacuum, etc.). Shows "Healthy" or "Needs Attention" (any <= 20%).
+      # Tap opens a popup listing every battery sensor with charge bars.
+      # To restrict to specific sensors, set entity_filter: [sensor.id1, sensor.id2].
+      - type: custom:button-card
+        template: hemma_battery
+        entity: sensor.living_room_thermostat_battery
+        name: Batteries
+        variables:
+          icon: battery

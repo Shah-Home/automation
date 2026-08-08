@@ -28,10 +28,6 @@ cards:
       show_weather: true
       weather_mode: room
 
-      # TODO: {Parth Shah} No motion sensor in master bedroom
-      # show_motion: true
-      # motion_sensor: binary_sensor.master_bedroom_motion
-
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 
