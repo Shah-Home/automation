@@ -5,7 +5,7 @@
 #   1. Install the Plex HACS integration or plex_recently_added custom component.
 #   2. Point plex_binary_1/2 at a binary_sensor that is "on" when a stream is active.
 #   3. Point plex_stream_1/2 at a sensor exposing the active session metadata
-#      (title, user, player, etc.) and flesh out the name/state templates below.
+#      (title, user, player, etc.) and flesh out the name template below.
 #   4. Set show_plex_1: true (and show_plex_2: true) in the relevant room view.
 #
 # Variables passed by hemma_room.yaml:
@@ -32,42 +32,59 @@ hemma_badge_plex:
       - --badge-after-z: 0
       - --badge-before-z: 1
 
+      # Override the base display: the base only checks `enabled`, but we
+      # also need the binary sensor to be "on" (active stream).  Variable
+      # names are kept unique from the name: template below to avoid
+      # ButtonCardJSTemplateError duplicate-identifier errors.
       - display: >
           [[[
-            const v = variables?.enabled;
-            const isEnabled = () => {
-              if (v === undefined || v === null) return false;
-              if (typeof v === 'boolean') return v;
-              if (typeof v === 'number')  return v !== 0;
-              const s = String(v).trim().toLowerCase();
-              return ['true','1','yes','on','enabled'].includes(s);
+            const dv = variables?.enabled;
+            const dEnabled = () => {
+              if (dv === undefined || dv === null) return false;
+              if (typeof dv === 'boolean') return dv;
+              if (typeof dv === 'number')  return dv !== 0;
+              const ds = String(dv).trim().toLowerCase();
+              return ['true','1','yes','on','enabled'].includes(ds);
             };
-            if (!isEnabled()) return 'none';
-            const s = entity?.state;
-            return (s && s === 'on') ? 'flex' : 'none';
+            if (!dEnabled()) return 'none';
+            const dState = String(entity?.state || '');
+            return dState === 'on' ? 'inline-grid' : 'none';
           ]]]
 
+    grid:
+      - grid-template-areas: '"i l"'
+      - grid-template-columns: min-content minmax(0, 1fr)
+      - column-gap: 6px
+      - row-gap: 0
+      - align-items: center
+
+    name:
+      - grid-area: l
+      - padding: 0 !important
+      - min-width: 0
+
+    icon:
+      - display: none
+
+  # Name template uses its own variable names (a, title, plexUser, etc.)
+  # that don't collide with the display: template above.
   name: >
     [[[
-      const v = variables?.enabled;
-      const isEnabled = () => {
-        if (v === undefined || v === null) return false;
-        if (typeof v === 'boolean') return v;
-        if (typeof v === 'number')  return v !== 0;
-        const s = String(v).trim().toLowerCase();
-        return ['true','1','yes','on','enabled'].includes(s);
-      };
-      if (!isEnabled()) return '';
-      const s = entity?.state;
-      if (!s || s !== 'on') return '';
-
-      // Placeholder: when session_entity is wired, surface its metadata here.
-      const session = variables.session_entity ? states[variables.session_entity] : null;
-      const a = session?.attributes || {};
-      const title = String(a.title || a.media_title || '').trim();
-      const user = String(a.user || a.username || '').trim();
-      const esc = (str) => String(str ?? '').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"').replace(/'/g,'&#39;');
-      const sub = user ? `Streaming · ${user}` : 'Streaming';
+      const a = (variables.session_entity ? states[variables.session_entity] : null)?.attributes || {};
+      const title    = String(a.title || a.media_title || '').trim();
+      const plexUser = String(a.user || a.username || '').trim();
+      const sub  = plexUser ? `Streaming · ${plexUser}` : 'Streaming';
       const main = title || 'Plex';
-      return `<div class="badge-wrap"><div class="badge-title">${esc(main)}</div><div class="badge-sub">${esc(sub)}</div></div>`;
+      const esc = (str) => String(str ?? '')
+        .replace(/&/g,'&')
+        .replace(/</g,'<')
+        .replace(/>/g,'>')
+        .replace(/"/g,'"')
+        .replace(/'/g,'&#39;');
+      return `
+        <div class="badge-wrap">
+          <div class="badge-title">${esc(main)}</div>
+          <div class="badge-sub">${esc(sub)}</div>
+        </div>
+      `;
     ]]]

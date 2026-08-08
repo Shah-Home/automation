@@ -8,8 +8,7 @@ cards:
     template: hemma_room
     name: Garage
     variables:
-      image: home
-      image_night: garage-night
+      image: garage-night
       image_position: center center
 
       show_weather: true
