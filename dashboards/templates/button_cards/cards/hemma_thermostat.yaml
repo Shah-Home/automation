@@ -5,6 +5,13 @@ hemma_thermostat:
   show_label: false
   name: Thermostat
 
+  # Refresh the card when these helpers change so the overlay and mode
+  # selector icon stay in sync without a full entity state change.
+  triggers_update:
+    - input_boolean.hemma_thermostat_overlay
+    - input_number.hemma_thermostat_target_temperature
+    - input_select.hemma_thermostat_mode
+
   variables:
     thermostat_toggle_helper: input_boolean.hemma_thermostat_overlay
     temp_sensor:
@@ -236,7 +243,7 @@ hemma_thermostat:
                 inset: 0 0 0 auto
                 width: var(--rail-w)
                 grid-template-columns: 1fr
-                grid-template-rows: repeat(3, minmax(0, 1fr))
+                grid-template-rows: repeat(4, minmax(0, 1fr))
                 height: 100%
                 margin: 0
                 padding: 0
@@ -250,6 +257,67 @@ hemma_thermostat:
                     box-shadow: none !important;
                   }
               cards:
+                # Mode selector — toggles input_select.hemma_thermostat_mode
+                # between cool (snowflake) and heat (fire). Read by the toggle
+                # sub-card when turning the thermostat on from off.
+                - type: custom:button-card
+                  template: [hemma_default]
+                  show_name: false
+                  show_state: false
+                  show_icon: true
+                  icon: |
+                    [[[ return states['input_select.hemma_thermostat_mode']?.state === 'heat' ? 'mdi:fire' : 'mdi:snowflake'; ]]]
+                  tap_action:
+                    action: call-service
+                    service: input_select.select_option
+                    service_data:
+                      entity_id: input_select.hemma_thermostat_mode
+                      option: |
+                        [[[ return states['input_select.hemma_thermostat_mode']?.state === 'heat' ? 'cool' : 'heat'; ]]]
+                  styles:
+                    card:
+                      - height: 100%
+                      - min-height: 0
+                      - padding: 0
+                      - background: transparent
+                      - box-shadow: none !important
+                      - border: none !important
+                      - border-bottom: 1px solid rgba(255,255,255,0.10) !important
+                      - backdrop-filter: none !important
+                      - "--button-card-ripple-color": transparent !important
+                      - "-webkit-tap-highlight-color": transparent !important
+                      - opacity: |
+                          [[[ return states['input_boolean.hemma_thermostat_overlay']?.state === 'on' ? '1' : '0'; ]]]
+                    icon:
+                      - color: |
+                          [[[ return states['input_select.hemma_thermostat_mode']?.state === 'heat'
+                                ? 'var(--hemma-puck-heat-color, #ffd600)'
+                                : 'var(--hemma-puck-cool-color, #00d2e0)'; ]]]
+                      - filter: var(--thermostat-control-icon-filter, none)
+                    img_cell:
+                      - width: |
+                          [[[ const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches; return isMobile ? '74%' : '78%'; ]]]
+                      - aspect-ratio: '1'
+                  card_mod:
+                    style: |
+                      ha-card { background: transparent !important; }
+                      #container::before {
+                        content: '';
+                        position: absolute;
+                        inset: 0;
+                        background: rgba(255,255,255,0.10);
+                        opacity: 0;
+                        pointer-events: none;
+                        z-index: 0;
+                        transition: opacity 0.18s ease;
+                      }
+                      @media (hover: hover) {
+                        :host(:hover) #container::before { opacity: 1; }
+                      }
+                      @media (hover: none) {
+                        :host(:active) #container::before { opacity: 1; }
+                      }
+
                 - type: custom:button-card
                   template: [hemma_default]
                   show_name: false

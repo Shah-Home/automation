@@ -11,14 +11,10 @@
 #   input_boolean.hemma_mobile_navigation   - Mobile nav menu open/close state
 #   input_select.hemma_expanded_row         - Which sub-badge row is expanded (none/climate/presence/media/lights)
 #   input_number.hemma_thermostat_target_temperature - Thermostat target temp
-#   input_select.hemma_thermostat_mode      - Heat/Cool mode selector
+#   input_select.hemma_thermostat_mode      - Heat/Cool mode selector (set via thermostat overlay rail)
+#   input_select.vacuum_command_state       - Vacuum command state machine
 #   sensor.hemma_mobile_dynamic_background  - Dynamic mobile background phase (morning/afternoon/night)
 #   sensor.plex_recently_added_count       - Plex recently-added count (placeholder, awaiting Plex server)
-#
-# PLACEHOLDER HELPERS (defined for future use, not yet wired to templates):
-#   input_boolean.hemma_motion_badges      - Toggle motion sensor navbar badges
-#   input_text.hemma_motion_*              - Motion sensor entity IDs for navbar badges
-#   See inline comments on each helper below for how to wire them up.
 # ============================================================================
 
 input_boolean:
@@ -29,27 +25,6 @@ input_boolean:
   hemma_mobile_navigation:
     name: Mobile Navigation
     initial: off
-
-  # Show/hide motion sensor badges on the navbar. To use: reference this
-  # in hemma_navigation.yaml to conditionally render motion badge slots.
-  hemma_motion_badges:
-    name: Motion Badges
-    initial: on
-
-input_text:
-  # Motion sensor entity IDs for navbar badges (desktop + mobile).
-  # Set initial to a binary_sensor entity ID to enable, or "" to disable.
-  # To use: reference these in hemma_navigation.yaml badge slots, e.g.
-  #   entity: "{{ states('input_text.hemma_motion_living_room') }}"
-  hemma_motion_living_room:
-    name: "Hemma Motion - Living Room"
-    initial: "binary_sensor.living_room_hub_motion"
-  hemma_motion_bedroom:
-    name: "Hemma Motion - Bedroom"
-    initial: "binary_sensor.hue_motion_sensor_motion"
-  hemma_motion_kitchen:
-    name: "Hemma Motion - Kitchen"
-    initial: ""
 
 input_number:
   hemma_thermostat_target_temperature:
@@ -128,52 +103,6 @@ template:
           next_setting: "{{ state_attr('sun.sun', 'next_setting') }}"
 
   - sensor:
-      - name: hemma_mobile_background_url
-        unique_id: hemma_mobile_background_url
-        state: >
-          {% set phase = states('sensor.hemma_mobile_dynamic_background') | lower %}
-          {% if phase in ['morning','dawn'] %}
-            {% set p = 'morning' %}
-          {% elif phase in ['night','evening','sunset'] %}
-            {% set p = 'night' %}
-          {% else %}
-            {% set p = 'day' %}
-          {% endif %}
-
-          {% set dark = '-dark' if is_state('sun.sun','below_horizon') else '' %}
-
-          /local/hemma/mobile/mobile-{{ p }}{{ dark }}.jpg
-
-      - name: Temp Color
-        unique_id: hemma_temp_color
-        state: >
-          {% set v = states('sensor.temperature') | float(0) %}
-          {% if v <= 65 %}
-            var(--hemma-badge-temp-very-cold-color)
-          {% elif v <= 70 %}
-            var(--hemma-badge-temp-cool-color)
-          {% elif v <= 76 %}
-            var(--hemma-badge-temp-comfortable-color)
-          {% elif v <= 81 %}
-            var(--hemma-badge-temp-warm-color)
-          {% elif v <= 85 %}
-            var(--hemma-badge-temp-hot-color)
-          {% else %}
-            var(--hemma-badge-temp-very-hot-color)
-          {% endif %}
-
-      - name: Humidity Color
-        unique_id: hemma_humidity_color
-        state: >
-          {% set v = states('sensor.humidity') | float(0) %}
-          {% if v <= 29.99 %}
-            var(--hemma-badge-humidity-dry-color)
-          {% elif v >= 61 %}
-            var(--hemma-badge-humidity-high-color)
-          {% else %}
-            var(--hemma-badge-climate-color)
-          {% endif %}
-
       # Placeholder: Counts Plex items added in the last 7 days.
       # To use: install the plex_recently_added HACS custom component
       # (https://github.com/NemesisRE/sensor.plex_recently_added) and configure

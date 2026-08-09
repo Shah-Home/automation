@@ -213,22 +213,14 @@ hemma_light:
                   }));
                 ]]]
 
-  tap_action:
-    action: call-service
-    service: script.turn_on
-    service_data:
-      entity_id: script.hemma_light_smart_toggle
-      variables:
-        light_entity: '[[[ return entity.entity_id ]]]'
-
-  icon_tap_action:
-    action: call-service
-    service: script.turn_on
-    service_data:
-      entity_id: script.hemma_light_smart_toggle
-      variables:
-        light_entity: '[[[ return entity.entity_id ]]]'
-
+  # Main card tap opens the popup (desktop browser_mod / mobile more-info).
+  # The toggle sub-card (hemma_entity.yaml custom_fields.toggle) is the sole
+  # caller of script.hemma_light_smart_toggle — tapping the card body must NOT
+  # also call the script or the two calls double-fire (toggle-on then toggle-off
+  # = net no-op), which is what made lights appear not to toggle. See
+  # /memories/repo/button-card-light-toggle-fix.md for the original Nov 2025 fix.
+  tap_action: *light_popup
+  icon_tap_action: *light_popup
   icon_hold_action: *light_popup
 
   styles:
