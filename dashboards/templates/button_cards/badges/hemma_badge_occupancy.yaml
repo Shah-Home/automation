@@ -42,8 +42,9 @@ hemma_badge_occupancy:
         #img-cell::before, .img-cell::before {
           content: '';
           position: absolute;
-          inset: 0;
-          background-color: var(--hemma-icon-color, var(--primary-text-color));
+          inset: 2px;
+          z-index: 5;
+          background-color: var(--hemma-icon-color, var(--primary-text-color)) !important;
           -webkit-mask: url('${SVG_URL}') no-repeat center / 85% 85%;
           mask: url('${SVG_URL}') no-repeat center / 85% 85%;
           transform: translateZ(0);
@@ -68,6 +69,13 @@ hemma_badge_occupancy:
 
             return hide ? 'none' : 'inline-grid';
           ]]]
+      - background: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase();
+            return s === 'on'
+              ? 'var(--badge-active-color, rgba(255,255,255,0.85))'
+              : 'var(--badge-background, rgba(0,0,0,0.18))';
+          ]]]
       - --hemma-icon-color: >
           [[[
             const s = String(entity?.state || '').toLowerCase();
@@ -79,14 +87,14 @@ hemma_badge_occupancy:
           [[[
             const s = String(entity?.state || '').toLowerCase();
             return s === 'on'
-              ? 'var(--primary-text-color)'
+              ? 'rgba(0,0,0,0.85)'
               : 'var(--badge-title-inactive)';
           ]]]
       - --badge-sub-color: >
           [[[
             const s = String(entity?.state || '').toLowerCase();
             return s === 'on'
-              ? 'var(--secondary-text-color)'
+              ? 'rgba(0,0,0,0.6)'
               : 'color-mix(in oklab, var(--secondary-text-color) 70%, transparent)';
           ]]]
     icon:
