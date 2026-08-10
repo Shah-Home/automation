@@ -11,8 +11,6 @@
 hemma_badge_occupancy_group:
   template: [hemma_badge_base]
 
-  entity: input_select.hemma_expanded_row
-
   variables:
     enabled: true
     entity_1:
@@ -79,12 +77,7 @@ hemma_badge_occupancy_group:
 
   styles:
     card:
-      - background: >
-          [[[
-            return entity?.state === 'occupancy'
-              ? 'var(--badge-active-color, rgba(255,255,255,0.85))'
-              : 'var(--badge-background, rgba(0,0,0,0.18))';
-          ]]]
+      - background: 'var(--badge-background, rgba(0,0,0,0.18))'
       - display: >
           [[[
             const v = variables?.enabled;
@@ -96,17 +89,10 @@ hemma_badge_occupancy_group:
             const hasAny = !!(variables?.entity_1 || variables?.entity_2 || variables?.entity_3 || variables?.entity_4);
             return (enabled && hasAny) ? 'inline-grid' : 'none';
           ]]]
-      - --badge-title-color: >
-          [[[
-            return entity?.state === 'occupancy' ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
-          ]]]
-      - --badge-sub-color: >
-          [[[
-            return entity?.state === 'occupancy' ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
-          ]]]
+      - --badge-title-color: 'var(--primary-text-color)'
+      - --badge-sub-color: 'var(--secondary-text-color)'
       - --hemma-badge-icon-color: >
           [[[
-            if (entity?.state === 'occupancy') return 'rgba(0,0,0,0.75)';
             const isOn = (eid) => {
               if (!eid) return false;
               const s = String(hass.states[eid]?.state || '').toLowerCase();
@@ -114,8 +100,7 @@ hemma_badge_occupancy_group:
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const onCount = entities.filter(isOn).length;
-            if (onCount === entities.length) return 'var(--hemma-badge-occupancy-active-color)';
-            if (onCount === 0)               return 'var(--badge-title-inactive)';
+            if (onCount === 0) return 'var(--badge-title-inactive)';
             return 'var(--hemma-badge-occupancy-active-color)';
           ]]]
       - --icon-primary-color: var(--hemma-badge-icon-color)
@@ -142,17 +127,14 @@ hemma_badge_occupancy_group:
       const isOn = (eid) => { const s = getState(eid); return s === 'on'; };
 
       const onCount   = entities.filter(isOn).length;
-      const offEntities = entities.filter(e => !isOn(e));
 
       let title, status;
       if (entities.length === 1) {
         title  = variables?.label_1 || getName(entities[0]);
-        status = isOn(entities[0]) ? 'Detected' : 'Clear';
+        status = isOn(entities[0]) ? 'Presence' : 'Empty';
       } else {
         title = 'Presence';
-        if (onCount === entities.length)  status = 'All Detected';
-        else if (onCount === 0)           status = 'All Clear';
-        else                                status = `${onCount} Detected`;
+        status = onCount > 0 ? 'Presence' : 'Empty';
       }
 
       const esc = (t) => String(t || '').replaceAll('"', '"');

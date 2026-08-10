@@ -502,7 +502,7 @@ hemma_room:
         - max-width: 100%
         - margin-top: >
             [[[
-              if (!variables.show_presence) return '0';
+              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
               if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
               const expanded = states['input_select.hemma_expanded_row']?.state;
@@ -515,13 +515,13 @@ hemma_room:
         - display: >
             [[[
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
-              if (!variables.show_presence) return 'none';
+              if (!variables.show_presence && !variables.occupancy_sensor_1) return 'none';
               if (variables.presence_entity_1 && !variables.presence_entity_2) return 'none';
               return 'block';
             ]]]
         - max-height: >
             [[[
-              if (!variables.show_presence) return '0';
+              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
               if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
               const expanded = states['input_select.hemma_expanded_row']?.state;
@@ -533,7 +533,7 @@ hemma_room:
         - overscroll-behavior-x: contain
         - --hemma-row-fade: >
             [[[
-              if (!variables.show_presence) return 0;
+              if (!variables.show_presence && !variables.occupancy_sensor_1) return 0;
               if (variables.presence_entity_1 && !variables.presence_entity_2) return 0;
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
               const expanded = states['input_select.hemma_expanded_row']?.state;
