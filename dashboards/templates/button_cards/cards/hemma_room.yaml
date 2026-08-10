@@ -951,6 +951,36 @@ hemma_room:
             variables:
               enabled: '[[[ return !!(variables.show_presence && variables.presence_entity_1 && !variables.presence_entity_2) ]]]'
 
+          # Occupancy badges (FP2 binary presence zones) — always visible in
+          # the top badge row. Dimmed when clear, highlighted when detected.
+          - type: custom:button-card
+            template: hemma_badge_occupancy
+            entity: '[[[ return variables.occupancy_sensor_1 ]]]'
+            variables:
+              enabled: '[[[ return !!variables.occupancy_sensor_1 ]]]'
+              label: '[[[ return variables.occupancy_label_1 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_occupancy
+            entity: '[[[ return variables.occupancy_sensor_2 ]]]'
+            variables:
+              enabled: '[[[ return !!variables.occupancy_sensor_2 ]]]'
+              label: '[[[ return variables.occupancy_label_2 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_occupancy
+            entity: '[[[ return variables.occupancy_sensor_3 ]]]'
+            variables:
+              enabled: '[[[ return !!variables.occupancy_sensor_3 ]]]'
+              label: '[[[ return variables.occupancy_label_3 ]]]'
+
+          - type: custom:button-card
+            template: hemma_badge_occupancy
+            entity: '[[[ return variables.occupancy_sensor_4 ]]]'
+            variables:
+              enabled: '[[[ return !!variables.occupancy_sensor_4 ]]]'
+              label: '[[[ return variables.occupancy_label_4 ]]]'
+
           - type: custom:button-card
             template: hemma_badge_media_group
             variables:
