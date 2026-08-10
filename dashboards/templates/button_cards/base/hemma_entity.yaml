@@ -417,11 +417,13 @@ hemma_entity:
                 const byIcon = {
                   energy:  'var(--hemma-color-yellow, #ffd600)',
                   power:   'var(--hemma-color-yellow, #ffd600)',
+                  light:   'var(--hemma-color-yellow, #ffd600)',
                   plant:   'var(--hemma-color-green-plant, #34C759)',
                   network: 'rgba(120,120,180,0.9)',
                 };
                 const byDomain = {
                   light:        'var(--hemma-color-yellow, #ffd600)',
+                  switch:       'var(--hemma-color-yellow, #ffd600)',
                   fan:          'var(--hemma-color-teal, #00d2e0)',
                   humidifier:   'var(--hemma-color-teal, #00d2e0)',
                   climate:      'var(--hemma-color-teal, #00d2e0)',
