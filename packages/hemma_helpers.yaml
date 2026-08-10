@@ -43,6 +43,7 @@ input_select:
       - none
       - climate
       - presence
+      - occupancy
       - media
       - lights
     initial: none

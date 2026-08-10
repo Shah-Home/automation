@@ -505,7 +505,8 @@ hemma_room:
               if (!variables.show_presence) return '0';
               if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              return states['input_select.hemma_expanded_row']?.state === 'presence'
+              const expanded = states['input_select.hemma_expanded_row']?.state;
+              return (expanded === 'presence' || expanded === 'occupancy')
                 ? 'var(--hero-header-gap-current, 6px)' : '0';
             ]]]
         - margin-bottom: 0
@@ -523,7 +524,8 @@ hemma_room:
               if (!variables.show_presence) return '0';
               if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              return states['input_select.hemma_expanded_row']?.state === 'presence' ? '200px' : '0';
+              const expanded = states['input_select.hemma_expanded_row']?.state;
+              return (expanded === 'presence' || expanded === 'occupancy') ? '200px' : '0';
             ]]]
         - overflow-x: auto
         - overflow-y: hidden
@@ -534,20 +536,23 @@ hemma_room:
               if (!variables.show_presence) return 0;
               if (variables.presence_entity_1 && !variables.presence_entity_2) return 0;
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
-              return states['input_select.hemma_expanded_row']?.state === 'presence' ? 1 : 0;
+              const expanded = states['input_select.hemma_expanded_row']?.state;
+              return (expanded === 'presence' || expanded === 'occupancy') ? 1 : 0;
             ]]]
         - transition: >
             [[[
-              const isExpanded = states['input_select.hemma_expanded_row']?.state === 'presence';
+              const currentState = states['input_select.hemma_expanded_row']?.state;
+              const isExpanded = currentState === 'presence' || currentState === 'occupancy';
               if (isExpanded) return 'max-height 0s, margin-top 0s';
-              const isSwitching = states['input_select.hemma_expanded_row']?.state !== 'none';
+              const isSwitching = currentState !== 'none';
               return isSwitching
                 ? 'max-height 0s, margin-top 0s'
                 : 'max-height 0s 0.35s, margin-top 0s 0.35s';
             ]]]
         - pointer-events: >
             [[[
-              return states['input_select.hemma_expanded_row']?.state === 'presence' ? 'auto' : 'none';
+              const expanded = states['input_select.hemma_expanded_row']?.state;
+              return (expanded === 'presence' || expanded === 'occupancy') ? 'auto' : 'none';
             ]]]
 
       badges_media:
@@ -951,35 +956,21 @@ hemma_room:
             variables:
               enabled: '[[[ return !!(variables.show_presence && variables.presence_entity_1 && !variables.presence_entity_2) ]]]'
 
-          # Occupancy badges (FP2 binary presence zones) — always visible in
-          # the top badge row. Dimmed when clear, highlighted when detected.
+          # Occupancy group badge (FP2 binary presence zones) — single badge
+          # in top row. Tap to expand/collapse individual zone badges in the
+          # presence row (driven by input_select.hemma_expanded_row).
           - type: custom:button-card
-            template: hemma_badge_occupancy
-            entity: '[[[ return variables.occupancy_sensor_1 ]]]'
+            template: hemma_badge_occupancy_group
             variables:
               enabled: '[[[ return !!variables.occupancy_sensor_1 ]]]'
-              label: '[[[ return variables.occupancy_label_1 ]]]'
-
-          - type: custom:button-card
-            template: hemma_badge_occupancy
-            entity: '[[[ return variables.occupancy_sensor_2 ]]]'
-            variables:
-              enabled: '[[[ return !!variables.occupancy_sensor_2 ]]]'
-              label: '[[[ return variables.occupancy_label_2 ]]]'
-
-          - type: custom:button-card
-            template: hemma_badge_occupancy
-            entity: '[[[ return variables.occupancy_sensor_3 ]]]'
-            variables:
-              enabled: '[[[ return !!variables.occupancy_sensor_3 ]]]'
-              label: '[[[ return variables.occupancy_label_3 ]]]'
-
-          - type: custom:button-card
-            template: hemma_badge_occupancy
-            entity: '[[[ return variables.occupancy_sensor_4 ]]]'
-            variables:
-              enabled: '[[[ return !!variables.occupancy_sensor_4 ]]]'
-              label: '[[[ return variables.occupancy_label_4 ]]]'
+              entity_1: '[[[ return variables.occupancy_sensor_1 ]]]'
+              entity_2: '[[[ return variables.occupancy_sensor_2 ]]]'
+              entity_3: '[[[ return variables.occupancy_sensor_3 ]]]'
+              entity_4: '[[[ return variables.occupancy_sensor_4 ]]]'
+              label_1: '[[[ return variables.occupancy_label_1 ]]]'
+              label_2: '[[[ return variables.occupancy_label_2 ]]]'
+              label_3: '[[[ return variables.occupancy_label_3 ]]]'
+              label_4: '[[[ return variables.occupancy_label_4 ]]]'
 
           - type: custom:button-card
             template: hemma_badge_media_group
