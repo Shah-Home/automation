@@ -462,19 +462,60 @@ hemma_room:
         - margin-right: auto !important
         - width: max-content
         - max-width: 100%
-        - margin-top: var(--hemma-row-presence-mt, 0)
+        - margin-top: >
+            [[[
+              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
+              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              const expanded = states['input_select.hemma_expanded_row']?.state;
+              return (expanded === 'presence' || expanded === 'occupancy')
+                ? 'var(--hero-header-gap-current, 6px)' : '0';
+            ]]]
         - margin-bottom: 0
         - padding-left: 0
         - height: auto !important
-        - display: var(--hemma-row-presence-d, block)
-        - max-height: var(--hemma-row-presence-mh, 0)
+        - display: >
+            [[[
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
+              if (!variables.show_presence && !variables.occupancy_sensor_1) return 'none';
+              if (variables.presence_entity_1 && !variables.presence_entity_2) return 'none';
+              return 'block';
+            ]]]
+        - max-height: >
+            [[[
+              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
+              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
+              const expanded = states['input_select.hemma_expanded_row']?.state;
+              return (expanded === 'presence' || expanded === 'occupancy') ? '200px' : '0';
+            ]]]
         - overflow-x: auto
         - overflow-y: hidden
         - touch-action: pan-x
         - overscroll-behavior-x: contain
-        - --hemma-row-fade: var(--hemma-row-presence-fade, 0)
-        - transition: var(--hemma-row-presence-t, max-height 0s 0.35s, margin-top 0s 0.35s)
-        - pointer-events: var(--hemma-row-presence-pe, auto)
+        - --hemma-row-fade: >
+            [[[
+              if (!variables.show_presence && !variables.occupancy_sensor_1) return 0;
+              if (variables.presence_entity_1 && !variables.presence_entity_2) return 0;
+              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
+              const expanded = states['input_select.hemma_expanded_row']?.state;
+              return (expanded === 'presence' || expanded === 'occupancy') ? 1 : 0;
+            ]]]
+        - transition: >
+            [[[
+              const currentState = states['input_select.hemma_expanded_row']?.state;
+              const isExpanded = currentState === 'presence' || currentState === 'occupancy';
+              if (isExpanded) return 'max-height 0s, margin-top 0s';
+              const isSwitching = currentState !== 'none';
+              return isSwitching
+                ? 'max-height 0s, margin-top 0s'
+                : 'max-height 0s 0.35s, margin-top 0s 0.35s';
+            ]]]
+        - pointer-events: >
+            [[[
+              const expanded = states['input_select.hemma_expanded_row']?.state;
+              return (expanded === 'presence' || expanded === 'occupancy') ? 'auto' : 'none';
+            ]]]
 
       badges_media:
         - grid-area: badges_media
