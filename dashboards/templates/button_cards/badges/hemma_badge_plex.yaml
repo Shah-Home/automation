@@ -1,0 +1,90 @@
+# Plex Activity Badge (PLACEHOLDER)
+# Shows a Plex streaming activity badge in the room hero header.
+#
+# This is a placeholder stub. When you set up your Plex server next year:
+#   1. Install the Plex HACS integration or plex_recently_added custom component.
+#   2. Point plex_binary_1/2 at a binary_sensor that is "on" when a stream is active.
+#   3. Point plex_stream_1/2 at a sensor exposing the active session metadata
+#      (title, user, player, etc.) and flesh out the name template below.
+#   4. Set show_plex_1: true (and show_plex_2: true) in the relevant room view.
+#
+# Variables passed by hemma_room.yaml:
+#   enabled        - show_plex_1 / show_plex_2 (bool, default false)
+#   session_entity - plex_stream_1 / plex_stream_2 (sensor with session metadata)
+hemma_badge_plex:
+  template: [hemma_badge_base]
+  show_state: false
+  show_label: false
+  show_entity_picture: false
+  tap_action: { action: more-info }
+  hold_action: { action: more-info }
+
+  styles:
+    card:
+      - background: rgba(0,0,0,0.18) !important
+      - -webkit-backdrop-filter: blur(14px) saturate(1.2) !important
+      - backdrop-filter: blur(14px) saturate(1.2) !important
+      - justify-self: start
+      - align-self: start
+      - place-self: start
+      - margin-inline-start: 0px !important
+      - margin-left: 0px !important
+      - --badge-after-z: 0
+      - --badge-before-z: 1
+
+      # Override the base display: the base only checks `enabled`, but we
+      # also need the binary sensor to be "on" (active stream).  Variable
+      # names are kept unique from the name: template below to avoid
+      # ButtonCardJSTemplateError duplicate-identifier errors.
+      - display: >
+          [[[
+            const dv = variables?.enabled;
+            const dEnabled = () => {
+              if (dv === undefined || dv === null) return false;
+              if (typeof dv === 'boolean') return dv;
+              if (typeof dv === 'number')  return dv !== 0;
+              const ds = String(dv).trim().toLowerCase();
+              return ['true','1','yes','on','enabled'].includes(ds);
+            };
+            if (!dEnabled()) return 'none';
+            const dState = String(entity?.state || '');
+            return dState === 'on' ? 'inline-grid' : 'none';
+          ]]]
+
+    grid:
+      - grid-template-areas: '"i l"'
+      - grid-template-columns: min-content minmax(0, 1fr)
+      - column-gap: 6px
+      - row-gap: 0
+      - align-items: center
+
+    name:
+      - grid-area: l
+      - padding: 0 !important
+      - min-width: 0
+
+    icon:
+      - display: none
+
+  # Name template uses its own variable names (a, title, plexUser, etc.)
+  # that don't collide with the display: template above.
+  name: >
+    [[[
+      const a = (variables.session_entity ? states[variables.session_entity] : null)?.attributes || {};
+      const title    = String(a.title || a.media_title || '').trim();
+      const plexUser = String(a.user || a.username || '').trim();
+      const sub  = plexUser ? `Streaming · ${plexUser}` : 'Streaming';
+      const main = title || 'Plex';
+      const esc = (str) => String(str ?? '')
+        .replace(/&/g,'&')
+        .replace(/</g,'<')
+        .replace(/>/g,'>')
+        .replace(/"/g,'"')
+        .replace(/'/g,'&#39;');
+      return `
+        <div class="badge-wrap">
+          <div class="badge-title">${esc(main)}</div>
+          <div class="badge-sub">${esc(sub)}</div>
+        </div>
+      `;
+    ]]]

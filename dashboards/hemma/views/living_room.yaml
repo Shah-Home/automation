@@ -12,25 +12,24 @@ cards:
       image_position: center center
 
       # Room Sensors
-      show_temp: true
-      temp_sensor: sensor.living_room_thermostat_temperature
+      show_climate: true
+      show_climate_inline: true
+      temp_sensor_1: sensor.living_room_thermostat_temperature
+      temp_unit: "F"
 
-      show_humidity: true
       humidity_sensor: sensor.living_room_thermostat_humidity
 
-      # TODO: {Parth Shah} No air quality sensor in Living Room
-      # Master Bedroom has air quality if needed elsewhere
-      # show_quality: true
-      # quality_sensor: sensor.living_room_air_quality
+      # FP2 Presence Zones — shown as badges in the presence row
+      occupancy_sensor_1: binary_sensor.powder_room_presence
+      occupancy_label_1: Powder Room
+      occupancy_sensor_2: binary_sensor.leasure_presence
+      occupancy_label_2: Leisure Area
+      occupancy_sensor_3: binary_sensor.living_room_presence
+      occupancy_label_3: Living Room
 
       # Weather (room mode shows indoor conditions)
       show_weather: true
       weather_mode: room
-      temp_unit: "F"
-
-      # Motion/Presence
-      show_motion: true
-      motion_sensor: binary_sensor.living_room_presence
 
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -47,10 +46,9 @@ cards:
         entity: climate.living_room_thermostat
         name: Thermostat
         variables:
-          temp_sensor:
-            sensor.living_room_thermostat_temperature
+          temp_sensor: sensor.living_room_thermostat_temperature
 
-            # Living Room TV (Google Cast)
+      # Living Room TV (Google Cast)
       - type: custom:button-card
         template: hemma_media
         entity: media_player.living_room_tv
@@ -80,25 +78,5 @@ cards:
         variables:
           room: living room
 
-      # TODO: {Parth Shah} Add Presence Zones
-      # - type: custom:button-card
-      #   template: hemma_entity
-      #   entity: binary_sensor.powder_room_presence
-      #   name: Powder Room
-      #   variables:
-      #     icon: motion
-
-      # - type: custom:button-card
-      #   template: hemma_entity
-      #   entity: binary_sensor.leasure_presence
-      #   name: Leisure Area
-      #   variables:
-      #     icon: motion
-
-      # TODO: {Parth Shah} Add fan if you have one in living room
-      # - type: custom:button-card
-      #   template: hemma_fan
-      #   entity: fan.living_room_fan
-      #   name: Fan
-      #   variables:
-      #     icon: fan
+      # Spotify is wired as a media badge via media_player.spotify when the
+      # integration is added (set show_media_player_N + media_player_N on the hero).

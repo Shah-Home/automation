@@ -269,7 +269,7 @@ hemma_entity:
                 ].join('');
                 document.head.appendChild(s);
               }
-              const activeStates = ["on","open","opening","playing","unlocked","unlocking","cleaning","returning","cool","heat"];
+              const activeStates = ["on","open","opening","playing","unlocked","unlocking","cleaning","returning","cool","heat","heat_cool","auto"];
               const isOn = activeStates.includes((entity?.state || "").toLowerCase());
               const mob = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
               const W = mob ? 38 : 44, H = mob ? 26 : 26, r = mob ? 8 : 9, cx0 = mob ? 14 : 14;
@@ -399,7 +399,7 @@ hemma_entity:
       value: |
         [[[
           const s = (entity?.state || "").toLowerCase();
-          const defaults = ["on","open","opening","unlocked","unlocking","playing","cleaning","returning","cool","heat","washing","rinsing","spinning","drying","running","active","problem"];
+          const defaults = ["on","open","opening","unlocked","unlocking","playing","cleaning","returning","cool","heat","heat_cool","auto","washing","rinsing","spinning","drying","running","active","problem"];
           const extra = Array.isArray(variables.active_states) ? variables.active_states.map(v => String(v).toLowerCase()) : [];
           return [...defaults, ...extra].includes(s);
         ]]]
@@ -417,11 +417,13 @@ hemma_entity:
                 const byIcon = {
                   energy:  'var(--hemma-color-yellow, #ffd600)',
                   power:   'var(--hemma-color-yellow, #ffd600)',
+                  light:   'var(--hemma-color-yellow, #ffd600)',
                   plant:   'var(--hemma-color-green-plant, #34C759)',
                   network: 'rgba(120,120,180,0.9)',
                 };
                 const byDomain = {
                   light:        'var(--hemma-color-yellow, #ffd600)',
+                  switch:       'var(--hemma-color-yellow, #ffd600)',
                   fan:          'var(--hemma-color-teal, #00d2e0)',
                   humidifier:   'var(--hemma-color-teal, #00d2e0)',
                   climate:      'var(--hemma-color-teal, #00d2e0)',

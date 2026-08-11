@@ -8,17 +8,14 @@ cards:
     template: hemma_room
     name: Garage
     variables:
-      image: home
-      image_night: garage-night
+      image: garage
       image_position: center center
 
       show_weather: true
       weather_mode: room
       temp_unit: "F"
 
-      # TODO: {Parth Shah} Add garage door sensor if available
-      # show_motion: true
-      # motion_sensor: binary_sensor.garage_door
+
 
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -37,10 +34,4 @@ cards:
         variables:
           icon: camera
 
-      # TODO: {Parth Shah} Add garage door opener if available
-      # - type: custom:button-card
-      #   template: hemma_entity
-      #   entity: cover.garage_door
-      #   name: Garage Door
-      #   variables:
-      #     icon: garage
+

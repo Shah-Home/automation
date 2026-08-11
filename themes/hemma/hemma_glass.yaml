@@ -702,6 +702,15 @@ Hemma Glass:
   hemma-badge-humidity-dry-color:  var(--hemma-color-amber, #ffb254)
   hemma-badge-humidity-high-color: var(--hemma-color-ice, #3cd3fe)
 
+  # Luminance (illuminance)
+  hemma-badge-luminance-dark-color:        var(--hemma-color-deep-blue, #0091ff)
+  hemma-badge-luminance-dim-color:         var(--hemma-color-amber, #ffb254)
+  hemma-badge-luminance-bright-color:      var(--hemma-color-yellow, #ffd600)
+  hemma-badge-luminance-very-bright-color: var(--hemma-color-orange, #ff9230)
+
+  # Occupancy (binary presence sensors, e.g. FP2 zones)
+  hemma-badge-occupancy-active-color: var(--hemma-color-teal, #00c3d0)
+
   # Presence
   hemma-badge-presence-home-color: "#49F08CD9"
   hemma-badge-presence-away-color: var(--hemma-color-yellow, #ffd600)

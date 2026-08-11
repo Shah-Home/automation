@@ -14,10 +14,6 @@ cards:
       image: home
       image_position: center center
 
-      # Temperature - Using Living Room thermostat as whole-home temp
-      show_temp: true
-      temp_sensor: sensor.living_room_thermostat_temperature
-
       # Presence Badges - Your person entities
       show_presence: true
       presence_entity_1: person.parth_shah
@@ -39,11 +35,9 @@ cards:
       show_weather: true
       weather_mode: outdoor
       weather_entity: weather.forecast_home
-      # TODO: {Parth Shah} Add outdoor temperature sensor if available
-      # weather_temp_sensor: sensor.outdoor_temperature
 
       # Temperature Unit
-      temp_unit: "F" # Fahrenheit (based on your US location)
+      temp_unit: "F"
 
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
@@ -62,27 +56,11 @@ cards:
         variables:
           temp_sensor: sensor.living_room_thermostat_temperature
 
-      # TODO: {Parth Shah} Add front door lock if available
-      # - type: custom:button-card
-      #   template: hemma_entity
-      #   entity: lock.front_door
-      #   name: Front Door
-      #   variables:
-      #     icon: door
-      #     battery_entity: sensor.front_door_lock_battery
 
-      # All Lights - Using Main Floor Speakers group as proxy for now
-      # TODO: {Parth Shah} Create a light group containing all 4 switches
-      # - type: custom:button-card
-      #   template: hemma_light
-      #   entity: light.all_lights
-      #   name: All Lights
-      #   variables:
-      #     icon: light
 
       # Doorbell Camera
       - type: custom:button-card
-        template: hemma_entity
+        template: hemma_doorbell
         entity: camera.front_door_doorbell
         name: Doorbell
         variables:
@@ -91,7 +69,7 @@ cards:
 
       # Roomba Vacuum
       - type: custom:button-card
-        template: hemma_entity
+        template: hemma_vacuum
         entity: vacuum.cleaning_lady
         name: Cleaning Lady
         variables:

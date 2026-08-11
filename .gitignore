@@ -103,8 +103,10 @@ nest/
 custom_components/
 www/community/
 blueprints/
+.hemma-dashboard-plan
 
 ##########################################################
 # README
 ##########################################################
 *.md
+!AGENTS.md

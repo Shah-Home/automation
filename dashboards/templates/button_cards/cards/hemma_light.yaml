@@ -23,7 +23,8 @@ hemma_light:
       };
 
       const root = entity?.entity_id;
-      const all = [...new Set(expand(root))].filter(eid => eid.startsWith("light."));
+      // Count "on" across all expanded members regardless of domain (light.*, switch.*, etc.)
+      const all = [...new Set(expand(root))];
       const onCount = all.filter(eid => states[eid]?.state === "on").length;
 
       return onCount > 0 ? `${onCount} On` : "Off";
@@ -212,10 +213,23 @@ hemma_light:
                   }));
                 ]]]
 
-  tap_action: *light_popup
-
-  icon_tap_action: *light_popup
-
+  # Main card tap toggles the light directly via homeassistant.toggle.
+  # The toggle sub-card (hemma_entity.yaml custom_fields.toggle) calls
+  # script.hemma_light_smart_toggle which handles scene snapshot/restore.
+  # Using homeassistant.toggle here (instead of the smart toggle script)
+  # avoids a double-fire: if both the card body and the toggle sub-card
+  # call the same queued script, the two calls cancel out (on→off→on=off).
+  # Hold action opens the popup for brightness/color controls.
+  tap_action:
+    action: call-service
+    service: homeassistant.toggle
+    service_data:
+      entity_id: '[[[ return entity.entity_id ]]]'
+  icon_tap_action:
+    action: call-service
+    service: homeassistant.toggle
+    service_data:
+      entity_id: '[[[ return entity.entity_id ]]]'
   icon_hold_action: *light_popup
 
   styles:

@@ -1,0 +1,118 @@
+# Occupancy Badge
+# Shows a binary presence/occupancy sensor (e.g. FP2 binary_sensor.*_presence)
+# with on/off status. Distinct from hemma_badge_presence, which is for person.*
+# entities with home/away states.
+#
+# Tap: opens more-info on the sensor (no shared popup for binary sensors).
+#
+# Variables (passed from hemma_room.yaml):
+#   enabled - show/hide badge (default: true)
+#   label   - optional zone/area label shown as the badge title
+#             (defaults to the entity friendly name)
+# ============================================================================
+hemma_badge_occupancy:
+  template: [hemma_badge_base]
+
+  variables:
+    enabled: true
+    label: null
+
+  tap_action:
+    action: more-info
+
+  extra_styles: >
+    [[[
+      const SVG_URL = '/local/hemma/icons/motion.svg';
+
+      const ev = variables?.enabled;
+      const enabled = (ev === undefined || ev === null) ? true :
+        (typeof ev === 'boolean') ? ev :
+        (typeof ev === 'number') ? ev !== 0 :
+        !['false','0','no','off','disabled'].includes(String(ev).trim().toLowerCase());
+
+      const hasEnt  = !!entity?.entity_id;
+      const stRaw   = String(entity?.state ?? '').trim();
+      const st      = stRaw.toLowerCase();
+      const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+      return `
+        :host{display:${hide ? 'none' : 'inline-block'} !important;}
+        #img-cell, .img-cell { position: relative; }
+        #img-cell #icon, .img-cell #icon { color: transparent !important; opacity: 0 !important; }
+        #img-cell::before, .img-cell::before {
+          content: '';
+          position: absolute;
+          inset: 2px;
+          z-index: 5;
+          background-color: var(--hemma-icon-color, var(--primary-text-color)) !important;
+          -webkit-mask: url('${SVG_URL}') no-repeat center / 85% 85%;
+          mask: url('${SVG_URL}') no-repeat center / 85% 85%;
+          transform: translateZ(0);
+        }
+      `;
+    ]]]
+
+  styles:
+    card:
+      - display: >
+          [[[
+            const ev = variables?.enabled;
+            const enabled = (ev === undefined || ev === null) ? true :
+              (typeof ev === 'boolean') ? ev :
+              (typeof ev === 'number') ? ev !== 0 :
+              !['false','0','no','off','disabled'].includes(String(ev).trim().toLowerCase());
+
+            const hasEnt  = !!entity?.entity_id;
+            const stRaw   = String(entity?.state ?? '').trim();
+            const st      = stRaw.toLowerCase();
+            const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+            return hide ? 'none' : 'inline-grid';
+          ]]]
+      - background: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase();
+            return s === 'on'
+              ? 'var(--badge-active-color, rgba(255,255,255,0.85))'
+              : 'var(--badge-background, rgba(0,0,0,0.18))';
+          ]]]
+      - --hemma-icon-color: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase();
+            return s === 'on'
+              ? 'var(--hemma-badge-occupancy-active-color)'
+              : 'var(--badge-title-inactive)';
+          ]]]
+      - --badge-title-color: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase();
+            return s === 'on'
+              ? 'rgba(0,0,0,0.85)'
+              : 'var(--badge-title-inactive)';
+          ]]]
+      - --badge-sub-color: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase();
+            return s === 'on'
+              ? 'rgba(0,0,0,0.6)'
+              : 'color-mix(in oklab, var(--secondary-text-color) 70%, transparent)';
+          ]]]
+    icon:
+      - color: transparent
+
+  name: >
+    [[[
+      const s = String(entity?.state || '').toLowerCase();
+      const status = s === 'on' ? 'Presence' : 'Empty';
+      const title = variables?.label
+        || (entity?.attributes?.friendly_name || 'Presence').split(' ')[0];
+
+      const esc = (t) => String(t || '').replaceAll('"','"');
+
+      return `
+        <div class="badge-wrap">
+          <div class="badge-title">${esc(title)}</div>
+          <div class="badge-sub">${esc(status)}</div>
+        </div>
+      `;
+    ]]]

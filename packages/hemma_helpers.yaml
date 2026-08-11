@@ -1,37 +1,20 @@
 # packages/hemma_helpers.yaml
 # ============================================================================
-# REQUIRED: Hemma Dashboard Helper Entities
+# Hemma Dashboard Helper Entities
 #
-# These helper entities are required for the Hemma dashboard to function.
-# Place this file in your /config/packages/ directory and ensure packages
-# are enabled in your configuration.yaml:
-#
+# Enable packages in configuration.yaml:
 #   homeassistant:
 #     packages: !include_dir_named packages
 #
-# ENTITIES CREATED:
-#   - input_boolean.hemma_thermostat_overlay: Thermostat card temperature adjustment overlay
-#   - input_boolean.hemma_mobile_navigation: Mobile nav menu state
-#   - input_boolean.hemma_motion_badges: Show/hide motion sensor badges on navbar
-#   - input_select.hemma_expanded_row: Which sub-badge row is expanded (none/climate/presence/media)
-#   - input_number.hemma_thermostat_target_temperature: Thermostat target temp
-#   - input_select.hemma_thermostat_mode: Heat/Cool mode selector
-#   - sensor.hemma_mobile_dynamic_background: Shared dynamic mobile backgrounds (morning/afternoon/night)
-#
-# NETWORK RESTART CONFIRMATION (used by hemma_popup_network action tiles):
-#   - input_boolean.hemma_restart_confirm_1: Confirm state for action button 1
-#   - input_boolean.hemma_restart_confirm_2: Confirm state for action button 2
-#   - input_boolean.hemma_restart_done_1: Done/success state for action button 1 (auto-clears after 3s)
-#   - input_boolean.hemma_restart_done_2: Done/success state for action button 2 (auto-clears after 3s)
-#   - script.hemma_restart_toggle: Handles Restart → Confirm → Done flow for network action tiles
-#
-#   Wire up in your popup variables:
-#     action_1_confirm_helper: input_boolean.hemma_restart_confirm_1
-#     action_1_done_helper: input_boolean.hemma_restart_done_1
-#     action_2_confirm_helper: input_boolean.hemma_restart_confirm_2
-#     action_2_done_helper: input_boolean.hemma_restart_done_2
-#
-# OPTIONAL: Adjust min/max values for input_number to match your climate needs.
+# ACTIVE HELPERS (used by current dashboard templates):
+#   input_boolean.hemma_thermostat_overlay  - Thermostat card temp adjustment overlay
+#   input_boolean.hemma_mobile_navigation   - Mobile nav menu open/close state
+#   input_select.hemma_expanded_row         - Which sub-badge row is expanded (none/climate/presence/media/lights)
+#   input_number.hemma_thermostat_target_temperature - Thermostat target temp
+#   input_select.hemma_thermostat_mode      - Heat/Cool mode selector (set via thermostat overlay rail)
+#   input_select.vacuum_command_state       - Vacuum command state machine
+#   sensor.hemma_mobile_dynamic_background  - Dynamic mobile background phase (morning/afternoon/night)
+#   sensor.plex_recently_added_count       - Plex recently-added count (placeholder, awaiting Plex server)
 # ============================================================================
 
 input_boolean:
@@ -42,43 +25,6 @@ input_boolean:
   hemma_mobile_navigation:
     name: Mobile Navigation
     initial: off
-
-  hemma_lock_overlay:
-    name: Lock Overlay
-    initial: off
-
-  hemma_motion_badges:
-    name: Motion Badges
-    initial: on
-
-  hemma_restart_confirm_1:
-    name: Network Restart Confirm 1
-    initial: off
-
-  hemma_restart_confirm_2:
-    name: Network Restart Confirm 2
-    initial: off
-
-  hemma_restart_done_1:
-    name: Network Restart Done 1
-    initial: off
-
-  hemma_restart_done_2:
-    name: Network Restart Done 2
-    initial: off
-
-input_text:
-  # Motion sensor entity IDs for navbar badges (desktop + mobile).
-  # Leave initial as "" to disable the badge for that room.
-  hemma_motion_living_room:
-    name: "Hemma Motion - Living Room"
-    initial: "binary_sensor.living_room_hub_motion"
-  hemma_motion_bedroom:
-    name: "Hemma Motion - Bedroom"
-    initial: "binary_sensor.hue_motion_sensor_motion"
-  hemma_motion_kitchen:
-    name: "Hemma Motion - Kitchen"
-    initial: ""   # set to your kitchen motion sensor entity ID to enable
 
 input_number:
   hemma_thermostat_target_temperature:
@@ -97,6 +43,7 @@ input_select:
       - none
       - climate
       - presence
+      - occupancy
       - media
       - lights
     initial: none
@@ -157,56 +104,11 @@ template:
           next_setting: "{{ state_attr('sun.sun', 'next_setting') }}"
 
   - sensor:
-      - name: hemma_mobile_background_url
-        unique_id: hemma_mobile_background_url
-        state: >
-          {% set phase = states('sensor.hemma_mobile_dynamic_background') | lower %}
-          {% if phase in ['morning','dawn'] %}
-            {% set p = 'morning' %}
-          {% elif phase in ['night','evening','sunset'] %}
-            {% set p = 'night' %}
-          {% else %}
-            {% set p = 'day' %}
-          {% endif %}
-
-          {% set dark = '-dark' if is_state('sun.sun','below_horizon') else '' %}
-
-          /local/hemma/mobile/mobile-{{ p }}{{ dark }}.jpg
-
-      - name: Temp Color
-        unique_id: hemma_temp_color
-        state: >
-          {% set v = states('sensor.temperature') | float(0) %}
-          {% if v <= 65 %}
-            var(--hemma-badge-temp-very-cold-color)
-          {% elif v <= 70 %}
-            var(--hemma-badge-temp-cool-color)
-          {% elif v <= 76 %}
-            var(--hemma-badge-temp-comfortable-color)
-          {% elif v <= 81 %}
-            var(--hemma-badge-temp-warm-color)
-          {% elif v <= 85 %}
-            var(--hemma-badge-temp-hot-color)
-          {% else %}
-            var(--hemma-badge-temp-very-hot-color)
-          {% endif %}
-
-      - name: Humidity Color
-        unique_id: hemma_humidity_color
-        state: >
-          {% set v = states('sensor.humidity') | float(0) %}
-          {% if v <= 29.99 %}
-            var(--hemma-badge-humidity-dry-color)
-          {% elif v >= 61 %}
-            var(--hemma-badge-humidity-high-color)
-          {% else %}
-            var(--hemma-badge-climate-color)
-          {% endif %}
-
-      # Counts Plex items added in the last 7 days — drives the Recently Added badge.
-      # Requires the plex_recently_added HACS custom component:
-      # https://github.com/NemesisRE/sensor.plex_recently_added
-      # Configure sensor.recently_added_movies and sensor.recently_added_tv in your sensor config.
+      # Placeholder: Counts Plex items added in the last 7 days.
+      # To use: install the plex_recently_added HACS custom component
+      # (https://github.com/NemesisRE/sensor.plex_recently_added) and configure
+      # sensor.recently_added_movies and sensor.recently_added_tv in your sensor config.
+      # Then wire a hemma_plex_recently_added badge card to this sensor.
       - name: "Plex Recently Added Count"
         unique_id: plex_recently_added_count
         state: >
@@ -225,62 +127,24 @@ template:
           {{ ns.count }}
 
 script:
-  hemma_restart_toggle:
-    alias: "Hemma - Restart Toggle"
-    description: >
-      One-button handler: first tap enters confirm mode, second tap
-      restarts the device and shows a done state, tapping done dismisses it.
-    mode: single
-    fields:
-      button_entity:
-        required: true
-      helper_entity:
-        required: true
-      done_entity:
-        required: false
-    sequence:
-      - choose:
-          - conditions:
-              - "{{ done_entity | default('') != '' and is_state(done_entity | default('x'), 'on') }}"
-            sequence:
-              - service: input_boolean.turn_off
-                target:
-                  entity_id: "{{ done_entity }}"
-          - conditions:
-              - "{{ is_state(helper_entity, 'on') }}"
-            sequence:
-              - service: button.press
-                target:
-                  entity_id: "{{ button_entity }}"
-              - if:
-                  - "{{ done_entity | default('') != '' }}"
-                then:
-                  - service: input_boolean.turn_on
-                    target:
-                      entity_id: "{{ done_entity }}"
-              - service: input_boolean.turn_off
-                target:
-                  entity_id: "{{ helper_entity }}"
-        default:
-          - service: input_boolean.turn_on
-            target:
-              entity_id: "{{ helper_entity }}"
-
   hemma_light_smart_toggle:
     alias: "Hemma - Smart Light Toggle"
     description: >
-      Saves the current light state before turning off.
-      For light groups, snapshots each individual member so only
-      the lights that were on get restored (not the whole group).
+      Saves the current light/switch state before turning off.
+      For groups, snapshots each individual member so only
+      the members that were on get restored (not the whole group).
       Falls back to a plain turn_on if no saved state exists yet.
+      Domain-agnostic: uses light.turn_on/off for light.*, switch.turn_on/off
+      for switch.*, and homeassistant.toggle for anything else.
     mode: queued
     max: 5
     sequence:
       - variables:
           scene_id: "hemma_restore_{{ light_entity | replace('.', '_') }}"
           scene_entity: "scene.hemma_restore_{{ light_entity | replace('.', '_') }}"
+          domain: "{{ light_entity.split('.')[0] }}"
       - choose:
-          # Light is ON → snapshot current state then turn off
+          # Entity is ON → snapshot current state then turn off
           - conditions:
               - condition: template
                 value_template: "{{ states(light_entity) == 'on' }}"
@@ -291,12 +155,12 @@ script:
                   snapshot_entities: >-
                     {% set m = state_attr(light_entity, 'entity_id') %}
                     {% if m %}{{ m }}{% else %}{{ [light_entity] }}{% endif %}
-              - service: light.turn_off
+              - service: "{{ 'light.turn_off' if domain == 'light' else 'switch.turn_off' if domain == 'switch' else 'homeassistant.turn_off' }}"
                 data:
                   transition: 2
                 target:
                   entity_id: "{{ light_entity }}"
-        # Light is OFF → restore snapshot if it exists, otherwise turn on normally
+        # Entity is OFF → restore snapshot if it exists, otherwise turn on normally
         default:
           - choose:
               - conditions:
@@ -309,7 +173,7 @@ script:
                       entity_id: "{{ scene_entity }}"
                       transition: 2
             default:
-              - service: light.turn_on
+              - service: "{{ 'light.turn_on' if domain == 'light' else 'switch.turn_on' if domain == 'switch' else 'homeassistant.turn_on' }}"
                 data:
                   transition: 2
                 target:
@@ -331,30 +195,6 @@ script:
           milliseconds: 400
 
 automation:
-  - alias: "Hemma - Auto clear restart done state 1"
-    id: hemma_auto_clear_restart_done_1
-    trigger:
-      - platform: state
-        entity_id: input_boolean.hemma_restart_done_1
-        to: "on"
-    action:
-      - delay: "00:00:03"
-      - service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.hemma_restart_done_1
-
-  - alias: "Hemma - Auto clear restart done state 2"
-    id: hemma_auto_clear_restart_done_2
-    trigger:
-      - platform: state
-        entity_id: input_boolean.hemma_restart_done_2
-        to: "on"
-    action:
-      - delay: "00:00:03"
-      - service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.hemma_restart_done_2
-
   # Auto-expand the media row when media is actively playing.
   # Triggers on HA startup (handles page-load defaults) and whenever
   # any media player begins playing. Only acts if the row is currently
