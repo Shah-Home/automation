@@ -31,7 +31,7 @@ hemma_badge_presence_group:
       option: >
         [[[
           return states['input_select.hemma_expanded_row']?.state === 'presence' ? 'none' : 'presence';
-        ]]]
+        ]]]]
 
   hold_action:
     action: none
@@ -149,7 +149,7 @@ hemma_badge_presence_group:
         else                                status = `${awayEntities.length} Away`;
       }
 
-      const esc = (t) => String(t || '').replaceAll('"', '&quot;');
+      const esc = (t) => String(t || '').replaceAll('"', '"');
       return `
         <div class="badge-wrap">
           <div class="badge-title">${esc(title)}</div>

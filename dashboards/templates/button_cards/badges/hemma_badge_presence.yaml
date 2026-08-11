@@ -49,13 +49,13 @@ hemma_badge_presence:
       - --presence-filter: >
           [[[
             const s = String(entity?.state || '').toLowerCase().replace(/_/g, ' ');
-            const on = (s === 'home' || s === 'just arrived');
-            return on ? 'none' : 'grayscale(1) contrast(.96) brightness(.94)';
+            const isPresent = (s === 'home' || s === 'just arrived');
+            return isPresent ? 'none' : 'var(--badge-title-inactive)';
           ]]]
       - --presence-opacity: >
           [[[
             const s = String(entity?.state || '').toLowerCase().replace(/_/g, ' ');
-            return (s === 'home' || s === 'just arrived') ? '1' : '.88';
+            return (s === 'home' || s === 'just arrived') ? '1' : '.80';
           ]]]
       - --badge-title-color: >
           [[[
@@ -69,7 +69,7 @@ hemma_badge_presence:
             const s = String(entity?.state || '').toLowerCase().replace(/_/g, ' ');
             return (s === 'home' || s === 'just arrived')
               ? 'var(--secondary-text-color)'
-              : 'color-mix(in oklab, var(--secondary-text-color) 70%, transparent)';
+              : 'var(--badge-sub-color, var(--secondary-text-color))';
           ]]]
     icon:
       - filter: var(--presence-filter)
@@ -94,7 +94,7 @@ hemma_badge_presence:
         s === 'extended away'  ? 'Extended Away' :
                                   raw;
 
-      const esc = (t) => String(t || '').replaceAll('"','&quot;');
+      const esc = (t) => String(t || '').replaceAll('"','"');
 
       return `
         <div class="badge-wrap">
