@@ -18,6 +18,8 @@ cards:
       # Presence from FP2 zones — shown as a badge in the presence row
       occupancy_sensor_1: binary_sensor.cooking_area_presence
       occupancy_label_1: Cooking Area
+      occupancy_sensor_2: binary_sensor.island_sitting_area_presence
+      occupancy_label_2: Island Sitting Area
 
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
