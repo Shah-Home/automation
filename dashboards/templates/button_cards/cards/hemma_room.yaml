@@ -420,12 +420,7 @@ hemma_room:
         - touch-action: pan-x
         - overscroll-behavior-x: contain
         - height: auto !important
-        - display: >
-            [[[
-              return (states['input_boolean.hemma_mobile_navigation']?.state === 'on')
-                ? 'none'
-                : 'block';
-            ]]]
+        - display: var(--hemma-nav-state, block)
 
       badges_climate:
         - grid-area: badges_climate
@@ -440,52 +435,19 @@ hemma_room:
         - margin-right: auto !important
         - width: max-content
         - max-width: 100%
-        - margin-top: >
-            [[[
-              if (!variables.show_climate || variables.show_climate_inline) return '0';
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              return states['input_select.hemma_expanded_row']?.state === 'climate'
-                ? 'var(--hero-header-gap-current, 6px)' : '0';
-            ]]]
+        - margin-top: var(--hemma-row-climate-mt, 0)
         - margin-bottom: 0
         - padding-left: 0
-        - pointer-events: auto
         - height: auto !important
-        - display: >
-            [[[
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
-              if (!variables.show_climate || variables.show_climate_inline) return 'none';
-              return 'block';
-            ]]]
-        - max-height: >
-            [[[
-              if (!variables.show_climate || variables.show_climate_inline) return '0';
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              return states['input_select.hemma_expanded_row']?.state === 'climate' ? '200px' : '0';
-            ]]]
+        - display: var(--hemma-row-climate-d, block)
+        - max-height: var(--hemma-row-climate-mh, 0)
         - overflow-x: auto
         - overflow-y: hidden
         - touch-action: pan-x
         - overscroll-behavior-x: contain
-        - --hemma-row-fade: >
-            [[[
-              if (!variables.show_climate || variables.show_climate_inline) return 0;
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
-              return states['input_select.hemma_expanded_row']?.state === 'climate' ? 1 : 0;
-            ]]]
-        - transition: >
-            [[[
-              const isExpanded = states['input_select.hemma_expanded_row']?.state === 'climate';
-              if (isExpanded) return 'max-height 0s, margin-top 0s';
-              const isSwitching = states['input_select.hemma_expanded_row']?.state !== 'none';
-              return isSwitching
-                ? 'max-height 0s, margin-top 0s'
-                : 'max-height 0s 0.35s, margin-top 0s 0.35s';
-            ]]]
-        - pointer-events: >
-            [[[
-              return states['input_select.hemma_expanded_row']?.state === 'climate' ? 'auto' : 'none';
-            ]]]
+        - --hemma-row-fade: var(--hemma-row-climate-fade, 0)
+        - transition: var(--hemma-row-climate-t, max-height 0s 0.35s, margin-top 0s 0.35s)
+        - pointer-events: var(--hemma-row-climate-pe, auto)
 
       badges_presence:
         - grid-area: badges_presence
@@ -500,60 +462,19 @@ hemma_room:
         - margin-right: auto !important
         - width: max-content
         - max-width: 100%
-        - margin-top: >
-            [[[
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              const expanded = states['input_select.hemma_expanded_row']?.state;
-              return (expanded === 'presence' || expanded === 'occupancy')
-                ? 'var(--hero-header-gap-current, 6px)' : '0';
-            ]]]
+        - margin-top: var(--hemma-row-presence-mt, 0)
         - margin-bottom: 0
         - padding-left: 0
         - height: auto !important
-        - display: >
-            [[[
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return 'none';
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return 'none';
-              return 'block';
-            ]]]
-        - max-height: >
-            [[[
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              const expanded = states['input_select.hemma_expanded_row']?.state;
-              return (expanded === 'presence' || expanded === 'occupancy') ? '200px' : '0';
-            ]]]
+        - display: var(--hemma-row-presence-d, block)
+        - max-height: var(--hemma-row-presence-mh, 0)
         - overflow-x: auto
         - overflow-y: hidden
         - touch-action: pan-x
         - overscroll-behavior-x: contain
-        - --hemma-row-fade: >
-            [[[
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return 0;
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return 0;
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
-              const expanded = states['input_select.hemma_expanded_row']?.state;
-              return (expanded === 'presence' || expanded === 'occupancy') ? 1 : 0;
-            ]]]
-        - transition: >
-            [[[
-              const currentState = states['input_select.hemma_expanded_row']?.state;
-              const isExpanded = currentState === 'presence' || currentState === 'occupancy';
-              if (isExpanded) return 'max-height 0s, margin-top 0s';
-              const isSwitching = currentState !== 'none';
-              return isSwitching
-                ? 'max-height 0s, margin-top 0s'
-                : 'max-height 0s 0.35s, margin-top 0s 0.35s';
-            ]]]
-        - pointer-events: >
-            [[[
-              const expanded = states['input_select.hemma_expanded_row']?.state;
-              return (expanded === 'presence' || expanded === 'occupancy') ? 'auto' : 'none';
-            ]]]
+        - --hemma-row-fade: var(--hemma-row-presence-fade, 0)
+        - transition: var(--hemma-row-presence-t, max-height 0s 0.35s, margin-top 0s 0.35s)
+        - pointer-events: var(--hemma-row-presence-pe, auto)
 
       badges_media:
         - grid-area: badges_media
@@ -561,13 +482,7 @@ hemma_room:
         - align-self: start !important
         - place-self: start !important
         - text-align: left !important
-        - margin-top: >
-            [[[
-              if (!variables.show_media) return '0';
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              return states['input_select.hemma_expanded_row']?.state === 'media'
-                ? 'var(--hero-header-gap-current, 6px)' : '0';
-            ]]]
+        - margin-top: var(--hemma-row-media-mt, 0)
         - margin-right: auto !important
         - margin-left: >
             calc(
@@ -583,57 +498,15 @@ hemma_room:
         - min-height: 0 !important
         - width: max-content
         - max-width: 100%
-        - display: >
-            [[[
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
-              if (!variables.show_media) return 'none';
-              return 'block';
-            ]]]
-        - max-height: >
-            [[[
-              if (!variables.show_media) return '0';
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              return states['input_select.hemma_expanded_row']?.state === 'media' ? '500px' : '0';
-            ]]]
+        - display: var(--hemma-row-media-d, block)
+        - max-height: var(--hemma-row-media-mh, 0)
         - overflow-x: auto
         - overflow-y: hidden
         - touch-action: pan-x
         - overscroll-behavior-x: contain
-        - --hemma-row-fade: >
-            [[[
-              if (!variables.show_media) return 0;
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
-              return states['input_select.hemma_expanded_row']?.state === 'media' ? 1 : 0;
-            ]]]
-        - transition: >
-            [[[
-              const currentState = states['input_select.hemma_expanded_row']?.state;
-              const isExpanded = currentState === 'media';
-
-              if (isExpanded) {
-                // Suppress animation within 3s of page load — covers the
-                // hemma_auto_expand_media_row automation that fires on HA start
-                if (!window.hemmaPageLoadTime) window.hemmaPageLoadTime = Date.now();
-                if (Date.now() - window.hemmaPageLoadTime < 3000) return 'none';
-
-                // After 3s, only animate for genuine user taps (last_changed < 1.5s ago)
-                const lastChanged = states['input_select.hemma_expanded_row']?.last_changed;
-                const msSince = lastChanged ? (Date.now() - new Date(lastChanged).getTime()) : Infinity;
-                return msSince < 1500
-                  ? 'max-height 0s, margin-top 0s, opacity 0.25s ease, transform 0.25s ease'
-                  : 'none';
-              }
-
-              const isSwitching = currentState !== 'none';
-
-              return isSwitching
-                ? 'max-height 0s, margin-top 0s, opacity 0.22s ease, transform 0.22s ease'
-                : 'max-height 0s 0.35s, margin-top 0s 0.35s, opacity 0.22s ease, transform 0.22s ease';
-            ]]]
-        - pointer-events: >
-            [[[
-              return states['input_select.hemma_expanded_row']?.state === 'media' ? 'auto' : 'none';
-            ]]]
+        - --hemma-row-fade: var(--hemma-row-media-fade, 0)
+        - transition: var(--hemma-row-media-t, max-height 0s 0.35s, margin-top 0s 0.35s, opacity 0.22s ease, transform 0.22s ease)
+        - pointer-events: var(--hemma-row-media-pe, auto)
 
       badges_lights:
         - grid-area: badges_lights
@@ -648,52 +521,19 @@ hemma_room:
         - margin-right: auto !important
         - width: max-content
         - max-width: 100%
-        - margin-top: >
-            [[[
-              if (!variables.show_lights) return '0';
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              return states['input_select.hemma_expanded_row']?.state === 'lights'
-                ? 'var(--hero-header-gap-current, 6px)' : '0';
-            ]]]
+        - margin-top: var(--hemma-row-lights-mt, 0)
         - margin-bottom: 0
         - padding-left: 0
-        - pointer-events: auto
         - height: auto !important
-        - display: >
-            [[[
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
-              if (!variables.show_lights) return 'none';
-              return 'block';
-            ]]]
-        - max-height: >
-            [[[
-              if (!variables.show_lights) return '0';
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
-              return states['input_select.hemma_expanded_row']?.state === 'lights' ? '200px' : '0';
-            ]]]
+        - display: var(--hemma-row-lights-d, block)
+        - max-height: var(--hemma-row-lights-mh, 0)
         - overflow-x: auto
         - overflow-y: hidden
         - touch-action: pan-x
         - overscroll-behavior-x: contain
-        - --hemma-row-fade: >
-            [[[
-              if (!variables.show_lights) return 0;
-              if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
-              return states['input_select.hemma_expanded_row']?.state === 'lights' ? 1 : 0;
-            ]]]
-        - transition: >
-            [[[
-              const isExpanded = states['input_select.hemma_expanded_row']?.state === 'lights';
-              if (isExpanded) return 'max-height 0s, margin-top 0s';
-              const isSwitching = states['input_select.hemma_expanded_row']?.state !== 'none';
-              return isSwitching
-                ? 'max-height 0s, margin-top 0s'
-                : 'max-height 0s 0.35s, margin-top 0s 0.35s';
-            ]]]
-        - pointer-events: >
-            [[[
-              return states['input_select.hemma_expanded_row']?.state === 'lights' ? 'auto' : 'none';
-            ]]]
+        - --hemma-row-fade: var(--hemma-row-lights-fade, 0)
+        - transition: var(--hemma-row-lights-t, max-height 0s 0.35s, margin-top 0s 0.35s)
+        - pointer-events: var(--hemma-row-lights-pe, auto)
 
       navigation:
         - position: fixed
@@ -1231,554 +1071,65 @@ hemma_room:
             - width: max-content !important
           custom_fields:
             mp1:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_1 || !variables.media_player_1) return '0px';
-                    const s = states[variables.media_player_1]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_1 || !variables.media_player_1) return '0px';
-                    const s = states[variables.media_player_1]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_1 || !variables.media_player_1) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_1]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(1, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(1, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(1, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             mp2:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_2 || !variables.media_player_2) return '0px';
-                    const s = states[variables.media_player_2]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_2 || !variables.media_player_2) return '0px';
-                    const s = states[variables.media_player_2]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_2 || !variables.media_player_2) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_2]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(2, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(2, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(2, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             mp3:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_3 || !variables.media_player_3) return '0px';
-                    const s = states[variables.media_player_3]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_3 || !variables.media_player_3) return '0px';
-                    const s = states[variables.media_player_3]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_3 || !variables.media_player_3) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_3]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(3, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(3, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(3, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             mp4:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_4 || !variables.media_player_4) return '0px';
-                    const s = states[variables.media_player_4]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_4 || !variables.media_player_4) return '0px';
-                    const s = states[variables.media_player_4]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_4 || !variables.media_player_4) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_4]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(4, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(4, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(4, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             mp5:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_5 || !variables.media_player_5) return '0px';
-                    const s = states[variables.media_player_5]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_5 || !variables.media_player_5) return '0px';
-                    const s = states[variables.media_player_5]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_5 || !variables.media_player_5) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_5]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(5, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(5, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(5, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             mp6:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_6 || !variables.media_player_6) return '0px';
-                    const s = states[variables.media_player_6]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_6 || !variables.media_player_6) return '0px';
-                    const s = states[variables.media_player_6]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_6 || !variables.media_player_6) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_6]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(6, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(6, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(6, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             mp7:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_7 || !variables.media_player_7) return '0px';
-                    const s = states[variables.media_player_7]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_7 || !variables.media_player_7) return '0px';
-                    const s = states[variables.media_player_7]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_7 || !variables.media_player_7) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_7]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(7, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(7, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(7, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             mp8:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_8 || !variables.media_player_8) return '0px';
-                    const s = states[variables.media_player_8]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_8 || !variables.media_player_8) return '0px';
-                    const s = states[variables.media_player_8]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_8 || !variables.media_player_8) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_8]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(8, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(8, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(8, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             mp9:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_9 || !variables.media_player_9) return '0px';
-                    const s = states[variables.media_player_9]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7,variables.show_media_player_8&&variables.media_player_8].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_9 || !variables.media_player_9) return '0px';
-                    const s = states[variables.media_player_9]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7,variables.show_media_player_8&&variables.media_player_8].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_9 || !variables.media_player_9) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_9]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(9, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(9, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(9, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             mp10:
-              - max-width: >
-                  [[[
-                    if (!variables.show_media_player_10 || !variables.media_player_10) return '0px';
-                    const s = states[variables.media_player_10]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7,variables.show_media_player_8&&variables.media_player_8,variables.show_media_player_9&&variables.media_player_9].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return '450px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_media_player_10 || !variables.media_player_10) return '0px';
-                    const s = states[variables.media_player_10]; if (!s) return '0px';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return '0px';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return '0px';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return '0px'; }
-                    const _ck=e=>{const a2=states[e]?.attributes||{};return`${String(a2.media_title||'').trim()}|${String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim()}`};
-                    const _ia=e=>{if(!e)return false;const s2=states[e];if(!s2)return false;const st2=String(s2.state||'');if(['unavailable','unknown','off','standby'].includes(st2))return false;const a2=s2.attributes||{};if(!String(a2.media_title||'').trim()&&!String(a2.media_artist||a2.artist||a2.media_album_artist||'').trim())return false;if(['playing','buffering','on','idle'].includes(st2))return true;if(st2==='paused'){const t=Number(variables.pause_timeout_minutes??5);return t<=0||((new Date()-new Date(s2.last_changed))/60000)<=t;}return false;};
-                    const _myKey=`${String(a.media_title||'').trim()}|${String(a.media_artist||a.artist||a.media_album_artist||'').trim()}`;
-                    if([variables.show_media_player_1&&variables.media_player_1,variables.show_media_player_2&&variables.media_player_2,variables.show_media_player_3&&variables.media_player_3,variables.show_media_player_4&&variables.media_player_4,variables.show_media_player_5&&variables.media_player_5,variables.show_media_player_6&&variables.media_player_6,variables.show_media_player_7&&variables.media_player_7,variables.show_media_player_8&&variables.media_player_8,variables.show_media_player_9&&variables.media_player_9].filter(Boolean).filter(_ia).some(e=>_ck(e)===_myKey))return'0px';
-                    return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_media_player_10 || !variables.media_player_10) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.media_player_10]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '');
-                    if (['unavailable','unknown','off','standby'].includes(st)) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const a = s.attributes || {};
-                    if (!String(a.media_title||'').trim() && !String(a.media_artist||a.artist||a.media_album_artist||'').trim()) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (st === 'paused') { const t = Number(variables.pause_timeout_minutes ?? 5); if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s'; }
-                    return 'max-width 0.001s ease, margin-right 0.001s ease';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(10, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(10, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.mediaSlot(10, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             plex:
-              - max-width: >
-                  [[[
-                    if (!variables.show_plex_1 || !variables.plex_binary_1) return '0px';
-                    const s = states[variables.plex_binary_1];
-                    return (s && s.state === 'on') ? '600px' : '0px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_plex_1 || !variables.plex_binary_1) return '0px';
-                    const s = states[variables.plex_binary_1];
-                    return (s && s.state === 'on') ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_plex_1 || !variables.plex_binary_1) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.plex_binary_1];
-                    return (s && s.state === 'on') ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.plexSlot(1, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.plexSlot(1, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.plexSlot(1, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             plex_2:
-              - max-width: >
-                  [[[
-                    if (!variables.show_plex_2 || !variables.plex_binary_2) return '0px';
-                    const s = states[variables.plex_binary_2];
-                    return (s && s.state === 'on') ? '600px' : '0px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_plex_2 || !variables.plex_binary_2) return '0px';
-                    const s = states[variables.plex_binary_2];
-                    return (s && s.state === 'on') ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_plex_2 || !variables.plex_binary_2) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.plex_binary_2];
-                    return (s && s.state === 'on') ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.plexSlot(2, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.plexSlot(2, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.plexSlot(2, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             activity1:
-              - max-width: >
-                  [[[
-                    if (!variables.show_psn_1 || !variables.psn_1) return '0px';
-                    const s = states[variables.psn_1]; if (!s) return '0px';
-                    const st = String(s.state || '').toLowerCase();
-                    const a = s.attributes || {};
-                    if (['playing','buffering','paused'].includes(st)) return '450px';
-                    const title = String(a.media_title || a.title || '').trim();
-                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
-                    const app = String(a.app_name || a.source || '').trim();
-                    return (title || artist || app) ? '450px' : '0px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_psn_1 || !variables.psn_1) return '0px';
-                    const s = states[variables.psn_1]; if (!s) return '0px';
-                    const st = String(s.state || '').toLowerCase();
-                    const a = s.attributes || {};
-                    if (['playing','buffering','paused'].includes(st)) return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                    const title = String(a.media_title || a.title || '').trim();
-                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
-                    const app = String(a.app_name || a.source || '').trim();
-                    return (title || artist || app) ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_psn_1 || !variables.psn_1) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.psn_1]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '').toLowerCase();
-                    const a = s.attributes || {};
-                    if (['playing','buffering','paused'].includes(st)) return 'max-width 0.001s ease, margin-right 0.001s ease';
-                    const title = String(a.media_title || a.title || '').trim();
-                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
-                    const app = String(a.app_name || a.source || '').trim();
-                    return (title || artist || app) ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.activitySlot(1, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.activitySlot(1, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.activitySlot(1, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             activity2:
-              - max-width: >
-                  [[[
-                    if (!variables.show_psn_2 || !variables.psn_2) return '0px';
-                    const s = states[variables.psn_2]; if (!s) return '0px';
-                    const st = String(s.state || '').toLowerCase();
-                    const a = s.attributes || {};
-                    if (['playing','buffering','paused'].includes(st)) return '450px';
-                    const title = String(a.media_title || a.title || '').trim();
-                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
-                    const app = String(a.app_name || a.source || '').trim();
-                    return (title || artist || app) ? '450px' : '0px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_psn_2 || !variables.psn_2) return '0px';
-                    const s = states[variables.psn_2]; if (!s) return '0px';
-                    const st = String(s.state || '').toLowerCase();
-                    const a = s.attributes || {};
-                    if (['playing','buffering','paused'].includes(st)) return 'var(--badge-gap-current, var(--badge-gap, 10px))';
-                    const title = String(a.media_title || a.title || '').trim();
-                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
-                    const app = String(a.app_name || a.source || '').trim();
-                    return (title || artist || app) ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_psn_2 || !variables.psn_2) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const s = states[variables.psn_2]; if (!s) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const st = String(s.state || '').toLowerCase();
-                    const a = s.attributes || {};
-                    if (['playing','buffering','paused'].includes(st)) return 'max-width 0.001s ease, margin-right 0.001s ease';
-                    const title = String(a.media_title || a.title || '').trim();
-                    const artist = String(a.media_artist || a.artist || a.media_album_artist || '').trim();
-                    const app = String(a.app_name || a.source || '').trim();
-                    return (title || artist || app) ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.activitySlot(2, variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.activitySlot(2, variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.activitySlot(2, variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
             activity_steam:
-              - max-width: >
-                  [[[
-                    if (!variables.show_discord_steam || !variables.discord_steam_online || !variables.discord_steam_game) return '0px';
-                    const online = states[variables.discord_steam_online]; if (!online) return '0px';
-                    if (String(online.state || '').toLowerCase() !== 'online') return '0px';
-                    const g = String(states[variables.discord_steam_game]?.state || '').toLowerCase();
-                    return (g && g !== 'unknown' && g !== 'unavailable') ? '450px' : '0px';
-                  ]]]
-              - margin-right: >
-                  [[[
-                    if (!variables.show_discord_steam || !variables.discord_steam_online || !variables.discord_steam_game) return '0px';
-                    const online = states[variables.discord_steam_online]; if (!online) return '0px';
-                    if (String(online.state || '').toLowerCase() !== 'online') return '0px';
-                    const g = String(states[variables.discord_steam_game]?.state || '').toLowerCase();
-                    return (g && g !== 'unknown' && g !== 'unavailable') ? 'var(--badge-gap-current, var(--badge-gap, 10px))' : '0px';
-                  ]]]
-              - transition: >
-                  [[[
-                    if (!variables.show_discord_steam || !variables.discord_steam_online || !variables.discord_steam_game) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const online = states[variables.discord_steam_online]; if (!online) return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    if (String(online.state || '').toLowerCase() !== 'online') return 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                    const g = String(states[variables.discord_steam_game]?.state || '').toLowerCase();
-                    return (g && g !== 'unknown' && g !== 'unavailable') ? 'max-width 0.001s ease, margin-right 0.001s ease' : 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s';
-                  ]]]
+              - max-width: '[[[ var h = window.hemmaRoomHelpers?.steamSlot(variables, states) || {}; return h.mw || "0px" ]]]'
+              - margin-right: '[[[ var h = window.hemmaRoomHelpers?.steamSlot(variables, states) || {}; return h.mr || "0px" ]]]'
+              - transition: '[[[ var h = window.hemmaRoomHelpers?.steamSlot(variables, states) || {}; return h.t || "max-height 0s 0.35s, margin-top 0s 0.35s" ]]]'
         custom_fields:
           mp1:
             card:
@@ -1973,195 +1324,229 @@ hemma_room:
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[0] || null) : (g || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(0, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[0];
-                  return variables.show_lights && !!g;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(0, variables, hass) || {}; return !!h.en ]]]'
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[1] || null) : (variables.light_entity_2 || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(1, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[1];
-                  return variables.show_lights && !!variables.light_entity_2;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(1, variables, hass) || {}; return !!h.en ]]]'
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[2] || null) : (variables.light_entity_3 || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(2, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[2];
-                  return variables.show_lights && !!variables.light_entity_3;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(2, variables, hass) || {}; return !!h.en ]]]'
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[3] || null) : (variables.light_entity_4 || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(3, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[3];
-                  return variables.show_lights && !!variables.light_entity_4;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(3, variables, hass) || {}; return !!h.en ]]]'
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[4] || null) : (variables.light_entity_5 || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(4, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[4];
-                  return variables.show_lights && !!variables.light_entity_5;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(4, variables, hass) || {}; return !!h.en ]]]'
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[5] || null) : (variables.light_entity_6 || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(5, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[5];
-                  return variables.show_lights && !!variables.light_entity_6;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(5, variables, hass) || {}; return !!h.en ]]]'
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[6] || null) : (variables.light_entity_7 || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(6, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[6];
-                  return variables.show_lights && !!variables.light_entity_7;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(6, variables, hass) || {}; return !!h.en ]]]'
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[8] || null) : (variables.light_entity_8 || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(7, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[8];
-                  return variables.show_lights && !!variables.light_entity_8;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(7, variables, hass) || {}; return !!h.en ]]]'
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[9] || null) : (variables.light_entity_9 || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(8, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[9];
-                  return variables.show_lights && !!variables.light_entity_9;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(8, variables, hass) || {}; return !!h.en ]]]'
 
           - type: custom:button-card
             template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[10] || null) : (variables.light_entity_10 || null);
-              ]]]
+            entity: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(9, variables, hass) || {}; return h.e || null ]]]'
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[10];
-                  return variables.show_lights && !!variables.light_entity_10;
-                ]]]
+              enabled: '[[[ var h = window.hemmaRoomHelpers?.lightSlot(9, variables, hass) || {}; return !!h.en ]]]'
 
   extra_styles: |
+    [[[
+      // ── Shared runtime helpers for room hero slots ─────────────────────────
+      if (!window.hemmaRoomHelpers) {
+        const OFF = ['unavailable','unknown','off','standby'];
+        const S0 = (s) => String(s || '').trim();
+
+        const mediaIsVisible = (v, states, i) => {
+          const eid = v['media_player_' + i];
+          if (!v['show_media_player_' + i] || !eid) return false;
+          const s = states[eid]; if (!s) return false;
+          const st = String(s.state || '');
+          if (OFF.includes(st)) return false;
+          const a = s.attributes || {};
+          if (!S0(a.media_title) && !S0(a.media_artist || a.artist || a.media_album_artist)) return false;
+          if (st === 'paused') {
+            const t = Number(v.pause_timeout_minutes ?? 5);
+            if (t > 0 && (new Date() - new Date(s.last_changed)) / 60000 > t) return false;
+          }
+          return true;
+        };
+
+        const mediaActive = (s, t) => {
+          const st = String(s.state || '');
+          if (['playing','buffering','on','idle'].includes(st)) return true;
+          if (st === 'paused') {
+            const timeout = Number(t ?? 5);
+            return timeout <= 0 || ((new Date() - new Date(s.last_changed)) / 60000) <= timeout;
+          }
+          return false;
+        };
+        const mediaKey = (s) => {
+          const a = s?.attributes || {};
+          return `${S0(a.media_title)}|${S0(a.media_artist || a.artist || a.media_album_artist)}`;
+        };
+
+        const ret = (visible, gap) => visible
+          ? { mw: '450px', mr: gap, t: 'max-width 0.001s ease, margin-right 0.001s ease' }
+          : { mw: '0px', mr: '0px', t: 'max-width 0.001s ease 0.3s, margin-right 0.001s ease 0.3s' };
+
+        const GAP = 'var(--badge-gap-current, var(--badge-gap, 10px))';
+
+        window.hemmaRoomHelpers = {
+          // mp1..mp10 — dedup same content across earlier media slots
+          mediaSlot(i, v, states) {
+            if (!mediaIsVisible(v, states, i)) return ret(false, GAP);
+            const eid = v['media_player_' + i];
+            const my = mediaKey(states[eid]);
+            let seen = false;
+            for (let j = 1; j < i; j++) {
+              const p = v['media_player_' + j];
+              if (v['show_media_player_' + j] && p && states[p] && mediaActive(states[p], v.pause_timeout_minutes)) {
+                if (mediaKey(states[p]) === my) { seen = true; break; }
+              }
+            }
+            return seen ? ret(false, GAP) : ret(true, GAP);
+          },
+          // plex / plex_2
+          plexSlot(n, v, states) {
+            const eid = v['plex_binary_' + n];
+            const on = v['show_plex_' + n] && eid && states[eid]?.state === 'on';
+            return on
+              ? { mw: '600px', mr: GAP, t: 'max-width 0.001s ease, margin-right 0.001s ease' }
+              : ret(false, GAP);
+          },
+          // activity1 / activity2 — PSN activity
+          activitySlot(n, v, states) {
+            const eid = v['psn_' + n];
+            if (!v['show_psn_' + n] || !eid) return ret(false, GAP);
+            const s = states[eid]; if (!s) return ret(false, GAP);
+            const st = String(s.state || '').toLowerCase();
+            const a = s.attributes || {};
+            const title = S0(a.media_title || a.title);
+            const artist = S0(a.media_artist || a.artist || a.media_album_artist);
+            const app = S0(a.app_name || a.source);
+            return ret(['playing','buffering','paused'].includes(st) || !!(title || artist || app), GAP);
+          },
+          // activity_steam — discord steam presence
+          steamSlot(v, states) {
+            if (!v.show_discord_steam || !v.discord_steam_online || !v.discord_steam_game) return ret(false, GAP);
+            const online = states[v.discord_steam_online];
+            if (!online || String(online.state || '').toLowerCase() !== 'online') return ret(false, GAP);
+            const g = String(states[v.discord_steam_game]?.state || '').toLowerCase();
+            return ret(!!(g && g !== 'unknown' && g !== 'unavailable'), GAP);
+          },
+          // badges_lights — group member or individual entity
+          lightSlot(idx, v, hass) {
+            const g = v.light_entity_1;
+            const m = g ? hass.states[g]?.attributes?.entity_id : null;
+            const expand = Array.isArray(m) && m.length > 0 && !v.light_entity_2;
+            if (expand) return { e: m[idx] || null, en: v.show_lights && !!m[idx] };
+            const entity = idx === 0 ? g : v['light_entity_' + (idx + 1)];
+            return { e: entity || null, en: v.show_lights && !!entity };
+          },
+        };
+      }
+
+      // ── Row-state CSS vars (computed once per render) ──────────────────────
+      const navOn = states['input_boolean.hemma_mobile_navigation']?.state === 'on';
+      const expanded = states['input_select.hemma_expanded_row']?.state || 'none';
+      const gap = 'var(--hero-header-gap-current, 6px)';
+      const off = 'max-height 0s 0.35s, margin-top 0s 0.35s';
+      const on = 'max-height 0s, margin-top 0s';
+      const hidden = 'none';
+
+      const rowVars = (name, show, triggers) => {
+        const ok = !navOn && show;
+        const isExp = expanded === name;
+        const showRow = ok && isExp;
+        return `
+          --hemma-row-${name}-d: ${ok ? 'block' : hidden};
+          --hemma-row-${name}-mh: ${showRow ? '200px' : '0'};
+          --hemma-row-${name}-fade: ${showRow ? '1' : '0'};
+          --hemma-row-${name}-mt: ${showRow ? gap : '0'};
+          --hemma-row-${name}-pe: ${showRow ? 'auto' : 'none'};
+        `;
+      };
+
+      let mediaT = off;
+      if (!navOn) {
+        if (expanded === 'media') {
+          if (!window.hemmaPageLoadTime) window.hemmaPageLoadTime = Date.now();
+          if (Date.now() - window.hemmaPageLoadTime < 3000) {
+            mediaT = 'none';
+          } else {
+            const lastChanged = states['input_select.hemma_expanded_row']?.last_changed;
+            const msSince = lastChanged ? (Date.now() - new Date(lastChanged).getTime()) : Infinity;
+            mediaT = msSince < 1500
+              ? 'max-height 0s, margin-top 0s, opacity 0.25s ease, transform 0.25s ease'
+              : 'none';
+          }
+        } else if (expanded !== 'none') {
+          mediaT = 'max-height 0s, margin-top 0s, opacity 0.22s ease, transform 0.22s ease';
+        }
+      }
+
+      const presenceOk = !!(variables.show_presence || variables.occupancy_sensor_1) &&
+        !(variables.presence_entity_1 && !variables.presence_entity_2);
+
+      return `
+        :host {
+          --hemma-nav-state: ${navOn ? 'none' : 'block'};
+          ${rowVars('climate', !!(variables.show_climate && !variables.show_climate_inline))}
+          ${rowVars('presence', presenceOk)}
+          --hemma-row-presence-mh: ${(navOn || !presenceOk) ? '0' : ((expanded === 'presence' || expanded === 'occupancy') ? '200px' : '0')};
+          --hemma-row-presence-fade: ${(navOn || !presenceOk) ? '0' : ((expanded === 'presence' || expanded === 'occupancy') ? '1' : '0')};
+          --hemma-row-presence-mt: ${(navOn || !presenceOk) ? '0' : ((expanded === 'presence' || expanded === 'occupancy') ? gap : '0')};
+          --hemma-row-presence-pe: ${(navOn || !presenceOk) ? 'none' : ((expanded === 'presence' || expanded === 'occupancy') ? 'auto' : 'none')};
+          --hemma-row-presence-t: ${(navOn || !presenceOk) ? off : ((expanded === 'presence' || expanded === 'occupancy') ? on : off)};
+          --hemma-row-lights-d: ${(navOn || !variables.show_lights) ? 'none' : 'block'};
+          --hemma-row-lights-mh: ${(navOn || !variables.show_lights) ? '0' : ((expanded === 'lights') ? '200px' : '0')};
+          --hemma-row-lights-fade: ${(navOn || !variables.show_lights) ? '0' : ((expanded === 'lights') ? '1' : '0')};
+          --hemma-row-lights-mt: ${(navOn || !variables.show_lights) ? '0' : ((expanded === 'lights') ? gap : '0')};
+          --hemma-row-lights-pe: ${(navOn || !variables.show_lights) ? 'none' : ((expanded === 'lights') ? 'auto' : 'none')};
+          --hemma-row-lights-t: ${(navOn || !variables.show_lights) ? off : ((expanded === 'lights') ? on : off)};
+          --hemma-row-media-d: ${(navOn || !variables.show_media) ? 'none' : 'block'};
+          --hemma-row-media-mh: ${(navOn || !variables.show_media) ? '0' : ((expanded === 'media') ? '500px' : '0')};
+          --hemma-row-media-fade: ${(navOn || !variables.show_media) ? '0' : ((expanded === 'media') ? '1' : '0')};
+          --hemma-row-media-mt: ${(navOn || !variables.show_media) ? '0' : ((expanded === 'media') ? gap : '0')};
+          --hemma-row-media-pe: ${(navOn || !variables.show_media) ? 'none' : ((expanded === 'media') ? 'auto' : 'none')};
+          --hemma-row-media-t: ${mediaT};
+        }
+      `;
+    ]]]
+
     #mp1, #mp2, #mp3, #mp4,
     #plex, #plex_2,
     #activity1, #activity2 {
