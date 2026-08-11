@@ -230,7 +230,7 @@ card:
         }
 
         .navbar-popup{
-          background: rgba(0,0,0,0.25) !important;
+          background: var(--hemma-surface-overlay) !important;
           -webkit-backdrop-filter: blur(10px) saturate(110%) !important;
           backdrop-filter: blur(10px) saturate(110%) !important;
           box-shadow: var(--button-card-box-shadow) !important;
@@ -260,7 +260,7 @@ card:
           bottom: 9px !important;
           height: 2px !important;
           border-radius: 2px !important;
-          background: rgba(255,255,255,0.85) !important;
+          background: var(--hemma-icon-color-muted) !important;
         }
 
         .navbar-popup-backdrop.visible{
@@ -281,8 +281,8 @@ card:
           background: transparent !important;
         }
 
-        .navbar-popup .popup-item:hover{ background: rgba(255,255,255,0.06) !important; }
-        .navbar-popup .popup-item:active{ background: rgba(255,255,255,0.10) !important; }
+        .navbar-popup .popup-item:hover{ background: var(--hemma-surface-hover) !important; }
+        .navbar-popup .popup-item:active{ background: var(--hemma-surface-border) !important; }
 
         .navbar-popup .popup-item .button{
           width: auto !important;
@@ -312,7 +312,7 @@ card:
           align-items: center !important;
           justify-content: center !important;
           line-height: 1 !important;
-          color: rgba(255,255,255,0.92) !important;
+          color: var(--hemma-text-primary-soft) !important;
           opacity: var(--hemma-popup-label-inactive-opacity) !important;
           padding: 0 !important;
           margin: 0 !important;
@@ -324,7 +324,7 @@ card:
           line-height: 1.1 !important;
           margin: 0 !important;
           padding: 0 !important;
-          color: rgba(255,255,255,0.92) !important;
+          color: var(--hemma-text-primary-soft) !important;
           opacity: var(--hemma-popup-label-inactive-opacity) !important;
           background: transparent !important;
           width: 100% !important;
@@ -405,7 +405,7 @@ card:
             inset:0 !important;
             border-radius:inherit !important;
             pointer-events:none !important;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10) !important;
+            box-shadow: inset 0 0 0 1px var(--hemma-surface-border) !important;
             z-index: 1 !important;
           }
 
@@ -415,7 +415,7 @@ card:
             inset:0 !important;
             border-radius: inherit !important;
             pointer-events:none !important;
-            background: rgba(0,0,0,0.12) !important;
+            background: var(--hemma-surface-overlay-soft) !important;
             z-index: 1 !important;
           }
 
@@ -433,7 +433,7 @@ card:
             overflow: hidden !important;
             margin-left: -5px !important;
             margin-right: 4px !important;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10) !important;
+            box-shadow: inset 0 0 0 1px var(--hemma-surface-border) !important;
           }
 
           .media-player-image img{
@@ -461,35 +461,35 @@ card:
           }
 
           .media-player :is(.media-player-progress-bar, .progress, .progress-bar){
-            background: var(--hemma-slider-track, rgba(255,255,255,0.22)) !important;
+            background: var(--hemma-slider-track, var(--hemma-slider-track)) !important;
             border-radius: 999px !important;
             overflow: hidden !important;
           }
           .media-player :is(.media-player-progress-bar-fill, .progress-fill, .bar){
-            background: var(--hemma-slider-progress, rgba(255,255,255,0.95)) !important;
+            background: var(--hemma-slider-progress, var(--hemma-icon-color-soft)) !important;
             border-radius: 999px !important;
           }
 
           .media-player :is(ha-icon-button, mwc-icon-button, button, .button){
             border-radius: 999px !important;
-            background: rgba(255,255,255,0.10) !important;
+            background: var(--hemma-surface-border) !important;
             box-shadow: none !important;
             padding: 6px !important;
             transition: background .16s ease, transform .12s ease !important;
           }
 
           .media-player :is(ha-icon-button, mwc-icon-button, button, .button):hover{
-            background: rgba(255,255,255,0.14) !important;
+            background: var(--hemma-surface-hover-strong) !important;
           }
 
           .media-player :is(ha-icon-button, mwc-icon-button, button, .button):active{
-            background: rgba(255,255,255,0.18) !important;
+            background: var(--hemma-surface-hover-stronger) !important;
             transform: translateY(.5px) !important;
           }
 
           .media-player :is(ha-icon, svg){
-            color: rgba(255,255,255,0.92) !important;
-            fill: rgba(255,255,255,0.92) !important;
+            color: var(--hemma-text-primary-soft) !important;
+            fill: var(--hemma-text-primary-soft) !important;
           }
         }
 

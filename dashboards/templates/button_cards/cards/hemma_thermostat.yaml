@@ -78,9 +78,9 @@ hemma_thermostat:
             ? 'var(--hemma-puck-heat-color, #ffd600)'
             : isHeatCool
               ? 'url(#heat-cool-grad)'
-              : 'var(--hemma-icon-circle-bg, rgba(255,255,255,0.10))';
+              : 'var(--hemma-icon-circle-bg, var(--hemma-surface-border))';
 
-        const textColor = 'rgba(255,255,255,0.9)';
+        const textColor = 'var(--hemma-text-primary-muted)';
         const textAttrs = `x="50" y="50" dominant-baseline="central" text-anchor="middle" font-weight="800" font-size="${fontSize}" font-family="system-ui,-apple-system,sans-serif"`;
         const eid2 = entity.entity_id;
         const stop = `event.stopPropagation();event.stopImmediatePropagation()`;
@@ -157,7 +157,7 @@ hemma_thermostat:
                 "s"
             - row-gap: 4px
           name:
-            - color: var(--thermostat-overlay-text-name, var(--hemma-entity-name, rgba(255,255,255,0.9))) !important
+            - color: var(--thermostat-overlay-text-name, var(--hemma-entity-name, var(--hemma-text-primary-muted))) !important
             - font-weight: 600
             - font-size: var(--hemma-entity-name-font-current, var(--hemma-entity-name-font-desktop, 18px))
             - text-shadow: var(--hemma-entity-text-shadow, 0 1px 4px rgba(0,0,0,0.35))
@@ -231,7 +231,7 @@ hemma_thermostat:
                     return isMobile ? '20px' : '24px';
                   ]]]
               - overflow: hidden
-              - background: var(--thermostat-rail-bg, rgba(255,255,255,0.09))
+              - background: var(--thermostat-rail-bg, var(--hemma-progress-track))
               - transition: "top 0.20s cubic-bezier(.2, 1.2, .64, 1), width 0.20s cubic-bezier(.2, 1.2, .64, 1), height 0.20s cubic-bezier(.2, 1.2, .64, 1), border-radius 0.14s ease"
         custom_fields:
           temperature_controls:
@@ -282,7 +282,7 @@ hemma_thermostat:
                       - background: transparent
                       - box-shadow: none !important
                       - border: none !important
-                      - border-bottom: 1px solid rgba(255,255,255,0.10) !important
+                      - border-bottom: 1px solid var(--hemma-surface-border) !important
                       - backdrop-filter: none !important
                       - "--button-card-ripple-color": transparent !important
                       - "-webkit-tap-highlight-color": transparent !important
@@ -305,7 +305,7 @@ hemma_thermostat:
                         content: '';
                         position: absolute;
                         inset: 0;
-                        background: rgba(255,255,255,0.10);
+                        background: var(--hemma-surface-border);
                         opacity: 0;
                         pointer-events: none;
                         z-index: 0;
@@ -359,7 +359,7 @@ hemma_thermostat:
                         content: '';
                         position: absolute;
                         inset: 0;
-                        background: rgba(255,255,255,0.10);
+                        background: var(--hemma-surface-border);
                         opacity: 0;
                         pointer-events: none;
                         z-index: 0;
@@ -395,8 +395,8 @@ hemma_thermostat:
                       - background: transparent
                       - box-shadow: none !important
                       - border: none !important
-                      - border-top: 1px solid rgba(255,255,255,0.10) !important
-                      - border-bottom: 1px solid rgba(255,255,255,0.10) !important
+                      - border-top: 1px solid var(--hemma-surface-border) !important
+                      - border-bottom: 1px solid var(--hemma-surface-border) !important
                       - backdrop-filter: none !important
                       - "--button-card-ripple-color": transparent !important
                       - "-webkit-tap-highlight-color": transparent !important
@@ -411,7 +411,7 @@ hemma_thermostat:
                             return isMobile ? '13px' : '15px';
                           ]]]
                       - font-weight: 500
-                      - color: var(--thermostat-control-color, rgba(255,255,255,0.9))
+                      - color: var(--thermostat-control-color, var(--hemma-text-primary-muted))
                   card_mod:
                     style: |
                       ha-card { background: transparent !important; }
@@ -419,7 +419,7 @@ hemma_thermostat:
                         content: '';
                         position: absolute;
                         inset: 0;
-                        background: rgba(255,255,255,0.10);
+                        background: var(--hemma-surface-border);
                         opacity: 0;
                         pointer-events: none;
                         z-index: 0;
@@ -473,7 +473,7 @@ hemma_thermostat:
                         content: '';
                         position: absolute;
                         inset: 0;
-                        background: rgba(255,255,255,0.10);
+                        background: var(--hemma-surface-border);
                         opacity: 0;
                         pointer-events: none;
                         z-index: 0;
@@ -550,7 +550,7 @@ hemma_thermostat:
           [[[
             const isActive = ['cool','heat'].includes(entity?.state);
             const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
-            return (isActive && isMobile) ? 'rgba(0,0,0,0.75)' : 'rgba(255,255,255,0.9)';
+            return (isActive && isMobile) ? 'rgba(0,0,0,0.75)' : 'var(--hemma-text-primary-muted)';
           ]]]
       - --thermostat-control-icon-filter: |
           [[[
@@ -562,7 +562,7 @@ hemma_thermostat:
           [[[
             const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
             const isActive = ['cool','heat'].includes(entity?.state);
-            return (isMobile && isActive) ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.11)';
+            return (isMobile && isActive) ? 'var(--hemma-surface-overlay-soft)' : 'rgba(255,255,255,0.11)';
           ]]]
       - --thermostat-overlay-text-name: |
           [[[
@@ -571,11 +571,11 @@ hemma_thermostat:
             if (isMobile) {
               return isActive
                 ? 'var(--hemma-entity-name-active-mobile, rgba(0,0,0,0.88))'
-                : 'var(--hemma-entity-name, rgba(255,255,255,0.9))';
+                : 'var(--hemma-entity-name, var(--hemma-text-primary-muted))';
             }
             return isActive
               ? 'var(--hemma-entity-name-active, rgba(255,255,255,0.97))'
-              : 'var(--hemma-entity-name, rgba(255,255,255,0.9))';
+              : 'var(--hemma-entity-name, var(--hemma-text-primary-muted))';
           ]]]
       - --thermostat-overlay-text-state: |
           [[[
@@ -588,7 +588,7 @@ hemma_thermostat:
             }
             return isActive
               ? 'var(--hemma-entity-state-active, rgba(255,255,255,0.80))'
-              : 'var(--hemma-entity-state, rgba(255,255,255,0.65))';
+              : 'var(--hemma-entity-state, var(--hemma-text-secondary-soft))';
           ]]]
     img_cell:
       - background: "transparent !important"

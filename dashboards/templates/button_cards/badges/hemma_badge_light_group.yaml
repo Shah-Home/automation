@@ -263,7 +263,7 @@ hemma_badge_light_group:
       - background: >
           [[[
             return entity?.state === 'lights'
-              ? 'var(--badge-active-color, rgba(255,255,255,0.85))'
+              ? 'var(--badge-active-color, var(--hemma-icon-color-muted))'
               : 'var(--badge-background, rgba(0,0,0,0.18))';
           ]]]
       - display: >
@@ -282,15 +282,15 @@ hemma_badge_light_group:
           ]]]
       - --badge-title-color: >
           [[[
-            return entity?.state === 'lights' ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+            return entity?.state === 'lights' ? 'var(--hemma-badge-active-title-color)' : 'var(--primary-text-color)';
           ]]]
       - --badge-sub-color: >
           [[[
-            return entity?.state === 'lights' ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
+            return entity?.state === 'lights' ? 'var(--hemma-badge-active-sub-color)' : 'var(--secondary-text-color)';
           ]]]
       - --hemma-icon-color: >
           [[[
-            if (entity?.state === 'lights') return 'rgba(0,0,0,0.75)';
+            if (entity?.state === 'lights') return 'var(--hemma-badge-active-icon-color)';
             const cfgEids = [
               variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4,
               variables?.entity_5, variables?.entity_6, variables?.entity_7, variables?.entity_8

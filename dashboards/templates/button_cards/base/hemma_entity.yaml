@@ -44,8 +44,8 @@ hemma_entity:
       background: linear-gradient(
         to bottom right,
         var(--hemma-card-specular-start, rgba(255,255,255,0.35)) 0%,
-        var(--hemma-card-specular-mid, rgba(255,255,255,0.18)) 45%,
-        var(--hemma-card-specular-mid, rgba(255,255,255,0.18)) 55%,
+        var(--hemma-card-specular-mid, var(--hemma-surface-hover-stronger)) 45%,
+        var(--hemma-card-specular-mid, var(--hemma-surface-hover-stronger)) 55%,
         var(--hemma-card-specular-end, rgba(255,255,255,0.35)) 100%
       );
       -webkit-mask:
@@ -148,7 +148,7 @@ hemma_entity:
     #img-cell {
       position: relative;
       border-radius: 50% !important;
-      background: var(--hemma-icon-circle-bg, rgba(255,255,255,0.10)) !important;
+      background: var(--hemma-icon-circle-bg, var(--hemma-surface-border)) !important;
       width: 44px !important;
       height: 44px !important;
       display: flex !important;
@@ -168,9 +168,9 @@ hemma_entity:
     #img-cell ha-icon {
       --mdc-icon-size: 25px !important;
       flex: none !important;
-      color: rgba(255,255,255,1.0) !important;
+      color: var(--hemma-icon-color) !important;
     }
-    #icon { color: rgba(255,255,255,1.0) !important; }
+    #icon { color: var(--hemma-icon-color) !important; }
 
     /* Mobile portrait */
     @media (max-width: 767px) and (orientation: portrait) {
@@ -283,7 +283,7 @@ hemma_entity:
               const circleCx = (!shouldAnimate && isOn) ? cx0 + travel : cx0;
               const mid = 'htm-' + entity.entity_id.replace(/[^a-z0-9]/gi, '-');
               const trackFillVar = getComputedStyle(document.documentElement).getPropertyValue('--hemma-toggle-track-fill').trim();
-              const trackFill = mob ? (trackFillVar || 'rgba(255,255,255,0.85)') : 'rgba(255,255,255,0.85)';
+              const trackFill = mob ? (trackFillVar || 'var(--hemma-icon-color-muted)') : 'var(--hemma-icon-color-muted)';
               const offColor = 'rgba(255,255,255,0.8)';
               if (isOn) {
                 return `<svg width="${SW}" height="${H}" viewBox="0 0 ${SW} ${H}" style="display:block;overflow:visible;"><defs><mask id="${mid}"><rect x="2" y="1" width="${W-2}" height="${H-2}" rx="${(H-2)/2}" fill="white"/><circle cx="${circleCx}" cy="${H/2}" r="${r}" fill="black" style="${animStyle}"/></mask></defs><rect x="2" y="1" width="${W-2}" height="${H-2}" rx="${(H-2)/2}" fill="${trackFill}" mask="url(#${mid})"/></svg>`;
@@ -433,7 +433,7 @@ hemma_entity:
                   lock:         entity.state === 'unlocking' ? 'var(--hemma-color-yellow, #ffd600)' : 'var(--hemma-color-teal, #00c3d0)',
                   plant:        'var(--hemma-color-green-plant, #34C759)',
                 };
-                return byIcon[icon] || byDomain[domain] || 'var(--hemma-icon-fallback-color, rgba(255,255,255,0.95))';
+                return byIcon[icon] || byDomain[domain] || 'var(--hemma-icon-fallback-color, var(--hemma-icon-color-soft))';
               ]]]
           - --hemma-entity-icon-animation: |
               [[[
@@ -641,7 +641,7 @@ hemma_entity:
         - filter: drop-shadow(0 2px 8px rgba(0,0,0,.3))
 
     name:
-      - color: var(--hemma-entity-name, rgba(255,255,255,0.9)) !important
+      - color: var(--hemma-entity-name, var(--hemma-text-primary-muted)) !important
       - font-weight: 600
       - text-shadow: var(--hemma-entity-text-shadow, 0 1px 4px rgba(0,0,0,0.35))
       - justify-self: start

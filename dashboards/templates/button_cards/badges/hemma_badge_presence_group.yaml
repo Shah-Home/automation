@@ -76,7 +76,7 @@ hemma_badge_presence_group:
       - background: >
           [[[
             return entity?.state === 'presence'
-              ? 'var(--badge-active-color, rgba(255,255,255,0.85))'
+              ? 'var(--badge-active-color, var(--hemma-icon-color-muted))'
               : 'var(--badge-background, rgba(0,0,0,0.18))';
           ]]]
       - display: >
@@ -92,15 +92,15 @@ hemma_badge_presence_group:
           ]]]
       - --badge-title-color: >
           [[[
-            return entity?.state === 'presence' ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+            return entity?.state === 'presence' ? 'var(--hemma-badge-active-title-color)' : 'var(--primary-text-color)';
           ]]]
       - --badge-sub-color: >
           [[[
-            return entity?.state === 'presence' ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
+            return entity?.state === 'presence' ? 'var(--hemma-badge-active-sub-color)' : 'var(--secondary-text-color)';
           ]]]
       - --hemma-badge-icon-color: >
           [[[
-            if (entity?.state === 'presence') return 'rgba(0,0,0,0.75)';
+            if (entity?.state === 'presence') return 'var(--hemma-badge-active-icon-color)';
             const isHome = (eid) => {
               if (!eid) return false;
               const s = String(hass.states[eid]?.state || '').toLowerCase().replace(/_/g, ' ');

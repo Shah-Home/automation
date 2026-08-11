@@ -625,6 +625,39 @@ Hemma:
   # Button Card / Icon Background
   hemma-icon-circle-bg: rgba(255,255,255,0.10)
 
+  # Active badge (white background) — text/icon colors for clear contrast
+  hemma-badge-active-icon-color:  rgba(0,0,0,0.75)
+  hemma-badge-active-title-color: rgba(0,0,0,0.85)
+  hemma-badge-active-sub-color:   rgba(0,0,0,0.6)
+
+  # Common surface / text / hover tokens
+  hemma-surface-hover:          rgba(255,255,255,0.06)
+  hemma-surface-hover-active:   rgba(255,255,255,0.10)
+  hemma-surface-hover-strong:   rgba(255,255,255,0.14)
+  hemma-surface-hover-stronger: rgba(255,255,255,0.18)
+  hemma-surface-border:         rgba(255,255,255,0.10)
+  hemma-surface-border-soft:    rgba(255,255,255,0.14)
+  hemma-surface-overlay:        rgba(0,0,0,0.25)
+  hemma-surface-overlay-soft:   rgba(0,0,0,0.12)
+  hemma-surface-overlay-strong: rgba(0,0,0,0.5)
+  hemma-text-primary-soft:      rgba(255,255,255,0.92)
+  hemma-text-primary-muted:     rgba(255,255,255,0.9)
+  hemma-text-secondary-soft:    rgba(255,255,255,0.65)
+  hemma-text-muted:             rgba(255,255,255,0.3)
+  hemma-text-faint:             rgba(255,255,255,0.09)
+  hemma-icon-color:             rgba(255,255,255,1.0)
+  hemma-icon-color-soft:        rgba(255,255,255,0.95)
+  hemma-icon-color-muted:       rgba(255,255,255,0.85)
+  hemma-icon-color-faint:       rgba(255,255,255,0.4)
+  hemma-slider-track:           rgba(255,255,255,0.22)
+  hemma-slider-progress:        rgba(255,255,255,0.95)
+  hemma-progress-track:         rgba(255,255,255,0.09)
+  hemma-progress-fill:          rgba(255,255,255,0.5)
+  hemma-shadow-soft:            rgba(0,0,0,0.15)
+  hemma-shadow-medium:          rgba(0,0,0,0.25)
+  hemma-shadow-strong:          rgba(0,0,0,0.5)
+  hemma-shadow-drop:            rgba(0,0,0,0.32)
+
   # Light
   hemma-badge-light-color:             var(--hemma-color-yellow, #ffd600)
 

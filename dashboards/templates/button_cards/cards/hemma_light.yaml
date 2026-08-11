@@ -251,7 +251,7 @@ hemma_light:
     #img-cell {
       position: relative;
       border-radius: 50% !important;
-      background: var(--hemma-icon-circle-bg, rgba(255,255,255,0.10)) !important;
+      background: var(--hemma-icon-circle-bg, var(--hemma-surface-border)) !important;
       width: 44px !important;
       height: 44px !important;
       display: flex !important;
@@ -271,9 +271,9 @@ hemma_light:
     #img-cell ha-icon {
       --mdc-icon-size: 26px !important;
       flex: none !important;
-      color: rgba(255,255,255,1.0) !important;
+      color: var(--hemma-icon-color) !important;
     }
-    #icon { color: rgba(255,255,255,1.0) !important; }
+    #icon { color: var(--hemma-icon-color) !important; }
     @media (max-width: 767px) and (orientation: portrait) {
       #img-cell { width: 38px !important; height: 38px !important; }
       #img-cell ha-icon { --mdc-icon-size: 23px !important; }

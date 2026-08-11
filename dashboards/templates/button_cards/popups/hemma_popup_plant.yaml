@@ -62,7 +62,7 @@ hemma_popup_plant:
             let scoreLabel, scoreColor, advice;
             if (allUnknown) {
               scoreLabel = 'Unknown';
-              scoreColor = 'rgba(255,255,255,0.3)';
+              scoreColor = 'var(--hemma-text-muted)';
               advice = 'Sensor data unavailable';
             } else {
               const ratio = score / maxScore;
@@ -89,7 +89,7 @@ hemma_popup_plant:
 
             // Health ring gradient stops
             let gaugeGrad1, gaugeGrad2;
-            if (allUnknown)                                        { gaugeGrad1 = gaugeGrad2 = 'rgba(255,255,255,0.3)'; }
+            if (allUnknown)                                        { gaugeGrad1 = gaugeGrad2 = 'var(--hemma-text-muted)'; }
             else if (scoreLabel === 'Healthy')                     { gaugeGrad1 = '#B8FF47'; gaugeGrad2 = '#44E371'; }
             else if (scoreLabel === 'Needs care')                  { gaugeGrad1 = '#FFE066'; gaugeGrad2 = '#FFB347'; }
             else if (scoreLabel === 'Struggling' || scoreLabel === 'Poor') { gaugeGrad1 = '#FFD166'; gaugeGrad2 = '#FF9230'; }
@@ -135,7 +135,7 @@ hemma_popup_plant:
             const tileTapStyle = `
               :host { --ha-card-box-shadow: none !important; --button-card-box-shadow: none !important; --button-card-box-shadow-hover: none !important; }
               ha-card { background: var(--hemma-popup-tile-background, rgba(255,255,255,0.07)) !important; border: none !important; border-radius: 24px !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; cursor: pointer !important; transform: scale(1) !important; transition: background-color var(--hemma-popup-tile-hover-duration, 0.2s) ease, transform var(--hemma-popup-tile-hover-duration, 0.2s) ease !important; }
-              ha-card:hover { background: var(--hemma-popup-tile-hover, rgba(255,255,255,0.09)) !important; transform: scale(var(--hemma-popup-tile-hover-scale, 1.01)) !important; }
+              ha-card:hover { background: var(--hemma-popup-tile-hover, var(--hemma-progress-track)) !important; transform: scale(var(--hemma-popup-tile-hover-scale, 1.01)) !important; }
               ha-ripple { display: none !important; }
             `;
 
@@ -161,10 +161,10 @@ hemma_popup_plant:
                 display: block !important;
                 overflow: visible !important;
                 -webkit-mask-image:
-                  linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 7%, rgba(0,0,0,0.1) 13%, rgba(0,0,0,0.5) 23%, black 35%, black 65%, rgba(0,0,0,0.5) 77%, rgba(0,0,0,0.1) 87%, rgba(0,0,0,0) 93%, rgba(0,0,0,0) 100%),
+                  linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 7%, rgba(0,0,0,0.1) 13%, var(--hemma-surface-overlay-strong) 23%, black 35%, black 65%, var(--hemma-surface-overlay-strong) 77%, rgba(0,0,0,0.1) 87%, rgba(0,0,0,0) 93%, rgba(0,0,0,0) 100%),
                   linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%);
                 mask-image:
-                  linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 7%, rgba(0,0,0,0.1) 13%, rgba(0,0,0,0.5) 23%, black 35%, black 65%, rgba(0,0,0,0.5) 77%, rgba(0,0,0,0.1) 87%, rgba(0,0,0,0) 93%, rgba(0,0,0,0) 100%),
+                  linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 7%, rgba(0,0,0,0.1) 13%, var(--hemma-surface-overlay-strong) 23%, black 35%, black 65%, var(--hemma-surface-overlay-strong) 77%, rgba(0,0,0,0.1) 87%, rgba(0,0,0,0) 93%, rgba(0,0,0,0) 100%),
                   linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%);
                 -webkit-mask-composite: destination-in;
                 mask-composite: intersect;
@@ -173,7 +173,7 @@ hemma_popup_plant:
                 -webkit-mask-size: 100% 100%;
                 mask-size: 100% 100%;
               }
-              .graph__line { opacity: 0.95; filter: drop-shadow(0 0 3px rgba(255,255,255,0.06)); }
+              .graph__line { opacity: 0.95; filter: drop-shadow(0 0 3px var(--hemma-surface-hover)); }
               .graph__fill { opacity: 0.36; }
               .graph.flex { margin-left: 0px !important; margin-right: 0px !important; padding-bottom: 0px !important; }
               .graph__hover { overflow: visible !important; }
@@ -189,7 +189,7 @@ hemma_popup_plant:
              * Stat Dot Color
              * ------------------------------------------------------- */
             const statDotColor = (eid) => {
-              if (!eid || safeNum(eid) == null) return 'rgba(255,255,255,0.3)';
+              if (!eid || safeNum(eid) == null) return 'var(--hemma-text-muted)';
               const type = getSensorType(eid);
               if (type === 'moisture')    return '#4FC3F7';
               if (type === 'illuminance') return 'var(--hemma-badge-plant-care-color, #ffd600)';
@@ -246,7 +246,7 @@ hemma_popup_plant:
               statsStyles.moist = [{ flex: '0 0 auto' }, { order: '1' }];
             }
             if (moistStatCard && illumStatCard) {
-              statsFields.div = '<div style="width:2px;height:100%;background:rgba(255,255,255,0.09);margin:0 12px;"></div>';
+              statsFields.div = '<div style="width:2px;height:100%;background:var(--hemma-progress-track);margin:0 12px;"></div>';
               statsStyles.div = [{ flex: '0 0 auto' }, { 'align-self': 'stretch' }, { order: '2' }];
             }
             if (illumStatCard) {
@@ -328,7 +328,7 @@ hemma_popup_plant:
                       + '</linearGradient>'
                     + '</defs>'
                     + '<circle cx="50" cy="50" r="' + radius + '" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="7"/>'
-                    + '<circle cx="50" cy="50" r="' + radius + '" fill="none" stroke="' + (allUnknown ? 'rgba(255,255,255,0.3)' : 'url(#plantGaugeGrad)') + '" stroke-width="7" stroke-dasharray="' + circ.toFixed(2) + '" stroke-dashoffset="' + dashOffset.toFixed(2) + '" stroke-linecap="round"/>'
+                    + '<circle cx="50" cy="50" r="' + radius + '" fill="none" stroke="' + (allUnknown ? 'var(--hemma-text-muted)' : 'url(#plantGaugeGrad)') + '" stroke-width="7" stroke-dasharray="' + circ.toFixed(2) + '" stroke-dashoffset="' + dashOffset.toFixed(2) + '" stroke-linecap="round"/>'
                   + '</svg>'
                   + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">'
                     + '<div style="position:relative;display:flex;align-items:center;justify-content:center;margin-top:5px;">'
@@ -458,9 +458,9 @@ hemma_popup_plant:
               const isOk  = !skVal || skVal === 'ok' || skVal === 'null';
 
               const stLabel = val == null ? 'Unknown' : (isOk ? 'OK' : 'Problem');
-              const stColor = val == null ? 'rgba(255,255,255,0.3)' : (isOk ? C_HEALTHY : C_STRUGGLING);
+              const stColor = val == null ? 'var(--hemma-text-muted)' : (isOk ? C_HEALTHY : C_STRUGGLING);
               const labelColor = val == null
-                ? 'rgba(255,255,255,0.3)'
+                ? 'var(--hemma-text-muted)'
                 : !isOk
                   ? '#FF9230'
                   : (type === 'moisture' || type === 'humidity')
@@ -532,12 +532,12 @@ hemma_popup_plant:
                       + '<span style="font-size:13px;color:' + labelColor + ';white-space:nowrap;font-weight:600;letter-spacing:.01em;flex-shrink:0;">' + stLabel + '</span>'
                     + '</div>'
                     + '<div style="display:flex;align-items:baseline;gap:3px;">'
-                      + '<span style="font-size:20px;font-weight:400;color:' + (val == null ? 'rgba(255,255,255,0.3)' : '#ffffff') + ';line-height:1;white-space:nowrap;">' + valStr + '</span>'
+                      + '<span style="font-size:20px;font-weight:400;color:' + (val == null ? 'var(--hemma-text-muted)' : '#ffffff') + ';line-height:1;white-space:nowrap;">' + valStr + '</span>'
                       + '<span style="font-size:12px;color:var(--hemma-popup-tile-text-muted);white-space:nowrap;">' + unit + '</span>'
                     + '</div>'
                     + '<div style="position:relative;margin-top:10px;">'
 
-                      + '<div style="height:8px;background:var(--hemma-popup-progress-track, rgba(255,255,255,0.09));border-radius:999px;overflow:hidden;position:relative;">'
+                      + '<div style="height:8px;background:var(--hemma-popup-progress-track, var(--hemma-progress-track));border-radius:999px;overflow:hidden;position:relative;">'
 
                         + rangeBar
 

@@ -173,7 +173,7 @@ hemma_media:
             const hasRichMeta = !!(a.media_series_title || a.media_episode_title);
             const fromRichApp = /youtube|plex|netflix|hulu|disney|max|prime|spotify|apple tv|apple music|paramount|peacock/i.test(app);
             const hasArtwork = !!pic && !looksLikeBareInput && (hasRichMeta || ['music','movie','video','tvshow'].includes(type) || fromRichApp);
-            if (hasArtwork) return 'rgba(255,255,255,0.95)';
+            if (hasArtwork) return 'var(--hemma-icon-color-soft)';
             return 'var(--hemma-entity-name-active)';
           ]]]
       - --hemma-media-state-color: |
@@ -210,7 +210,7 @@ hemma_media:
           [[[
             const a = entity?.attributes || {};
             const id = entity?.entity_id || '';
-            if (entity?.state !== 'playing') return 'var(--hemma-icon-circle-bg, rgba(255,255,255,0.10))';
+            if (entity?.state !== 'playing') return 'var(--hemma-icon-circle-bg, var(--hemma-surface-border))';
             const type = String(a.media_content_type || '').toLowerCase();
             const app = String(a.app_name || '').trim();
             const title = (a.media_title || a.title || '').trim();
@@ -288,12 +288,12 @@ hemma_media:
       }
 
   extra_styles: |
-    #name { color: var(--hemma-media-name-color, rgba(255,255,255,0.9)) !important; }
-    #state { color: var(--hemma-media-state-color, rgba(255,255,255,0.65)) !important; }
+    #name { color: var(--hemma-media-name-color, var(--hemma-text-primary-muted)) !important; }
+    #state { color: var(--hemma-media-state-color, var(--hemma-text-secondary-soft)) !important; }
     #img-cell {
       position: relative;
       border-radius: 50% !important;
-      background: var(--hemma-media-icon-bg, var(--hemma-icon-circle-bg, rgba(255,255,255,0.10))) !important;
+      background: var(--hemma-media-icon-bg, var(--hemma-icon-circle-bg, var(--hemma-surface-border))) !important;
       width: 44px !important;
       height: 44px !important;
       display: flex !important;
@@ -313,9 +313,9 @@ hemma_media:
     #img-cell ha-icon {
       --mdc-icon-size: 26px !important;
       flex: none !important;
-      color: rgba(255,255,255,1.0) !important;
+      color: var(--hemma-icon-color) !important;
     }
-    #icon { color: rgba(255,255,255,1.0) !important; }
+    #icon { color: var(--hemma-icon-color) !important; }
     @media (max-width: 767px) and (orientation: portrait) {
       #img-cell { width: 38px !important; height: 38px !important; }
       #img-cell ha-icon { --mdc-icon-size: 23px !important; }

@@ -76,7 +76,7 @@ hemma_badge_activity:
       - min-width: 0
 
     img_cell:
-      - box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14) !important
+      - box-shadow: inset 0 0 0 1px var(--hemma-surface-hover-strong) !important
 
     icon:
       - display: none
@@ -131,8 +131,8 @@ hemma_badge_activity:
       pointer-events:none;
       border-radius: inherit;
       box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.18),
-        0 0 0 1px rgba(255,255,255,0.14);
+        inset 0 0 0 1px var(--hemma-surface-hover-stronger),
+        0 0 0 1px var(--hemma-surface-hover-strong);
       z-index: 1;
     }
 
@@ -163,7 +163,7 @@ hemma_badge_activity:
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      text-shadow: 0 0 3px rgba(0,0,0,0.25);
+      text-shadow: 0 0 3px var(--hemma-surface-overlay);
     }
 
     .mp-sub{

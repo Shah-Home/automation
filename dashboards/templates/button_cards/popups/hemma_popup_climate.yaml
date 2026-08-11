@@ -105,7 +105,7 @@ hemma_climate_popup:
             const tileTapStyle = [
               ':host { --ha-card-box-shadow: none !important; --button-card-box-shadow: none !important; --button-card-box-shadow-hover: none !important; }',
               'ha-card { background: var(--hemma-popup-tile-background, rgba(255,255,255,0.07)) !important; border: none !important; border-radius: 24px !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; cursor: pointer !important; transform: scale(1) !important; transition: background-color var(--hemma-popup-tile-hover-duration, 0.2s) ease, transform var(--hemma-popup-tile-hover-duration, 0.2s) ease !important; }',
-              'ha-card:hover { background: var(--hemma-popup-tile-hover, rgba(255,255,255,0.09)) !important; transform: scale(var(--hemma-popup-tile-hover-scale, 1.01)) !important; }',
+              'ha-card:hover { background: var(--hemma-popup-tile-hover, var(--hemma-progress-track)) !important; transform: scale(var(--hemma-popup-tile-hover-scale, 1.01)) !important; }',
               'ha-ripple { display: none !important; }',
             ].join('\n');
 
@@ -143,11 +143,11 @@ hemma_climate_popup:
                 overflow: visible !important;
 
                 -webkit-mask-image:
-                  linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 7%, rgba(0,0,0,0.1) 13%, rgba(0,0,0,0.5) 23%, black 35%, black 65%, rgba(0,0,0,0.5) 77%, rgba(0,0,0,0.1) 87%, rgba(0,0,0,0) 93%, rgba(0,0,0,0) 100%),
+                  linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 7%, rgba(0,0,0,0.1) 13%, var(--hemma-surface-overlay-strong) 23%, black 35%, black 65%, var(--hemma-surface-overlay-strong) 77%, rgba(0,0,0,0.1) 87%, rgba(0,0,0,0) 93%, rgba(0,0,0,0) 100%),
                   linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%);
 
                 mask-image:
-                  linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 7%, rgba(0,0,0,0.1) 13%, rgba(0,0,0,0.5) 23%, black 35%, black 65%, rgba(0,0,0,0.5) 77%, rgba(0,0,0,0.1) 87%, rgba(0,0,0,0) 93%, rgba(0,0,0,0) 100%),
+                  linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 7%, rgba(0,0,0,0.1) 13%, var(--hemma-surface-overlay-strong) 23%, black 35%, black 65%, var(--hemma-surface-overlay-strong) 77%, rgba(0,0,0,0.1) 87%, rgba(0,0,0,0) 93%, rgba(0,0,0,0) 100%),
                   linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%);
 
                 -webkit-mask-composite: destination-in;
@@ -158,7 +158,7 @@ hemma_climate_popup:
                 mask-size: 100% 100%;
               }
 
-              .graph__line { opacity: 0.95; filter: drop-shadow(0 0 3px rgba(255,255,255,0.06)); }
+              .graph__line { opacity: 0.95; filter: drop-shadow(0 0 3px var(--hemma-surface-hover)); }
               .graph__fill { opacity: 0.36; }
               .graph.flex { margin-left: 0px !important; margin-right: 0px !important; padding-bottom: 0px !important; }
               .graph__hover { overflow: visible !important; }
@@ -426,7 +426,7 @@ hemma_climate_popup:
               },
               custom_fields: {
                 temp_s:  { card: tempStatCard },
-                div:     '<div style="width:2px;height:100%;background:rgba(255,255,255,0.09);margin:0 12px;"></div>',
+                div:     '<div style="width:2px;height:100%;background:var(--hemma-progress-track);margin:0 12px;"></div>',
                 humid_s: { card: humidStatCard },
               },
             };
@@ -549,7 +549,7 @@ hemma_climate_popup:
                     let label, color;
                     if (v == null || good == null) {
                       label = v == null ? '—' : 'Value';
-                      color = 'rgba(255,255,255,0.4)';
+                      color = 'var(--hemma-icon-color-faint)';
                     } else if (v <= good)     { label='Good';     color='var(--hemma-badge-air-quality-good-color)'; }
                     else if (v <= moderate)   { label='Moderate'; color='var(--hemma-badge-air-quality-moderate-color)'; }
                     else if (v <= high)       { label='Poor';     color='var(--hemma-badge-air-quality-poor-color)'; }
@@ -580,7 +580,7 @@ hemma_climate_popup:
                         + '<span style="font-size:20px;font-weight:400;color:var(--hemma-popup-tile-text-primary);line-height:1;white-space:nowrap;">' + valStr + '</span>'
                         + '<span style="font-size:12px;color:var(--hemma-popup-tile-text-muted);white-space:nowrap;">' + unit + '</span>'
                       + '</div>'
-                      + '<div style="position:relative;height:8px;width:100%;background:var(--hemma-popup-progress-track, rgba(255,255,255,0.09));border-radius:999px;overflow:hidden;margin-top:10px;">'
+                      + '<div style="position:relative;height:8px;width:100%;background:var(--hemma-popup-progress-track, var(--hemma-progress-track));border-radius:999px;overflow:hidden;margin-top:10px;">'
                         + '<div style="position:absolute;inset:0 auto 0 0;width:' + pct.toFixed(1) + '%;border-radius:999px;background:' + gradient + ';transition:width .35s ease;"></div>'
                       + '</div>'
                     + '</div>';

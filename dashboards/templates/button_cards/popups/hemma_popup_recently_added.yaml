@@ -43,8 +43,8 @@ hemma_popup_recently_added:
                 }
               }
               swipe-card {
-                --swiper-pagination-color: rgba(255,255,255,0.95);
-                --swiper-theme-color: rgba(255,255,255,0.95);
+                --swiper-pagination-color: var(--hemma-icon-color-soft);
+                --swiper-theme-color: var(--hemma-icon-color-soft);
               }
         content: |
           [[[
@@ -201,7 +201,7 @@ hemma_popup_recently_added:
               const dotSize  = isMobile ? 16 : 20;
               const dotIcon  = isMobile ?  8 : 11;
               const watchedDot = isWatched
-                ? '<div style="position:absolute;top:6px;right:6px;width:' + dotSize + 'px;height:' + dotSize + 'px;background:rgba(255,255,255,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 5px rgba(0,0,0,0.1);">'
+                ? '<div style="position:absolute;top:6px;right:6px;width:' + dotSize + 'px;height:' + dotSize + 'px;background:var(--hemma-text-muted);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 5px rgba(0,0,0,0.1);">'
                   + '<svg viewBox="0 0 10 10" width="' + dotIcon + '" height="' + dotIcon + '"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
                   + '</div>'
                 : '';
@@ -223,11 +223,11 @@ hemma_popup_recently_added:
               }
               if (item.genres) yearGenreParts.push(esc(item.genres));
               const yearGenreLine = yearGenreParts.length
-                ? '<div style="font-size:15px;color:rgba(255,255,255,0.65);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + yearGenreParts.join(' \xb7 ') + '</div>'
+                ? '<div style="font-size:15px;color:var(--hemma-text-secondary-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + yearGenreParts.join(' \xb7 ') + '</div>'
                 : '';
 
               const agoLine = timeAgo
-                ? '<div style="font-size:15px;color:rgba(255,255,255,0.4);">Added ' + timeAgo + '</div>'
+                ? '<div style="font-size:15px;color:var(--hemma-icon-color-faint);">Added ' + timeAgo + '</div>'
                 : '';
 
               const summaryLen = (item.summary || '').length;

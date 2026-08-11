@@ -93,7 +93,7 @@ hemma_badge_occupancy_group:
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const onCount = entities.filter(isOn).length;
             return onCount > 0
-              ? 'var(--badge-active-color, rgba(255,255,255,0.85))'
+              ? 'var(--badge-active-color, var(--hemma-icon-color-muted))'
               : 'var(--badge-background, rgba(0,0,0,0.18))';
           ]]]
       - display: >
@@ -116,7 +116,7 @@ hemma_badge_occupancy_group:
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const onCount = entities.filter(isOn).length;
-            return onCount > 0 ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+            return onCount > 0 ? 'var(--hemma-badge-active-title-color)' : 'var(--primary-text-color)';
           ]]]
       - --badge-sub-color: >
           [[[
@@ -127,7 +127,7 @@ hemma_badge_occupancy_group:
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const onCount = entities.filter(isOn).length;
-            return onCount > 0 ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
+            return onCount > 0 ? 'var(--hemma-badge-active-sub-color)' : 'var(--secondary-text-color)';
           ]]]
       - --hemma-badge-icon-color: >
           [[[
@@ -139,7 +139,8 @@ hemma_badge_occupancy_group:
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const onCount = entities.filter(isOn).length;
             if (onCount === 0) return 'var(--badge-title-inactive)';
-            return 'var(--hemma-badge-occupancy-active-color)';
+            // Dark icon on the white active background for clear visibility
+            return 'var(--hemma-badge-active-icon-color)';
           ]]]
       - --icon-primary-color: var(--hemma-badge-icon-color)
       - --paper-item-icon-color: var(--hemma-badge-icon-color)

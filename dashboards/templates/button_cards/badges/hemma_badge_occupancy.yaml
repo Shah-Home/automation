@@ -73,28 +73,28 @@ hemma_badge_occupancy:
           [[[
             const s = String(entity?.state || '').toLowerCase();
             return s === 'on'
-              ? 'var(--badge-active-color, rgba(255,255,255,0.85))'
+              ? 'var(--badge-active-color, var(--hemma-icon-color-muted))'
               : 'var(--badge-background, rgba(0,0,0,0.18))';
           ]]]
       - --hemma-icon-color: >
           [[[
             const s = String(entity?.state || '').toLowerCase();
             return s === 'on'
-              ? 'var(--hemma-badge-occupancy-active-color)'
+              ? 'var(--hemma-badge-active-icon-color)'
               : 'var(--badge-title-inactive)';
           ]]]
       - --badge-title-color: >
           [[[
             const s = String(entity?.state || '').toLowerCase();
             return s === 'on'
-              ? 'rgba(0,0,0,0.85)'
+              ? 'var(--hemma-badge-active-title-color)'
               : 'var(--badge-title-inactive)';
           ]]]
       - --badge-sub-color: >
           [[[
             const s = String(entity?.state || '').toLowerCase();
             return s === 'on'
-              ? 'rgba(0,0,0,0.6)'
+              ? 'var(--hemma-badge-active-sub-color)'
               : 'color-mix(in oklab, var(--secondary-text-color) 70%, transparent)';
           ]]]
     icon:

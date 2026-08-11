@@ -139,7 +139,7 @@ hemma_popup_battery:
               }
 
               ha-card:hover {
-                background:var(--hemma-popup-tile-hover, rgba(255,255,255,0.09)) !important;
+                background:var(--hemma-popup-tile-hover, var(--hemma-progress-track)) !important;
                 opacity:1 !important;
                 transform:scale(var(--hemma-popup-tile-hover-scale, 1.01)) !important;
                 box-shadow:none !important;
@@ -341,7 +341,7 @@ hemma_popup_battery:
                       + '<span style="grid-area:name;font-size:13px;color:var(--hemma-popup-tile-text-primary);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;">' + name + '</span>'
                       + '<span style="grid-area:pct;justify-self:end;font-size:14px;font-weight:600;color:var(--hemma-popup-tile-text-primary);white-space:nowrap;">' + pct + '%</span>'
                       + '<div style="grid-area:bar;display:flex;align-items:center;width:100%;min-height:13px;">'
-                        + '<div style="flex:1;height:8px;background:var(--hemma-popup-progress-track, rgba(255,255,255,0.09));border-radius:999px;overflow:hidden;position:relative;' + (charging ? 'margin-right:8px;' : '') + '">'
+                        + '<div style="flex:1;height:8px;background:var(--hemma-popup-progress-track, var(--hemma-progress-track));border-radius:999px;overflow:hidden;position:relative;' + (charging ? 'margin-right:8px;' : '') + '">'
                           + '<div style="height:100%;width:' + barWidth + ';border-radius:999px;background:' + barGradient + ';background-size:200% 100%;background-repeat:repeat;' + (charging ? 'animation:batteryFlow 3.5s linear infinite;' : '') + 'transition:width .35s ease,background-position .2s linear;"></div>'
                         + '</div>'
                         + chargingIcon
