@@ -1,7 +1,7 @@
 # Occupancy Group Badge
 # Shows consolidated occupancy status for multiple FP2 zones.
 # Tap to expand/collapse the individual occupancy badges row
-# (driven by input_select.hemma_expanded_row) — only if >1 zone.
+# (driven by input_select.hemma_expanded_row).
 #
 # Variables:
 #   entity_1          - entity ID of occupancy sensor 1 (required)
@@ -38,8 +38,8 @@ hemma_badge_occupancy_group:
             variables?.entity_1, variables?.entity_2,
             variables?.entity_3, variables?.entity_4
           ].filter(Boolean);
-          // Only expand if more than one zone
-          if (entities.length <= 1) return 'none';
+          // Always expand if at least one zone is configured
+          if (entities.length === 0) return 'none';
           return states['input_select.hemma_expanded_row']?.state === 'occupancy' ? 'none' : 'occupancy';
         ]]]
 
@@ -169,10 +169,10 @@ hemma_badge_occupancy_group:
       let title, status;
       if (entities.length === 1) {
         title  = variables?.label_1 || getName(entities[0]);
-        status = isOn(entities[0]) ? 'Presence' : 'Empty';
+        status = isOn(entities[0]) ? 'Occupied' : 'Empty';
       } else {
-        title = 'Presence';
-        status = onCount > 0 ? 'Presence' : 'Empty';
+        title = 'Occupancy';
+        status = onCount > 0 ? 'Occupied' : 'Empty';
       }
 
       const esc = (t) => String(t || '').replaceAll('"', '"');
