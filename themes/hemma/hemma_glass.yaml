@@ -721,7 +721,7 @@ Hemma Glass:
   # Network
   hemma-badge-network-online-color:        var(--hemma-color-green, #44e371)
   hemma-badge-network-offline-color:       var(--hemma-color-red, #ff4245)
-  hemma-badge-network-idle-color:          var(--hemma-color-neutral, #8e8e93)
+  hemma-badge-network-idle-color:          var(--hemma-color-neutral, #CDCDCF)
   hemma-badge-network-low-color:           var(--hemma-color-green, #44e371)
   hemma-badge-network-active-color:        var(--hemma-color-yellow, #ffd600)
   hemma-badge-network-high-color:          var(--hemma-color-orange, #ff9230)

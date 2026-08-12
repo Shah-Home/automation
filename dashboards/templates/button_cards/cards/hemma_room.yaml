@@ -2135,7 +2135,7 @@ hemma_room:
                 const g = variables.light_entity_1;
                 const m = g ? hass.states[g]?.attributes?.entity_id : null;
                 const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[8] || null) : (variables.light_entity_8 || null);
+                return expand ? (m[7] || null) : (variables.light_entity_8 || null);
               ]]]
             variables:
               enabled: >
@@ -2143,7 +2143,7 @@ hemma_room:
                   const g = variables.light_entity_1;
                   const m = g ? hass.states[g]?.attributes?.entity_id : null;
                   const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[8];
+                  if (expand) return variables.show_lights && !!m[7];
                   return variables.show_lights && !!variables.light_entity_8;
                 ]]]
 
@@ -2154,7 +2154,7 @@ hemma_room:
                 const g = variables.light_entity_1;
                 const m = g ? hass.states[g]?.attributes?.entity_id : null;
                 const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[9] || null) : (variables.light_entity_9 || null);
+                return expand ? (m[8] || null) : (variables.light_entity_9 || null);
               ]]]
             variables:
               enabled: >
@@ -2162,7 +2162,7 @@ hemma_room:
                   const g = variables.light_entity_1;
                   const m = g ? hass.states[g]?.attributes?.entity_id : null;
                   const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[9];
+                  if (expand) return variables.show_lights && !!m[8];
                   return variables.show_lights && !!variables.light_entity_9;
                 ]]]
 
@@ -2173,7 +2173,7 @@ hemma_room:
                 const g = variables.light_entity_1;
                 const m = g ? hass.states[g]?.attributes?.entity_id : null;
                 const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[10] || null) : (variables.light_entity_10 || null);
+                return expand ? (m[9] || null) : (variables.light_entity_10 || null);
               ]]]
             variables:
               enabled: >
@@ -2181,7 +2181,7 @@ hemma_room:
                   const g = variables.light_entity_1;
                   const m = g ? hass.states[g]?.attributes?.entity_id : null;
                   const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[10];
+                  if (expand) return variables.show_lights && !!m[9];
                   return variables.show_lights && !!variables.light_entity_10;
                 ]]]
 

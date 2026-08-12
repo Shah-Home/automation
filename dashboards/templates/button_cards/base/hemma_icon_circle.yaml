@@ -1,0 +1,58 @@
+# Icon-circle mixin
+# ============================================================================
+# Shared #img-cell / #icon styling (size, background, hover/active states,
+# mobile-portrait sizing). Extracted from hemma_entity.yaml so every card
+# that shows an icon circle shares one definition instead of copy-pasting it.
+#
+# Compose via `template: [..., hemma_icon_circle]`. Override the size via
+# these custom properties (set in a composing template's styles.card) rather
+# than redefining the block:
+#   --hemma-icon-circle-size          (default 44px)
+#   --hemma-icon-circle-size-mobile   (default 38px)
+#   --hemma-icon-circle-icon-size         (default 25px)
+#   --hemma-icon-circle-icon-size-mobile  (default 22px)
+# ============================================================================
+hemma_icon_circle:
+  extra_styles: |
+    #img-cell {
+      position: relative;
+      border-radius: 50% !important;
+      background: var(--hemma-icon-circle-bg, rgba(255,255,255,0.10)) !important;
+      width: var(--hemma-icon-circle-size, 44px) !important;
+      height: var(--hemma-icon-circle-size, 44px) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+    }
+    #img-cell::before { opacity: 0 !important; }
+    #img-cell img {
+      width: 68% !important;
+      height: 68% !important;
+      max-width: 68% !important;
+      max-height: 68% !important;
+      object-fit: contain !important;
+      flex: none !important;
+    }
+    #img-cell ha-icon {
+      --mdc-icon-size: var(--hemma-icon-circle-icon-size, 25px) !important;
+      flex: none !important;
+      color: rgba(255,255,255,1.0) !important;
+    }
+    #icon { color: rgba(255,255,255,1.0) !important; }
+
+    /* Mobile portrait */
+    @media (max-width: 767px) and (orientation: portrait) {
+      #img-cell {
+        width: var(--hemma-icon-circle-size-mobile, 38px) !important;
+        height: var(--hemma-icon-circle-size-mobile, 38px) !important;
+      }
+      #img-cell ha-icon { --mdc-icon-size: var(--hemma-icon-circle-icon-size-mobile, 22px) !important; }
+      #toggle { filter: invert(var(--hemma-toggle-invert, 0)); }
+    }
+    @media (hover: hover) {
+      #img-cell:hover { filter: brightness(1.15); transform: scale(1.03); transition: filter 0.15s ease, transform 0.15s ease; }
+    }
+    @media (hover: none) {
+      #img-cell:active { filter: brightness(1.15); transform: scale(1.03); }
+    }
