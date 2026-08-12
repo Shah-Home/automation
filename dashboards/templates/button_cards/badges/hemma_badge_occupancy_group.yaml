@@ -166,14 +166,9 @@ hemma_badge_occupancy_group:
 
       const onCount   = entities.filter(isOn).length;
 
-      let title, status;
-      if (entities.length === 1) {
-        title  = variables?.label_1 || getName(entities[0]);
-        status = isOn(entities[0]) ? 'Occupied' : 'Empty';
-      } else {
-        title = 'Occupancy';
-        status = onCount > 0 ? 'Occupied' : 'Empty';
-      }
+      // Always use "Occupancy" as the group title, regardless of zone count
+      title = 'Occupancy';
+      status = onCount > 0 ? 'Occupied' : 'Empty';
 
       const esc = (t) => String(t || '').replaceAll('"', '"');
       return `
