@@ -30,11 +30,11 @@ Hemma Glass:
       hemma-entity-active-gradient-mobile: "linear-gradient(to bottom, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.63) 12%, rgba(255,255,255,0.61) 25%, rgba(255,255,255,0.58) 40%, rgba(255,255,255,0.54) 55%, rgba(255,255,255,0.52) 70%, rgba(255,255,255,0.50) 85%, rgba(255,255,255,0.48) 100%)"
       hemma-entity-name: rgba(255,255,255,0.95)
       hemma-entity-name-active: rgba(255,255,255,1)
-      hemma-entity-name-active-mobile: rgba(0,0,0,0.88)
+      hemma-entity-name-active-mobile: rgba(255,255,255,0.88)
       hemma-entity-state: rgba(240,240,240,0.85)
       hemma-entity-state-opacity: 0.78
       hemma-entity-state-active: rgba(245,245,245,0.98)
-      hemma-entity-state-active-mobile: rgba(0,0,0,0.55)
+      hemma-entity-state-active-mobile: rgba(255,255,255,0.55)
       hemma-entity-state-active-color: rgba(255,255,255,0.90)
       hemma-entity-state-active-color-mobile: rgba(0,0,0,0.65)
 
@@ -155,11 +155,11 @@ Hemma Glass:
       hemma-entity-active-gradient-mobile: "linear-gradient(to bottom, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.63) 12%, rgba(255,255,255,0.61) 25%, rgba(255,255,255,0.58) 40%, rgba(255,255,255,0.55) 55%, rgba(255,255,255,0.52) 70%, rgba(255,255,255,0.49) 85%, rgba(255,255,255,0.47) 100%)"
       hemma-entity-name: rgba(255,255,255,0.85)
       hemma-entity-name-active: rgba(255,255,255,1)
-      hemma-entity-name-active-mobile: rgba(0,0,0,0.88)
+      hemma-entity-name-active-mobile: rgba(255,255,255,0.88)
       hemma-entity-state: rgba(255,255,255,0.7)
       hemma-entity-state-opacity: 0.75
       hemma-entity-state-active: rgba(255,255,255,0.8)
-      hemma-entity-state-active-mobile: rgba(0,0,0,0.55)
+      hemma-entity-state-active-mobile: rgba(255,255,255,0.55)
       hemma-entity-state-active-color: rgba(255,255,255,0.85)
       hemma-entity-state-active-color-mobile: rgba(0,0,0,0.85)
 
@@ -742,7 +742,7 @@ Hemma Glass:
   hemma-badge-luminance-very-bright-color: var(--hemma-color-orange, #ff9230)
 
   # Occupancy (binary presence sensors, e.g. FP2 zones)
-  hemma-badge-occupancy-active-color: var(--hemma-color-teal, #00c3d0)
+  hemma-badge-occupancy-active-color: var(--hemma-badge-light-color, var(--hemma-color-yellow, #ffd600))
 
   # Presence
   hemma-badge-presence-home-color: "#49F08CD9"

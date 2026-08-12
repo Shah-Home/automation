@@ -1,7 +1,7 @@
 # Occupancy Group Badge
 # Shows consolidated occupancy status for multiple FP2 zones.
 # Tap to expand/collapse the individual occupancy badges row
-# (driven by input_select.hemma_expanded_row) — only if >1 zone.
+# (driven by input_select.hemma_expanded_row).
 #
 # Variables:
 #   entity_1          - entity ID of occupancy sensor 1 (required)
@@ -34,12 +34,6 @@ hemma_badge_occupancy_group:
       entity_id: input_select.hemma_expanded_row
       option: >
         [[[
-          const entities = [
-            variables?.entity_1, variables?.entity_2,
-            variables?.entity_3, variables?.entity_4
-          ].filter(Boolean);
-          // Only expand if more than one zone
-          if (entities.length <= 1) return 'none';
           return states['input_select.hemma_expanded_row']?.state === 'occupancy' ? 'none' : 'occupancy';
         ]]]
 
@@ -83,19 +77,7 @@ hemma_badge_occupancy_group:
 
   styles:
     card:
-      - background: >
-          [[[
-            const isOn = (eid) => {
-              if (!eid) return false;
-              const s = String(hass.states[eid]?.state || '').toLowerCase();
-              return s === 'on';
-            };
-            const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
-            const onCount = entities.filter(isOn).length;
-            return onCount > 0
-              ? 'var(--badge-active-color, var(--hemma-icon-color-muted))'
-              : 'var(--badge-background, rgba(0,0,0,0.18))';
-          ]]]
+      - background: var(--badge-background, rgba(0,0,0,0.18))
       - display: >
           [[[
             const v = variables?.enabled;
@@ -116,7 +98,9 @@ hemma_badge_occupancy_group:
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const onCount = entities.filter(isOn).length;
-            return onCount > 0 ? 'var(--hemma-badge-active-title-color)' : 'var(--primary-text-color)';
+            return onCount > 0
+              ? 'var(--hemma-badge-occupancy-active-color)'
+              : 'var(--primary-text-color)';
           ]]]
       - --badge-sub-color: >
           [[[
@@ -127,7 +111,9 @@ hemma_badge_occupancy_group:
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const onCount = entities.filter(isOn).length;
-            return onCount > 0 ? 'var(--hemma-badge-active-sub-color)' : 'var(--secondary-text-color)';
+            return onCount > 0
+              ? 'var(--hemma-badge-occupancy-active-color)'
+              : 'var(--secondary-text-color)';
           ]]]
       - --hemma-badge-icon-color: >
           [[[
@@ -139,8 +125,7 @@ hemma_badge_occupancy_group:
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const onCount = entities.filter(isOn).length;
             if (onCount === 0) return 'var(--badge-title-inactive)';
-            // Dark icon on the white active background for clear visibility
-            return 'var(--hemma-badge-active-icon-color)';
+            return 'var(--hemma-badge-occupancy-active-color)';
           ]]]
       - --icon-primary-color: var(--hemma-badge-icon-color)
       - --paper-item-icon-color: var(--hemma-badge-icon-color)
@@ -172,7 +157,7 @@ hemma_badge_occupancy_group:
         title  = variables?.label_1 || getName(entities[0]);
         status = isOn(entities[0]) ? 'Presence' : 'Empty';
       } else {
-        title = 'Presence';
+        title = 'Occupancy';
         status = onCount > 0 ? 'Presence' : 'Empty';
       }
 

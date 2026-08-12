@@ -31,7 +31,7 @@ hemma_badge_presence_group:
       option: >
         [[[
           return states['input_select.hemma_expanded_row']?.state === 'presence' ? 'none' : 'presence';
-        ]]]]
+        ]]]
 
   hold_action:
     action: none

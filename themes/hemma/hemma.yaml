@@ -29,11 +29,11 @@ Hemma:
       hemma-entity-active-gradient-mobile: rgba(255,255,255,1.0)
       hemma-entity-name: rgba(255,255,255,0.98)
       hemma-entity-name-active: rgba(255,255,255,0.98)
-      hemma-entity-name-active-mobile: rgba(0,0,0,0.88)
+      hemma-entity-name-active-mobile: rgba(255,255,255,0.88)
       hemma-entity-state: rgba(255,255,255,0.65)
       hemma-entity-state-opacity: 1
       hemma-entity-state-active: rgba(255,255,255,0.80)
-      hemma-entity-state-active-mobile: rgba(0,0,0,0.55)
+      hemma-entity-state-active-mobile: rgba(255,255,255,0.55)
       hemma-entity-state-active-color: rgba(255,255,255,0.80)
       hemma-entity-state-active-color-mobile: rgba(0,0,0,0.55)
       hemma-toggle-inactive-opacity: 0.55
@@ -152,11 +152,11 @@ Hemma:
       hemma-entity-active-gradient-mobile: rgba(255,255,255,0.70)
       hemma-entity-name: rgba(255,255,255,0.95)
       hemma-entity-name-active: rgba(255,255,255,0.97)
-      hemma-entity-name-active-mobile: rgba(0,0,0,0.88)
+      hemma-entity-name-active-mobile: rgba(255,255,255,0.88)
       hemma-entity-state: rgba(255,255,255,0.65)
       hemma-entity-state-opacity: 1
       hemma-entity-state-active: rgba(255,255,255,0.80)
-      hemma-entity-state-active-mobile: rgba(0,0,0,0.55)
+      hemma-entity-state-active-mobile: rgba(255,255,255,0.55)
       hemma-entity-state-active-color: rgba(255,255,255,0.80)
       hemma-entity-state-active-color-mobile: rgba(27 15 15 / 0.55)
 
@@ -693,7 +693,7 @@ Hemma:
   hemma-badge-luminance-very-bright-color: var(--hemma-color-orange, #ff9230)
 
   # Occupancy (binary presence sensors, e.g. FP2 zones)
-  hemma-badge-occupancy-active-color: var(--hemma-color-teal, #00c3d0)
+  hemma-badge-occupancy-active-color: var(--hemma-badge-light-color, var(--hemma-color-yellow, #ffd600))
 
   # Presence
   hemma-badge-presence-home-color: "#49F08CD9"
