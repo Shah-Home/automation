@@ -1151,28 +1151,52 @@ hemma_room:
             template: hemma_badge_occupancy
             entity: '[[[ return variables.occupancy_sensor_1 ]]]'
             variables:
-              enabled: '[[[ return !!variables.occupancy_sensor_1 ]]]'
+              enabled: >
+                [[[
+                  return !!variables.occupancy_sensor_1 &&
+                    !['unknown','unavailable','none',''].includes(
+                      String(states[variables.occupancy_sensor_1]?.state || '').toLowerCase()
+                    );
+                ]]]
               label: '[[[ return variables.occupancy_label_1 ]]]'
 
           - type: custom:button-card
             template: hemma_badge_occupancy
             entity: '[[[ return variables.occupancy_sensor_2 ]]]'
             variables:
-              enabled: '[[[ return !!variables.occupancy_sensor_2 ]]]'
+              enabled: >
+                [[[
+                  return !!variables.occupancy_sensor_2 &&
+                    !['unknown','unavailable','none',''].includes(
+                      String(states[variables.occupancy_sensor_2]?.state || '').toLowerCase()
+                    );
+                ]]]
               label: '[[[ return variables.occupancy_label_2 ]]]'
 
           - type: custom:button-card
             template: hemma_badge_occupancy
             entity: '[[[ return variables.occupancy_sensor_3 ]]]'
             variables:
-              enabled: '[[[ return !!variables.occupancy_sensor_3 ]]]'
+              enabled: >
+                [[[
+                  return !!variables.occupancy_sensor_3 &&
+                    !['unknown','unavailable','none',''].includes(
+                      String(states[variables.occupancy_sensor_3]?.state || '').toLowerCase()
+                    );
+                ]]]
               label: '[[[ return variables.occupancy_label_3 ]]]'
 
           - type: custom:button-card
             template: hemma_badge_occupancy
             entity: '[[[ return variables.occupancy_sensor_4 ]]]'
             variables:
-              enabled: '[[[ return !!variables.occupancy_sensor_4 ]]]'
+              enabled: >
+                [[[
+                  return !!variables.occupancy_sensor_4 &&
+                    !['unknown','unavailable','none',''].includes(
+                      String(states[variables.occupancy_sensor_4]?.state || '').toLowerCase()
+                    );
+                ]]]
               label: '[[[ return variables.occupancy_label_4 ]]]'
 
     badges_media:

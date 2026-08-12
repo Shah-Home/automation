@@ -1,7 +1,7 @@
 # Occupancy Group Badge
 # Shows consolidated occupancy status for multiple FP2 zones.
 # Tap to expand/collapse the individual occupancy badges row
-# (driven by input_select.hemma_expanded_row) — only if >1 zone.
+# (driven by input_select.hemma_expanded_row).
 #
 # Variables:
 #   entity_1          - entity ID of occupancy sensor 1 (required)
@@ -38,8 +38,8 @@ hemma_badge_occupancy_group:
             variables?.entity_1, variables?.entity_2,
             variables?.entity_3, variables?.entity_4
           ].filter(Boolean);
-          // Only expand if more than one zone
-          if (entities.length <= 1) return 'none';
+          // Always expand if at least one zone is configured
+          if (entities.length === 0) return 'none';
           return states['input_select.hemma_expanded_row']?.state === 'occupancy' ? 'none' : 'occupancy';
         ]]]
 
@@ -85,13 +85,19 @@ hemma_badge_occupancy_group:
     card:
       - background: >
           [[[
+            const isValid = (eid) => {
+              if (!eid) return false;
+              const s = String(hass.states[eid]?.state || '').toLowerCase();
+              return !['unknown','unavailable','none',''].includes(s);
+            };
             const isOn = (eid) => {
               if (!eid) return false;
               const s = String(hass.states[eid]?.state || '').toLowerCase();
               return s === 'on';
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
-            const onCount = entities.filter(isOn).length;
+            const validEntities = entities.filter(isValid);
+            const onCount = validEntities.filter(isOn).length;
             return onCount > 0
               ? 'var(--badge-active-color, rgba(255,255,255,0.85))'
               : 'var(--badge-background, rgba(0,0,0,0.18))';
@@ -104,40 +110,67 @@ hemma_badge_occupancy_group:
               (typeof v === 'number') ? v !== 0 :
               !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
 
-            const hasAny = !!(variables?.entity_1 || variables?.entity_2 || variables?.entity_3 || variables?.entity_4);
-            return (enabled && hasAny) ? 'inline-grid' : 'none';
+            const isValid = (eid) => {
+              if (!eid) return false;
+              const s = String(hass.states[eid]?.state || '').toLowerCase();
+              return !['unknown','unavailable','none',''].includes(s);
+            };
+            const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
+            const validEntities = entities.filter(isValid);
+            return (enabled && validEntities.length > 0) ? 'inline-grid' : 'none';
           ]]]
       - --badge-title-color: >
           [[[
+            const isValid = (eid) => {
+              if (!eid) return false;
+              const s = String(hass.states[eid]?.state || '').toLowerCase();
+              return !['unknown','unavailable','none',''].includes(s);
+            };
             const isOn = (eid) => {
               if (!eid) return false;
               const s = String(hass.states[eid]?.state || '').toLowerCase();
               return s === 'on';
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
-            const onCount = entities.filter(isOn).length;
+            const validEntities = entities.filter(isValid);
+            if (validEntities.length === 0) return 'var(--primary-text-color)';
+            const onCount = validEntities.filter(isOn).length;
             return onCount > 0 ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
           ]]]
       - --badge-sub-color: >
           [[[
+            const isValid = (eid) => {
+              if (!eid) return false;
+              const s = String(hass.states[eid]?.state || '').toLowerCase();
+              return !['unknown','unavailable','none',''].includes(s);
+            };
             const isOn = (eid) => {
               if (!eid) return false;
               const s = String(hass.states[eid]?.state || '').toLowerCase();
               return s === 'on';
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
-            const onCount = entities.filter(isOn).length;
+            const validEntities = entities.filter(isValid);
+            if (validEntities.length === 0) return 'var(--secondary-text-color)';
+            const onCount = validEntities.filter(isOn).length;
             return onCount > 0 ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
           ]]]
       - --hemma-badge-icon-color: >
           [[[
+            const isValid = (eid) => {
+              if (!eid) return false;
+              const s = String(hass.states[eid]?.state || '').toLowerCase();
+              return !['unknown','unavailable','none',''].includes(s);
+            };
             const isOn = (eid) => {
               if (!eid) return false;
               const s = String(hass.states[eid]?.state || '').toLowerCase();
               return s === 'on';
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
-            const onCount = entities.filter(isOn).length;
+            const validEntities = entities.filter(isValid);
+            if (validEntities.length === 0) return 'var(--badge-title-inactive)';
+            const onCount = validEntities.filter(isOn).length;
             if (onCount === 0) return 'var(--badge-title-inactive)';
             return 'var(--hemma-badge-occupancy-active-color)';
           ]]]
@@ -151,29 +184,28 @@ hemma_badge_occupancy_group:
 
   name: >
     [[[
+      const isValid = (eid) => {
+        if (!eid) return false;
+        const s = String(hass.states[eid]?.state || '').toLowerCase();
+        return !['unknown','unavailable','none',''].includes(s);
+      };
       const entities = [
         variables?.entity_1, variables?.entity_2,
         variables?.entity_3, variables?.entity_4
       ].filter(Boolean);
 
-      if (!entities.length) return '';
+      const validEntities = entities.filter(isValid);
+      if (!validEntities.length) return '';
 
       const getState = (eid) =>
         String(hass.states[eid]?.state || '').toLowerCase();
-      const getName = (eid) =>
-        String(hass.states[eid]?.attributes?.friendly_name || '').split(' ')[0] || 'Zone';
       const isOn = (eid) => { const s = getState(eid); return s === 'on'; };
 
-      const onCount   = entities.filter(isOn).length;
+      const onCount   = validEntities.filter(isOn).length;
 
-      let title, status;
-      if (entities.length === 1) {
-        title  = variables?.label_1 || getName(entities[0]);
-        status = isOn(entities[0]) ? 'Presence' : 'Empty';
-      } else {
-        title = 'Presence';
-        status = onCount > 0 ? 'Presence' : 'Empty';
-      }
+      // Always use "Occupancy" as the group title, regardless of zone count
+      const title = 'Occupancy';
+      const status = onCount > 0 ? 'Occupied' : 'Empty';
 
       const esc = (t) => String(t || '').replaceAll('"', '"');
       return `

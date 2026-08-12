@@ -103,9 +103,9 @@ hemma_badge_occupancy:
   name: >
     [[[
       const s = String(entity?.state || '').toLowerCase();
-      const status = s === 'on' ? 'Presence' : 'Empty';
+      const status = s === 'on' ? 'Occupied' : 'Empty';
       const title = variables?.label
-        || (entity?.attributes?.friendly_name || 'Presence').split(' ')[0];
+        || (entity?.attributes?.friendly_name || 'Occupancy').split(' ')[0];
 
       const esc = (t) => String(t || '').replaceAll('"','"');
 
