@@ -15,6 +15,12 @@ cards:
       weather_mode: room
       temp_unit: "F"
 
+      # Spotify (shared/common Spotify Connect target) — shown as a media
+      # badge in the hero header.
+      show_media: true
+      show_media_player_1: true
+      media_player_1: media_player.common_spotify
+
       # Presence from FP2 zones — shown as a badge in the presence row
       occupancy_sensor_1: binary_sensor.cooking_area_presence
       occupancy_label_1: Cooking Area

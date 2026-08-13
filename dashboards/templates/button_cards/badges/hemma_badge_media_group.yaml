@@ -1,6 +1,6 @@
 # Media Group Badge
 hemma_badge_media_group:
-  template: [hemma_badge_base]
+  template: [hemma_badge_base, hemma_badge_icon_mask]
 
   entity: input_select.hemma_expanded_row
 
@@ -63,36 +63,19 @@ hemma_badge_media_group:
     - '[[[ return variables?.steam_game_entity ]]]'
 
   extra_styles: |
-    #img-cell, .img-cell{ position: relative; }
-
     #img-cell #icon, .img-cell #icon{
-      color: transparent !important;
-      opacity: 0 !important;
       --icon-primary-color: var(--hemma-icon-color) !important;
       --paper-item-icon-color: var(--hemma-icon-color) !important;
       --state-icon-color: var(--hemma-icon-color) !important;
       --card-mod-icon-color: var(--hemma-icon-color) !important;
     }
 
-    #img-cell::before,
-    .img-cell::before{
-      content: '';
-      position: absolute;
-      inset: 2px;
-      z-index: 5;
-      background-color: var(--hemma-icon-color, var(--primary-text-color)) !important;
-
-      -webkit-mask: url('/local/hemma/icons/media.svg') no-repeat center / 100% 100%;
-      mask: url('/local/hemma/icons/media.svg') no-repeat center / 100% 100%;
-
-      transform: translateZ(0);
-    }
-
   styles:
-    icon:
-      - color: transparent
-
     card:
+      - --hemma-badge-icon-mask-url: url('/local/hemma/icons/media.svg')
+      - --hemma-badge-icon-mask-size: 100%
+      - --hemma-badge-icon-mask-inset: 2px
+      - --hemma-badge-icon-mask-z: 5
       - --badge-icon-size-current: calc(var(--badge-icon-size, 30px) + 1px)
       - background: >
           [[[
@@ -155,15 +138,15 @@ hemma_badge_media_group:
           ]]]
       - --badge-title-color: >
           [[[
-            return entity?.state === 'media' ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+            return entity?.state === 'media' ? 'var(--hemma-badge-title-color-active)' : 'var(--hemma-entity-name, #ffffff)';
           ]]]
       - --badge-sub-color: >
           [[[
-            return entity?.state === 'media' ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
+            return entity?.state === 'media' ? 'var(--hemma-badge-sub-color-active)' : 'var(--secondary-text-color)';
           ]]]
       - --hemma-icon-color: >
           [[[
-            if (entity?.state === 'media') return 'rgba(0,0,0,0.75)';
+            if (entity?.state === 'media') return 'var(--hemma-badge-icon-color-active)';
 
             const isActive = (eid) => {
               if (!eid) return false;

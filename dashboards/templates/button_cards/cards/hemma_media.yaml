@@ -143,7 +143,7 @@ hemma_media:
             const hasRichMeta = !!(a.media_series_title || a.media_episode_title);
             const fromRichApp = /youtube|plex|netflix|hulu|disney|max|prime|spotify|apple tv|apple music|paramount|peacock/i.test(app);
             const hasArtwork = !!pic && !looksLikeBareInput && (hasRichMeta || ['music','movie','video','tvshow'].includes(type) || fromRichApp);
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return hasArtwork ? (isMobile ? "0.3" : "0.4") : "var(--hemma-active-overlay-opacity, 0)";
           ]]]
       - --hemma-media-name-color: |
@@ -153,7 +153,7 @@ hemma_media:
             const s = String(entity?.state || '').toLowerCase();
             const activeStates = ['on','open','opening','playing','cleaning','returning','cool','heat','washing','rinsing','spinning','drying','running','active','problem'];
             if (!activeStates.includes(s)) return 'var(--hemma-entity-name)';
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             if (s !== 'playing') return 'var(--hemma-entity-name-active)';
             const type = String(a.media_content_type || '').toLowerCase();
             const app = String(a.app_name || '').trim();
@@ -183,7 +183,7 @@ hemma_media:
             const s = String(entity?.state || '').toLowerCase();
             const activeStates = ['on','open','opening','playing','cleaning','returning','cool','heat','washing','rinsing','spinning','drying','running','active','problem'];
             if (!activeStates.includes(s)) return 'var(--hemma-entity-state)';
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             if (s !== 'playing') return 'var(--hemma-entity-state-active)';
             const type = String(a.media_content_type || '').toLowerCase();
             const app = String(a.app_name || '').trim();
@@ -313,9 +313,9 @@ hemma_media:
     #img-cell ha-icon {
       --mdc-icon-size: 26px !important;
       flex: none !important;
-      color: rgba(255,255,255,1.0) !important;
+      color: var(--primary-text-color, rgba(255,255,255,1.0)) !important;
     }
-    #icon { color: rgba(255,255,255,1.0) !important; }
+    #icon { color: var(--primary-text-color, rgba(255,255,255,1.0)) !important; }
     @media (max-width: 767px) and (orientation: portrait) {
       #img-cell { width: 38px !important; height: 38px !important; }
       #img-cell ha-icon { --mdc-icon-size: 23px !important; }

@@ -1,0 +1,205 @@
+# Light Popup
+# ============================================================================
+# Shared browser_mod popup (more-info-card + scrollable per-light list),
+# extracted from hemma_badge_light.yaml / hemma_badge_light_group.yaml where
+# it was duplicated ~95% verbatim (~130 lines each) — the only real
+# difference was how the target entity resolves. Mirrors the same
+# shared-popup-template treatment already used for hemma_climate_popup.
+#
+# Compose via `template: [..., hemma_light_popup]`. Provides `hold_action`
+# only — each composing badge keeps its own `tap_action` (toggle for the
+# individual light badge, expand-row for the group badge).
+#
+# Target entity resolution (used everywhere in this template): checks
+# `variables.light_group_entity`, then `variables.entity_1`, then the card's
+# own bound entity. One fallback chain naturally handles both callers —
+# hemma_badge_light never sets light_group_entity/entity_1 so it falls
+# through to `entity.entity_id`; hemma_badge_light_group always sets one of
+# the first two.
+# ============================================================================
+hemma_light_popup:
+  hold_action:
+    haptic: medium
+    action: |
+      [[[
+        const isMobile = (window.hemmaMM?.isMobileWidthOnly?.() ?? window.matchMedia('(max-width: 767px)').matches);
+        const hasBrowserMod = typeof window.browser_mod !== 'undefined';
+        const targetEntity = variables?.light_group_entity || variables?.entity_1 || entity?.entity_id;
+        const members = targetEntity ? states[targetEntity]?.attributes?.entity_id : null;
+        const isGroup = Array.isArray(members) && members.length > 0;
+        return (isMobile || !hasBrowserMod || !isGroup) ? 'more-info' : 'fire-dom-event';
+      ]]]
+    entity: >
+      [[[
+        return variables?.light_group_entity || variables?.entity_1 || entity?.entity_id || null;
+      ]]]
+    browser_mod:
+      service: browser_mod.popup
+      data:
+        title: ""
+        style: |
+          --popup-min-width: 800px;
+        popup_styles:
+          - style: all
+            styles: |
+              ha-dialog .content .container,
+              ha-dialog .container {
+                padding: 28px 10px 16px 10px !important;
+              }
+        content:
+          type: custom:layout-card
+          layout_type: custom:grid-layout
+          card_mod:
+            style: |
+              ha-card,
+              ha-card:hover,
+              ha-card:focus-within,
+              ha-card:active {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                filter: none !important;
+              }
+          layout:
+            grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.05fr)
+            grid-template-rows: auto
+            grid-template-areas: |
+              "main list"
+            column-gap: 18px
+            row-gap: 18px
+          cards:
+            - type: custom:more-info-card
+              view_layout:
+                grid-area: main
+              entity: >
+                [[[
+                  return variables?.light_group_entity || variables?.entity_1 || entity?.entity_id || null;
+                ]]]
+              card_mod:
+                style:
+                  $: |
+                    h1.card-header {
+                      display: block !important;
+                      margin: 0 !important;
+                      padding: 8px 0 24px 0 !important;
+                      width: 100% !important;
+                      text-align: center !important;
+                      font-size: 32px !important;
+                      font-weight: 600 !important;
+                      line-height: 1.2 !important;
+                      color: var(--hemma-entity-name, #ffffff) !important;
+                    }
+
+                  .: |
+                    ha-card,
+                    ha-card:hover,
+                    ha-card:focus-within,
+                    ha-card:active {
+                      background: transparent !important;
+                      border: none !important;
+                      box-shadow: none !important;
+                      filter: none !important;
+                      backdrop-filter: none !important;
+                      -webkit-backdrop-filter: none !important;
+                      transform: none !important;
+                    }
+
+                    state-card-content,
+                    div.action {
+                      display: none !important;
+                    }
+
+                    more-info-content {
+                      opacity: 0;
+                      animation: revealMoreInfo 0s linear 0.5s forwards;
+                    }
+
+                    @keyframes revealMoreInfo {
+                      to { opacity: 1; }
+                    }
+
+                  more-info-content:
+                    $: |
+                      hui-section,
+                      hui-grid-section {
+                        display: none !important;
+                      }
+
+            - type: vertical-stack
+              view_layout:
+                grid-area: list
+              card_mod:
+                style: |
+                  ha-card,
+                  ha-card:hover,
+                  ha-card:focus-within,
+                  ha-card:active {
+                    background: transparent !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                    overflow-y: auto !important;
+                    filter: none !important;
+                  }
+              cards: |
+                [[[
+                  const root = variables?.light_group_entity || variables?.entity_1 || entity?.entity_id;
+                  if (!root) return [];
+
+                  const expand = (eid, seen = new Set()) => {
+                    if (!eid || seen.has(eid)) return [];
+                    seen.add(eid);
+
+                    const s = states[eid];
+                    if (!s) return [];
+
+                    const members = s.attributes?.entity_id;
+                    return Array.isArray(members)
+                      ? members.flatMap(m => expand(m, seen))
+                      : [eid];
+                  };
+
+                  const lights = [...new Set(expand(root))]
+                    .filter((eid) => eid.startsWith('light.') && eid !== root);
+
+                  return lights.map((eid) => ({
+                    type: 'custom:mushroom-light-card',
+                    entity: eid,
+                    fill_container: false,
+                    primary_info: 'name',
+                    secondary_info: 'state',
+                    icon_type: 'icon',
+                    show_brightness_control: true,
+                    show_color_temp_control: true,
+                    show_color_control: true,
+                    collapsible_controls: false,
+                    layout: 'horizontal',
+                    tap_action: { action: 'toggle' },
+                    hold_action: { action: 'more-info' },
+                    double_tap_action: { action: 'none' },
+                    card_mod: {
+                      style: `
+                        ha-card {
+                          background: var(--hemma-popup-entity-background, rgba(0, 0, 0, 0.4)) !important;
+                          box-shadow: none !important;
+                          border-radius: 9999px !important;
+                          margin-bottom: 8px !important;
+                          transition:
+                            background var(--hemma-transition-fast, 0.18s) ease,
+                            border-color var(--hemma-transition-fast, 0.18s) ease !important;
+                        }
+
+                        ha-card:hover,
+                        ha-card:focus-within,
+                        ha-card:active {
+                          background: var(--hemma-popup-entity-hover, rgba(0, 0, 0, 0.5)) !important;
+                          border-color: var(--hemma-popup-entity-border-hover) !important;
+                          box-shadow: none !important;
+                        }
+                      `
+                    }
+                  }));
+                ]]]

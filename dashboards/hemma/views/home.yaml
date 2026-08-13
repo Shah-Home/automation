@@ -31,6 +31,14 @@ cards:
       show_media_player_4: true
       media_player_4: media_player.main_floor_speakers
 
+      # Alarm Badge (Phase 5, §5.2) — Alarmo, the whole-house alarm system.
+      # label override: entity's own friendly name is "Alarmo" (the
+      # integration's brand name); "Alarm" matches the function-named style
+      # every other badge uses (Occupancy, Presence, Lights).
+      alarm_badges:
+        - entity: alarm_control_panel.alarmo
+          label: Alarm
+
       # Weather Widget
       show_weather: true
       weather_mode: outdoor

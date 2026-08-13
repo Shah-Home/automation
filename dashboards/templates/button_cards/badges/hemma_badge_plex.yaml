@@ -21,7 +21,7 @@ hemma_badge_plex:
 
   styles:
     card:
-      - background: rgba(0,0,0,0.18) !important
+      - background: var(--hemma-badge-background-quiet) !important
       - -webkit-backdrop-filter: blur(14px) saturate(1.2) !important
       - backdrop-filter: blur(14px) saturate(1.2) !important
       - justify-self: start

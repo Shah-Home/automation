@@ -25,6 +25,8 @@ hemma_room:
     - '[[[ return variables.occupancy_sensor_2 ]]]'
     - '[[[ return variables.occupancy_sensor_3 ]]]'
     - '[[[ return variables.occupancy_sensor_4 ]]]'
+    - '[[[ return JSON.stringify(variables.presence_badges || []) ]]]'
+    - '[[[ return JSON.stringify(variables.occupancy_badges || []) ]]]'
     - '[[[ return variables.media_player_1 ]]]'
     - '[[[ return variables.media_player_2 ]]]'
     - '[[[ return variables.media_player_3 ]]]'
@@ -45,16 +47,8 @@ hemma_room:
     - '[[[ return variables.plex_stream_1 ]]]'
     - '[[[ return variables.plex_binary_2 ]]]'
     - '[[[ return variables.plex_stream_2 ]]]'
-    - '[[[ return variables.light_entity_1 ]]]'
-    - '[[[ return variables.light_entity_2 ]]]'
-    - '[[[ return variables.light_entity_3 ]]]'
-    - '[[[ return variables.light_entity_4 ]]]'
-    - '[[[ return variables.light_entity_5 ]]]'
-    - '[[[ return variables.light_entity_6 ]]]'
-    - '[[[ return variables.light_entity_7 ]]]'
-    - '[[[ return variables.light_entity_8 ]]]'
-    - '[[[ return variables.light_entity_9 ]]]'
-    - '[[[ return variables.light_entity_10 ]]]'
+    - '[[[ return JSON.stringify(variables.light_badges || []) ]]]'
+    - '[[[ return JSON.stringify(variables.alarm_badges || []) ]]]'
     - '[[[ return variables.image ]]]'
     - '[[[ return variables.image_night ]]]'
     - '[[[ return variables.image_position ]]]'
@@ -108,6 +102,11 @@ hemma_room:
     presence_entity_3:
     presence_entity_4:
 
+    # Phase 4 (§4.1) array-based alternative to presence_entity_1..4 above —
+    # renders alongside the numbered slots via hemma_badge_row. Still
+    # requires show_presence: true. Shape: [{ entity: person.x }, ...].
+    presence_badges: []
+
     # Occupancy sensors (binary_sensor.*_presence, e.g. FP2 zones) — shown as
     # badges in the presence row. Distinct from presence_entity_* (person.*).
     occupancy_sensor_1:
@@ -118,6 +117,14 @@ hemma_room:
     occupancy_label_2:
     occupancy_label_3:
     occupancy_label_4:
+
+    # Phase 4 (§4.1) array-based alternative to occupancy_sensor_1..4/
+    # occupancy_label_1..4 above — renders alongside the numbered slots via
+    # hemma_badge_row. Unlike presence, occupancy has no separate show_x
+    # toggle — populating this array is itself sufficient to show the badge,
+    # matching the existing occupancy_sensor_N behavior.
+    # Shape: [{ entity: binary_sensor.x, label: "Zone Name" }, ...].
+    occupancy_badges: []
 
     show_media: false
     pause_timeout_minutes: 5
@@ -168,16 +175,23 @@ hemma_room:
 
     show_lights: false
     light_group_entity:
-    light_entity_1:
-    light_entity_2:
-    light_entity_3:
-    light_entity_4:
-    light_entity_5:
-    light_entity_6:
-    light_entity_7:
-    light_entity_8:
-    light_entity_9:
-    light_entity_10:
+
+    # Phase 4 (§4.1) — array of lights to show as one summary badge (tap to
+    # expand into individual controls), rendered via hemma_badge_row +
+    # hemma_badge_registry. Used at floor level (one badge per floor,
+    # aggregating every room's light on that floor) rather than per room,
+    # since this house has exactly one light per room and a room-level badge
+    # would just duplicate that room's own entity-grid toggle tile.
+    # Shape: [{ entity: switch.x }, ...]. Still requires show_lights: true.
+    light_badges: []
+
+    # Phase 5 (§5.2) — array of alarm_control_panel entities to show as
+    # badges in the always-visible top row, rendered via hemma_badge_row +
+    # hemma_badge_registry. There's normally just one alarm system for the
+    # whole house, so this is set only on the home view — no per-room
+    # wiring, no summary/expand row needed for a single badge.
+    # Shape: [{ entity: alarm_control_panel.x }, ...].
+    alarm_badges: []
 
     show_weather: false
     weather_entity:
@@ -193,10 +207,10 @@ hemma_room:
       - padding-top: >
           [[[
             const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
-            const isPhonePortrait =
-              (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+            const isPhonePortrait = window.hemmaMM?.isPhonePortraitTouch?.() ??
+              ((mm('(pointer: coarse)') || mm('(hover: none)')) &&
               mm('(max-width: 767px)') &&
-              mm('(orientation: portrait)');
+              mm('(orientation: portrait)'));
 
             const base = 'var(--hero-top)';
             return isPhonePortrait ? `calc(${base} - 20px)` : base;
@@ -206,10 +220,10 @@ hemma_room:
       - padding-bottom: >
           [[[
             const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
-            const isPhonePortrait =
-              (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+            const isPhonePortrait = window.hemmaMM?.isPhonePortraitTouch?.() ??
+              ((mm('(pointer: coarse)') || mm('(hover: none)')) &&
               mm('(max-width: 767px)') &&
-              mm('(orientation: portrait)');
+              mm('(orientation: portrait)'));
 
             return isPhonePortrait
               ? `calc(var(--hemma-nav-height, 112px) + env(safe-area-inset-bottom, 0px) + var(--hemma-entity-mobile-gap-above-nav, 20px))`
@@ -225,7 +239,7 @@ hemma_room:
             const isDark =
               typeof hass?.themes?.darkMode === 'boolean'
                 ? hass.themes.darkMode
-                : window.matchMedia('(prefers-color-scheme: dark)').matches;
+                : (window.hemmaMM?.prefersDark?.() ?? window.matchMedia('(prefers-color-scheme: dark)').matches);
 
             if (isMobile && (variables.mobile_background ?? false)) {
               const phaseEntity = variables.mobile_background_entity || 'sensor.hemma_mobile_dynamic_background';
@@ -315,15 +329,15 @@ hemma_room:
 
     name:
       - grid-area: n
-      - color: var(--primary-text-color)
+      - color: var(--hemma-entity-name, #ffffff)
       - opacity: 0.9
-      - font-size: var(--hero-room-name-size-current, clamp(48px, 6vw + 12px, 100px))
+      - font-size: var(--hero-room-name-size-current, clamp(75px, 4.6vw + 8px, 105px))
       - letter-spacing: var(--hero-room-name-letter-spacing-current, -2px)
       - font-weight: 700
       - justify-self: start
       - padding-left: 0
-      - line-height: var(--hero-room-name-line-height-current, 1.2)
-      - margin-left: var(--hero-room-name-margin-left-current, 0px)
+      - line-height: var(--hero-room-name-line-height-current, 1.18)
+      - margin-left: var(--hero-room-name-margin-left-current, -2px)
       - overflow: visible
 
     grid: []  # Inherits from hemma_shared
@@ -349,13 +363,13 @@ hemma_room:
         - left: >
             calc(
               var(--hero-gutter)
-              + var(--hero-room-name-margin-left-current, 0px)
+              + var(--hero-room-name-margin-left-current, -2px)
               + var(--hemma-header-temp-nudge, 0px))
         - z-index: 5
         - pointer-events: auto
         - cursor: pointer
         - overflow: visible
-        - color: var(--primary-text-color)
+        - color: var(--hemma-entity-name, #ffffff)
         - background: transparent !important
         - background-color: transparent !important
 
@@ -372,10 +386,10 @@ hemma_room:
         - display: >
             [[[
               const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
-              const isPhonePortrait =
-                (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+              const isPhonePortrait = window.hemmaMM?.isPhonePortraitTouch?.() ??
+                ((mm('(pointer: coarse)') || mm('(hover: none)')) &&
                 mm('(max-width: 767px)') &&
-                mm('(orientation: portrait)');
+                mm('(orientation: portrait)'));
               const hasData = !!(variables.weather_entity || variables.weather_temp_sensor);
               const ok = !!variables.show_weather && hasData;
               return (isPhonePortrait && ok) ? 'block' : 'none';
@@ -408,7 +422,7 @@ hemma_room:
         - text-align: left !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px))
         - margin-right: auto !important
         - width: max-content
@@ -435,7 +449,7 @@ hemma_room:
         - text-align: left !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px))
         - margin-right: auto !important
         - width: max-content
@@ -495,15 +509,15 @@ hemma_room:
         - text-align: left !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px))
         - margin-right: auto !important
         - width: max-content
         - max-width: 100%
         - margin-top: >
             [[[
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
+              if (!variables.show_presence && !variables.occupancy_sensor_1 && !(variables.presence_badges?.length) && !(variables.occupancy_badges?.length)) return '0';
+              if ((variables.presence_entity_1 && !variables.presence_entity_2) || variables.presence_badges?.length === 1) return '0';
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
               const expanded = states['input_select.hemma_expanded_row']?.state;
               return (expanded === 'presence' || expanded === 'occupancy')
@@ -515,14 +529,14 @@ hemma_room:
         - display: >
             [[[
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return 'none';
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return 'none';
+              if (!variables.show_presence && !variables.occupancy_sensor_1 && !(variables.presence_badges?.length) && !(variables.occupancy_badges?.length)) return 'none';
+              if ((variables.presence_entity_1 && !variables.presence_entity_2) || variables.presence_badges?.length === 1) return 'none';
               return 'block';
             ]]]
         - max-height: >
             [[[
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
+              if (!variables.show_presence && !variables.occupancy_sensor_1 && !(variables.presence_badges?.length) && !(variables.occupancy_badges?.length)) return '0';
+              if ((variables.presence_entity_1 && !variables.presence_entity_2) || variables.presence_badges?.length === 1) return '0';
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
               const expanded = states['input_select.hemma_expanded_row']?.state;
               return (expanded === 'presence' || expanded === 'occupancy') ? '200px' : '0';
@@ -533,8 +547,8 @@ hemma_room:
         - overscroll-behavior-x: contain
         - --hemma-row-fade: >
             [[[
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return 0;
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return 0;
+              if (!variables.show_presence && !variables.occupancy_sensor_1 && !(variables.presence_badges?.length) && !(variables.occupancy_badges?.length)) return 0;
+              if ((variables.presence_entity_1 && !variables.presence_entity_2) || variables.presence_badges?.length === 1) return 0;
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
               const expanded = states['input_select.hemma_expanded_row']?.state;
               return (expanded === 'presence' || expanded === 'occupancy') ? 1 : 0;
@@ -571,7 +585,7 @@ hemma_room:
         - margin-right: auto !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px) +
               var(--hemma-header-media-badge-nudge-current, 0px))
         - padding-left: 0
@@ -643,7 +657,7 @@ hemma_room:
         - text-align: left !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px))
         - margin-right: auto !important
         - width: max-content
@@ -930,47 +944,58 @@ hemma_room:
             variables:
               enabled: '[[[ return variables.show_lights ]]]'
               light_group_entity: '[[[ return variables.show_lights ? variables.light_group_entity : null ]]]'
-              entity_1: '[[[ return variables.show_lights ? variables.light_entity_1 : null ]]]'
-              entity_2: '[[[ return variables.show_lights ? variables.light_entity_2 : null ]]]'
-              entity_3: '[[[ return variables.show_lights ? variables.light_entity_3 : null ]]]'
-              entity_4: '[[[ return variables.show_lights ? variables.light_entity_4 : null ]]]'
-              entity_5: '[[[ return variables.show_lights ? variables.light_entity_5 : null ]]]'
-              entity_6: '[[[ return variables.show_lights ? variables.light_entity_6 : null ]]]'
-              entity_7: '[[[ return variables.show_lights ? variables.light_entity_7 : null ]]]'
-              entity_8: '[[[ return variables.show_lights ? variables.light_entity_8 : null ]]]'
-              entity_9: '[[[ return variables.show_lights ? variables.light_entity_9 : null ]]]'
-              entity_10: '[[[ return variables.show_lights ? variables.light_entity_10 : null ]]]'
+              # entity_1..8 read from light_badges[i] — this is the tap target that
+              # reveals the expanded per-light row rendered by hemma_badge_row below.
+              # hemma_badge_light_group itself only reads entity_1..8 (8-slot cap).
+              entity_1: '[[[ return variables.show_lights ? (variables.light_badges?.[0]?.entity || null) : null ]]]'
+              entity_2: '[[[ return variables.show_lights ? (variables.light_badges?.[1]?.entity || null) : null ]]]'
+              entity_3: '[[[ return variables.show_lights ? (variables.light_badges?.[2]?.entity || null) : null ]]]'
+              entity_4: '[[[ return variables.show_lights ? (variables.light_badges?.[3]?.entity || null) : null ]]]'
+              entity_5: '[[[ return variables.show_lights ? (variables.light_badges?.[4]?.entity || null) : null ]]]'
+              entity_6: '[[[ return variables.show_lights ? (variables.light_badges?.[5]?.entity || null) : null ]]]'
+              entity_7: '[[[ return variables.show_lights ? (variables.light_badges?.[6]?.entity || null) : null ]]]'
+              entity_8: '[[[ return variables.show_lights ? (variables.light_badges?.[7]?.entity || null) : null ]]]'
 
+          # entity_1..4 fall back to presence_badges[i] (Phase 4 array form,
+          # 2026-08-13) when the matching numbered slot is unset. enabled
+          # additionally triggers on 2+ presence_badges, mirroring the
+          # existing "2+ numbered entities" group-vs-single split below.
           - type: custom:button-card
             template: hemma_badge_presence_group
             variables:
-              enabled: '[[[ return variables.show_presence && !!variables.presence_entity_2 ]]]'
-              entity_1: '[[[ return variables.presence_entity_1 ]]]'
-              entity_2: '[[[ return variables.presence_entity_2 ]]]'
-              entity_3: '[[[ return variables.presence_entity_3 ]]]'
-              entity_4: '[[[ return variables.presence_entity_4 ]]]'
+              enabled: '[[[ return variables.show_presence && (!!variables.presence_entity_2 || variables.presence_badges?.length >= 2) ]]]'
+              entity_1: '[[[ return variables.presence_entity_1 || variables.presence_badges?.[0]?.entity || null ]]]'
+              entity_2: '[[[ return variables.presence_entity_2 || variables.presence_badges?.[1]?.entity || null ]]]'
+              entity_3: '[[[ return variables.presence_entity_3 || variables.presence_badges?.[2]?.entity || null ]]]'
+              entity_4: '[[[ return variables.presence_entity_4 || variables.presence_badges?.[3]?.entity || null ]]]'
 
           - type: custom:button-card
             template: hemma_badge_presence
-            entity: '[[[ return variables.presence_entity_1 ]]]'
+            entity: '[[[ return variables.presence_entity_1 || variables.presence_badges?.[0]?.entity || null ]]]'
             variables:
-              enabled: '[[[ return !!(variables.show_presence && variables.presence_entity_1 && !variables.presence_entity_2) ]]]'
+              enabled: >
+                [[[
+                  return !!(variables.show_presence && variables.presence_entity_1 && !variables.presence_entity_2)
+                    || !!(variables.show_presence && variables.presence_badges?.length === 1);
+                ]]]
 
           # Occupancy group badge (FP2 binary presence zones) — single badge
           # in top row. Tap to expand/collapse individual zone badges in the
           # presence row (driven by input_select.hemma_expanded_row).
+          # entity_1..4/label_1..4 fall back to occupancy_badges[i] (Phase 4
+          # array form, 2026-08-13) when the matching numbered slot is unset.
           - type: custom:button-card
             template: hemma_badge_occupancy_group
             variables:
-              enabled: '[[[ return !!variables.occupancy_sensor_1 ]]]'
-              entity_1: '[[[ return variables.occupancy_sensor_1 ]]]'
-              entity_2: '[[[ return variables.occupancy_sensor_2 ]]]'
-              entity_3: '[[[ return variables.occupancy_sensor_3 ]]]'
-              entity_4: '[[[ return variables.occupancy_sensor_4 ]]]'
-              label_1: '[[[ return variables.occupancy_label_1 ]]]'
-              label_2: '[[[ return variables.occupancy_label_2 ]]]'
-              label_3: '[[[ return variables.occupancy_label_3 ]]]'
-              label_4: '[[[ return variables.occupancy_label_4 ]]]'
+              enabled: '[[[ return !!variables.occupancy_sensor_1 || variables.occupancy_badges?.length > 0 ]]]'
+              entity_1: '[[[ return variables.occupancy_sensor_1 || variables.occupancy_badges?.[0]?.entity || null ]]]'
+              entity_2: '[[[ return variables.occupancy_sensor_2 || variables.occupancy_badges?.[1]?.entity || null ]]]'
+              entity_3: '[[[ return variables.occupancy_sensor_3 || variables.occupancy_badges?.[2]?.entity || null ]]]'
+              entity_4: '[[[ return variables.occupancy_sensor_4 || variables.occupancy_badges?.[3]?.entity || null ]]]'
+              label_1: '[[[ return variables.occupancy_label_1 || variables.occupancy_badges?.[0]?.label || null ]]]'
+              label_2: '[[[ return variables.occupancy_label_2 || variables.occupancy_badges?.[1]?.label || null ]]]'
+              label_3: '[[[ return variables.occupancy_label_3 || variables.occupancy_badges?.[2]?.label || null ]]]'
+              label_4: '[[[ return variables.occupancy_label_4 || variables.occupancy_badges?.[3]?.label || null ]]]'
 
           - type: custom:button-card
             template: hemma_badge_media_group
@@ -993,6 +1018,17 @@ hemma_room:
               entity_14: '[[[ return variables.show_plex_2 ? variables.plex_binary_2 : null ]]]'
               steam_online_entity: '[[[ return variables.show_discord_steam ? variables.discord_steam_online : null ]]]'
               steam_game_entity: '[[[ return variables.show_discord_steam ? variables.discord_steam_game : null ]]]'
+
+          # Phase 5 (§5.2) — alarm_control_panel badge(s), array-driven via
+          # hemma_badge_row (same mechanism as light_badges), placed directly
+          # in the always-visible row since there's normally only one alarm
+          # system and it doesn't need a summary/expand wrapper. Renders
+          # nothing when alarm_badges is empty (every other room).
+          - type: custom:button-card
+            template: hemma_badge_row
+            variables:
+              items: '[[[ return variables.alarm_badges || [] ]]]'
+              default_type: alarm
 
     badges_climate:
       card:
@@ -1198,6 +1234,20 @@ hemma_room:
                     );
                 ]]]
               label: '[[[ return variables.occupancy_label_4 ]]]'
+
+          # Phase 4 (§4.1) array-driven presence/occupancy, alongside the
+          # numbered slots above via hemma_badge_row. Inert unless a room
+          # sets presence_badges/occupancy_badges.
+          - type: custom:button-card
+            template: hemma_badge_row
+            variables:
+              items: '[[[ return variables.presence_badges || [] ]]]'
+              default_type: presence
+          - type: custom:button-card
+            template: hemma_badge_row
+            variables:
+              items: '[[[ return variables.occupancy_badges || [] ]]]'
+              default_type: occupancy
 
     badges_media:
       card:
@@ -1991,199 +2041,18 @@ hemma_room:
           grid-column-gap: var(--badge-gap-current, var(--badge-gap, 10px))
 
         cards:
-          # When light_entity_2 is not set and light_entity_1 is an HA light group,
-          # the sub-badges automatically expand to show each member of the group.
-          # To use individual entities directly, set light_entity_1, light_entity_2, etc.
-
+          # Phase 4 (§4.1) — array-driven, via hemma_badge_row + light_badges.
+          # Replaced the old 10 hand-copied numbered-slot cards (2026-08-13):
+          # they were never used by any room (light_entity_1..10 had zero
+          # live usage across all 19 view files), and this house has exactly
+          # one light per room, so there's no unbounded list to cap here —
+          # light_badges is set at floor level (aggregating each room's one
+          # light), not per room. See hemma_badge_registry.yaml/hemma_badge_row.yaml.
           - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[0] || null) : (g || null);
-              ]]]
+            template: hemma_badge_row
             variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[0];
-                  return variables.show_lights && !!g;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[1] || null) : (variables.light_entity_2 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[1];
-                  return variables.show_lights && !!variables.light_entity_2;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[2] || null) : (variables.light_entity_3 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[2];
-                  return variables.show_lights && !!variables.light_entity_3;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[3] || null) : (variables.light_entity_4 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[3];
-                  return variables.show_lights && !!variables.light_entity_4;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[4] || null) : (variables.light_entity_5 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[4];
-                  return variables.show_lights && !!variables.light_entity_5;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[5] || null) : (variables.light_entity_6 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[5];
-                  return variables.show_lights && !!variables.light_entity_6;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[6] || null) : (variables.light_entity_7 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[6];
-                  return variables.show_lights && !!variables.light_entity_7;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[8] || null) : (variables.light_entity_8 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[8];
-                  return variables.show_lights && !!variables.light_entity_8;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[9] || null) : (variables.light_entity_9 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[9];
-                  return variables.show_lights && !!variables.light_entity_9;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[10] || null) : (variables.light_entity_10 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[10];
-                  return variables.show_lights && !!variables.light_entity_10;
-                ]]]
+              items: '[[[ return variables.light_badges || [] ]]]'
+              default_type: light
 
   extra_styles: |
     #mp1, #mp2, #mp3, #mp4,

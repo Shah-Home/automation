@@ -2,7 +2,7 @@
 # Shows indoor temperature sensor with comfort label and value.
 # Tap: opens hemma_climate_popup (shared climate popup).
 hemma_badge_temp:
-  template: [hemma_badge_base, hemma_popup_base, hemma_climate_popup]
+  template: [hemma_badge_base, hemma_popup_base, hemma_climate_popup, hemma_badge_icon_mask]
 
   variables:
     enabled: true
@@ -40,17 +40,9 @@ hemma_badge_temp:
       else                  svgUrl = '/local/hemma/icons/temp-high.svg';
 
       return `
-        :host{display:${hide ? 'none' : 'inline-block'} !important;}
-        #img-cell, .img-cell { position: relative; }
-        #img-cell #icon, .img-cell #icon { color: transparent !important; opacity: 0 !important; }
-        #img-cell::before, .img-cell::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-color: var(--hemma-icon-color, var(--primary-text-color));
-          -webkit-mask: url('${svgUrl}') no-repeat center / 85% 85%;
-          mask: url('${svgUrl}') no-repeat center / 85% 85%;
-          transform: translateZ(0);
+        :host{
+          display:${hide ? 'none' : 'inline-block'} !important;
+          --hemma-badge-icon-mask-url: url('${svgUrl}');
         }
       `;
     ]]]
@@ -88,8 +80,6 @@ hemma_badge_temp:
             if (v <= t.hot)         return 'var(--hemma-badge-temp-hot-color)';
             return 'var(--hemma-badge-temp-very-hot-color)';
           ]]]
-    icon:
-      - color: transparent
 
   name: >
     [[[

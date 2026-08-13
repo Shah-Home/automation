@@ -21,7 +21,7 @@ hemma_badge_media_player:
   styles:
     card:
       - padding: 0 8px 0 8px !important
-      - background: rgba(0,0,0,0.18) !important
+      - background: var(--hemma-badge-background-quiet) !important
       - -webkit-backdrop-filter: blur(14px) saturate(1.2) !important
       - backdrop-filter: blur(14px) saturate(1.2) !important
       - border-radius: 9999px !important
@@ -284,7 +284,7 @@ hemma_badge_media_player:
                   - width: var(--badge-media-btn-size-current, var(--badge-media-btn-size, 44px))
                   - height: var(--badge-media-btn-size-current, var(--badge-media-btn-size, 44px))
                   - border-radius: 9999px
-                  - background: rgba(255,255,255,0.10)
+                  - background: var(--hemma-badge-media-btn-bg)
                   - box-shadow: none !important
                   - border: none !important
                   - padding: 6px
@@ -292,7 +292,7 @@ hemma_badge_media_player:
                 grid:
                   - place-items: center
                 icon:
-                  - color: rgba(255,255,255,0.92)
+                  - color: var(--hemma-badge-media-btn-icon-color)
                   - width: var(--badge-media-btn-icon-size-current, var(--badge-media-btn-icon-size, 28px))
                   - height: var(--badge-media-btn-icon-size-current, var(--badge-media-btn-icon-size, 28px))
               tap_action:
@@ -312,9 +312,9 @@ hemma_badge_media_player:
                               filter .18s ease !important;
                   transform: none !important;
                 }
-                ha-card:hover{ background: rgba(255,255,255,0.14) !important; }
+                ha-card:hover{ background: var(--hemma-badge-media-btn-hover-bg) !important; }
                 ha-card:active{
-                  background: rgba(255,255,255,0.18) !important;
+                  background: var(--hemma-badge-media-btn-active-bg) !important;
                   filter: brightness(1.06) !important;
                   transform: none !important;
                 }
@@ -330,7 +330,7 @@ hemma_badge_media_player:
                   - width: var(--badge-media-btn-size-current, var(--badge-media-btn-size, 44px))
                   - height: var(--badge-media-btn-size-current, var(--badge-media-btn-size, 44px))
                   - border-radius: 9999px
-                  - background: rgba(255,255,255,0.10)
+                  - background: var(--hemma-badge-media-btn-bg)
                   - padding: 6px
                   - transform: none !important
                   - box-shadow: none !important
@@ -338,7 +338,7 @@ hemma_badge_media_player:
                 grid:
                   - place-items: center
                 icon:
-                  - color: rgba(255,255,255,0.92)
+                  - color: var(--hemma-badge-media-btn-icon-color)
                   - width: var(--badge-media-btn-icon-size-current, var(--badge-media-btn-icon-size, 28px))
                   - height: var(--badge-media-btn-icon-size-current, var(--badge-media-btn-icon-size, 28px))
               tap_action:
@@ -358,9 +358,9 @@ hemma_badge_media_player:
                               filter .18s ease !important;
                   transform: none !important;
                 }
-                ha-card:hover{ background: rgba(255,255,255,0.14) !important; }
+                ha-card:hover{ background: var(--hemma-badge-media-btn-hover-bg) !important; }
                 ha-card:active{
-                  background: rgba(255,255,255,0.18) !important;
+                  background: var(--hemma-badge-media-btn-active-bg) !important;
                   filter: brightness(1.06) !important;
                   transform: none !important;
                 }
@@ -465,29 +465,27 @@ hemma_badge_media_player:
       line-height: normal !important;
     }
 
+    /* Overrides base/hemma_badge_base.yaml's .badge-title/.badge-sub — only the
+       properties that genuinely differ (larger font for track metadata,
+       text-shadow for legibility over blurred album art, fixed color since
+       this badge doesn't use the active/inactive color-flip other badges do).
+       font-weight, white-space, overflow, text-overflow match the base rule
+       exactly and are inherited from it rather than repeated here. */
     .badge-title{
       font-size: var(--hemma-badge-title);
-      font-weight: 700;
       line-height: 1.1;
-      color: rgba(255,255,255,0.96);
-      text-shadow: 0 0 3px rgba(0,0,0,0.25);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      color: var(--hemma-badge-media-title-color);
+      text-shadow: 0 0 3px var(--hemma-badge-media-title-shadow);
       max-width:100%;
       text-align:left;
     }
 
     .badge-sub{
       font-size: var(--hemma-badge-sub);
-      font-weight: 500;
       line-height: 1.14;
-      opacity: .82;
-      color: rgba(255,255,255,0.90);
-      text-shadow: 0 0 3px rgba(0,0,0,0.20);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      opacity: var(--badge-sub-opacity, .82);
+      color: var(--hemma-badge-media-sub-color);
+      text-shadow: 0 0 3px var(--hemma-badge-media-sub-shadow);
       max-width:100%;
       text-align:left;
     }

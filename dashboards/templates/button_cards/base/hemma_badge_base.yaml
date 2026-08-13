@@ -36,14 +36,14 @@ hemma_badge_base:
       - margin-block-end: 0
       - position: relative
       - isolation: isolate
-      - --badge-title-color: var(--primary-text-color)
+      - --badge-title-color: var(--hemma-entity-name, #ffffff)
       - --badge-sub-color: var(--secondary-text-color)
       - background-clip: padding-box
       - overflow: hidden
       - transition: background-color .22s ease,
                     box-shadow .24s ease,
                     transform .24s ease,
-                    filter .18s ease,
+                    filter var(--hemma-transition-fast, .18s) ease,
                     opacity .35s ease
 
     grid:
@@ -68,7 +68,7 @@ hemma_badge_base:
       - grid-area: i
       - width: var(--badge-icon-size-current, var(--badge-icon-size, 30px))
       - height: var(--badge-icon-size-current, var(--badge-icon-size, 30px))
-      - color: var(--primary-text-color)
+      - color: var(--hemma-entity-name, #ffffff)
       - z-index: 4
 
     img_cell:
@@ -136,7 +136,7 @@ hemma_badge_base:
       transition: background-color .22s ease,
                   box-shadow .24s ease,
                   transform .24s ease,
-                  filter .18s ease,
+                  filter var(--hemma-transition-fast, .18s) ease,
                   opacity .35s ease !important;
     }
 

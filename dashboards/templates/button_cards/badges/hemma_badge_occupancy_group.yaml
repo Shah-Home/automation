@@ -9,7 +9,7 @@
 #   label_1           - optional label for sensor 1 (defaults to entity friendly name)
 #   label_2 – label_4 - optional labels for additional sensors
 hemma_badge_occupancy_group:
-  template: [hemma_badge_base]
+  template: [hemma_badge_base, hemma_badge_icon_mask]
 
   variables:
     enabled: true
@@ -56,33 +56,18 @@ hemma_badge_occupancy_group:
     - '[[[ return variables?.entity_4 ]]]'
 
   extra_styles: |
-    #img-cell, .img-cell{ position: relative; }
-
     #img-cell #icon, .img-cell #icon{
-      color: transparent !important;
-      opacity: 0 !important;
       --icon-primary-color: var(--hemma-badge-icon-color) !important;
       --paper-item-icon-color: var(--hemma-badge-icon-color) !important;
       --state-icon-color: var(--hemma-badge-icon-color) !important;
       --card-mod-icon-color: var(--hemma-badge-icon-color) !important;
     }
 
-    #img-cell::before,
-    .img-cell::before{
-      content: '';
-      position: absolute;
-      inset: 2px;
-      z-index: 5;
-      background-color: var(--hemma-badge-icon-color, var(--primary-text-color)) !important;
-
-      -webkit-mask: url('/local/hemma/icons/motion.svg') no-repeat center / 85% 85%;
-      mask: url('/local/hemma/icons/motion.svg') no-repeat center / 85% 85%;
-
-      transform: translateZ(0);
-    }
-
   styles:
     card:
+      - --hemma-badge-icon-mask-url: url('/local/hemma/icons/motion.svg')
+      - --hemma-badge-icon-mask-inset: 2px
+      - --hemma-badge-icon-mask-z: 5
       - background: >
           [[[
             const isValid = (eid) => {
@@ -133,9 +118,9 @@ hemma_badge_occupancy_group:
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const validEntities = entities.filter(isValid);
-            if (validEntities.length === 0) return 'var(--primary-text-color)';
+            if (validEntities.length === 0) return 'var(--hemma-entity-name, #ffffff)';
             const onCount = validEntities.filter(isOn).length;
-            return onCount > 0 ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+            return onCount > 0 ? 'var(--hemma-badge-title-color-active)' : 'var(--hemma-entity-name, #ffffff)';
           ]]]
       - --badge-sub-color: >
           [[[
@@ -153,7 +138,7 @@ hemma_badge_occupancy_group:
             const validEntities = entities.filter(isValid);
             if (validEntities.length === 0) return 'var(--secondary-text-color)';
             const onCount = validEntities.filter(isOn).length;
-            return onCount > 0 ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
+            return onCount > 0 ? 'var(--hemma-badge-sub-color-active)' : 'var(--secondary-text-color)';
           ]]]
       - --hemma-badge-icon-color: >
           [[[
@@ -178,9 +163,6 @@ hemma_badge_occupancy_group:
       - --paper-item-icon-color: var(--hemma-badge-icon-color)
       - --state-icon-color: var(--hemma-badge-icon-color)
       - --card-mod-icon-color: var(--hemma-badge-icon-color)
-
-    icon:
-      - color: transparent
 
   name: >
     [[[

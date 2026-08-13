@@ -8,7 +8,7 @@
 #   enabled             - show/hide this badge (default: true)
 #   entity_1 – entity_8 - entity IDs of light entities to track
 hemma_badge_light_group:
-  template: [hemma_badge_base]
+  template: [hemma_badge_base, hemma_badge_icon_mask, hemma_light_popup]
 
   entity: input_select.hemma_expanded_row
 
@@ -28,189 +28,6 @@ hemma_badge_light_group:
   show_label: false
   show_icon: true
   icon: mdi:lightbulb-group
-
-  hold_action:
-    haptic: medium
-    action: |
-      [[[
-        const isMobile = window.matchMedia('(max-width: 767px)').matches;
-        const hasBrowserMod = typeof window.browser_mod !== 'undefined';
-        return (isMobile || !hasBrowserMod) ? 'more-info' : 'fire-dom-event';
-      ]]]
-    entity: >
-      [[[
-        return variables?.light_group_entity || variables?.entity_1 || null;
-      ]]]
-    browser_mod:
-      service: browser_mod.popup
-      data:
-        title: ""
-        style: |
-          --popup-min-width: 800px;
-        popup_styles:
-          - style: all
-            styles: |
-              ha-dialog .content .container,
-              ha-dialog .container {
-                padding: 28px 10px 16px 10px !important;
-              }
-        content:
-          type: custom:layout-card
-          layout_type: custom:grid-layout
-          card_mod:
-            style: |
-              ha-card,
-              ha-card:hover,
-              ha-card:focus-within,
-              ha-card:active {
-                background: transparent !important;
-                border: none !important;
-                box-shadow: none !important;
-                backdrop-filter: none !important;
-                -webkit-backdrop-filter: none !important;
-                filter: none !important;
-              }
-          layout:
-            grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.05fr)
-            grid-template-rows: auto
-            grid-template-areas: |
-              "main list"
-            column-gap: 18px
-            row-gap: 18px
-          cards:
-            - type: custom:more-info-card
-              view_layout:
-                grid-area: main
-              entity: >
-                [[[
-                  return variables?.light_group_entity || variables?.entity_1 || null;
-                ]]]
-              card_mod:
-                style:
-                  $: |
-                    h1.card-header {
-                      display: block !important;
-                      margin: 0 !important;
-                      padding: 8px 0 24px 0 !important;
-                      width: 100% !important;
-                      text-align: center !important;
-                      font-size: 32px !important;
-                      font-weight: 600 !important;
-                      line-height: 1.2 !important;
-                      color: var(--primary-text-color) !important;
-                    }
-
-                  .: |
-                    ha-card,
-                    ha-card:hover,
-                    ha-card:focus-within,
-                    ha-card:active {
-                      background: transparent !important;
-                      border: none !important;
-                      box-shadow: none !important;
-                      filter: none !important;
-                      backdrop-filter: none !important;
-                      -webkit-backdrop-filter: none !important;
-                      transform: none !important;
-                    }
-
-                    state-card-content,
-                    div.action {
-                      display: none !important;
-                    }
-
-                    more-info-content {
-                      opacity: 0;
-                      animation: revealMoreInfo 0s linear 0.5s forwards;
-                    }
-
-                    @keyframes revealMoreInfo {
-                      to { opacity: 1; }
-                    }
-
-                  more-info-content:
-                    $: |
-                      hui-section,
-                      hui-grid-section {
-                        display: none !important;
-                      }
-
-            - type: vertical-stack
-              view_layout:
-                grid-area: list
-              card_mod:
-                style: |
-                  ha-card,
-                  ha-card:hover,
-                  ha-card:focus-within,
-                  ha-card:active {
-                    background: transparent !important;
-                    border: none !important;
-                    box-shadow: none !important;
-                    backdrop-filter: none !important;
-                    -webkit-backdrop-filter: none !important;
-                    overflow-y: auto !important;
-                    filter: none !important;
-                  }
-              cards: |
-                [[[
-                  const root = variables?.light_group_entity || variables?.entity_1;
-                  if (!root) return [];
-
-                  const expand = (eid, seen = new Set()) => {
-                    if (!eid || seen.has(eid)) return [];
-                    seen.add(eid);
-
-                    const s = states[eid];
-                    if (!s) return [];
-
-                    const members = s.attributes?.entity_id;
-                    return Array.isArray(members)
-                      ? members.flatMap(m => expand(m, seen))
-                      : [eid];
-                  };
-
-                  const lights = [...new Set(expand(root))]
-                    .filter((eid) => eid.startsWith('light.') && eid !== root);
-
-                  return lights.map((eid) => ({
-                    type: 'custom:mushroom-light-card',
-                    entity: eid,
-                    fill_container: false,
-                    primary_info: 'name',
-                    secondary_info: 'state',
-                    icon_type: 'icon',
-                    show_brightness_control: true,
-                    show_color_temp_control: true,
-                    show_color_control: true,
-                    collapsible_controls: false,
-                    layout: 'horizontal',
-                    tap_action: { action: 'toggle' },
-                    hold_action: { action: 'more-info' },
-                    double_tap_action: { action: 'none' },
-                    card_mod: {
-                      style: `
-                        ha-card {
-                          background: var(--hemma-popup-entity-background, rgba(0, 0, 0, 0.4)) !important;
-                          box-shadow: none !important;
-                          border-radius: 9999px !important;
-                          margin-bottom: 8px !important;
-                          transition:
-                            background 0.18s ease,
-                            border-color 0.18s ease !important;
-                        }
-
-                        ha-card:hover,
-                        ha-card:focus-within,
-                        ha-card:active {
-                          background: var(--hemma-popup-entity-hover, rgba(0, 0, 0, 0.5)) !important;
-                          border-color: rgba(255, 255, 255, 0.08) !important;
-                          box-shadow: none !important;
-                        }
-                      `
-                    }
-                  }));
-                ]]]
 
   tap_action:
     action: call-service
@@ -235,31 +52,12 @@ hemma_badge_light_group:
     - '[[[ return variables?.entity_7 ]]]'
     - '[[[ return variables?.entity_8 ]]]'
 
-  extra_styles: |
-    #img-cell, .img-cell{ position: relative; }
-
-    #img-cell #icon, .img-cell #icon{
-      color: transparent !important;
-      opacity: 0 !important;
-    }
-
-    #img-cell::before,
-    .img-cell::before{
-      content: '';
-      position: absolute;
-      inset: 0px;
-      z-index: 5;
-      background-color: var(--hemma-icon-color, var(--primary-text-color)) !important;
-
-      -webkit-mask: url('/local/hemma/icons/light.svg') no-repeat center / 78% 78%;
-      mask: url('/local/hemma/icons/light.svg') no-repeat center / 78% 78%;
-
-      transform: translateZ(0);
-    }
-
   styles:
 
     card:
+      - --hemma-badge-icon-mask-url: url('/local/hemma/icons/light.svg')
+      - --hemma-badge-icon-mask-size: 78%
+      - --hemma-badge-icon-mask-z: 5
       - background: >
           [[[
             return entity?.state === 'lights'
@@ -282,15 +80,15 @@ hemma_badge_light_group:
           ]]]
       - --badge-title-color: >
           [[[
-            return entity?.state === 'lights' ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+            return entity?.state === 'lights' ? 'var(--hemma-badge-title-color-active)' : 'var(--hemma-entity-name, #ffffff)';
           ]]]
       - --badge-sub-color: >
           [[[
-            return entity?.state === 'lights' ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
+            return entity?.state === 'lights' ? 'var(--hemma-badge-sub-color-active)' : 'var(--secondary-text-color)';
           ]]]
       - --hemma-icon-color: >
           [[[
-            if (entity?.state === 'lights') return 'rgba(0,0,0,0.75)';
+            if (entity?.state === 'lights') return 'var(--hemma-badge-icon-color-active)';
             const cfgEids = [
               variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4,
               variables?.entity_5, variables?.entity_6, variables?.entity_7, variables?.entity_8

@@ -1,0 +1,57 @@
+# Badge Registry
+# ============================================================================
+# Central type -> badge-template mapping (Phase 4, §4.2 of the refactor
+# plan), consumed by hemma_badge_row (base/hemma_badge_row.yaml).
+#
+# Adding a new list-based badge type (e.g. a future `alarm` type) is meant to
+# be a one-time, one-file cost: add an entry here, build its
+# hemma_badge_<type>.yaml card (same as any badge today), and every room that
+# later pushes `{ type: alarm, entity: ... }` into a *_badges array picks it
+# up for free — no edits to hemma_room.yaml or any view file required.
+#
+# This is data only (no rendering logic) so it's safe to compose into any
+# template's `template:` list purely for the `variables.hemma_badge_registry`
+# side effect. hemma_room composes it directly (see hemma_room.yaml's
+# top-level `template:` list) so every room instance has it available.
+#
+# Fields per entry:
+#   template - button-card template name hemma_badge_row instantiates
+#   popup    - documentation only for now: which shared popup template (if
+#              any) that badge composes internally. hemma_badge_row does not
+#              act on this field itself since every badge below already
+#              wires its own popup via its own `template:` composition; it's
+#              recorded here so a future new type's author knows the
+#              convention to follow.
+#
+# Scope note: only entity-list domains live here (light, media_player, plex,
+# presence, occupancy, alarm) — the ones with a genuine "add one more" growth
+# problem (§3.1's smoking gun), or (alarm, Phase 5) a brand-new domain added
+# specifically to prove the registry generalizes with minimal effort. The
+# climate/AQI badges (temp, humidity, air_quality, co2, pm25, voc, luminance)
+# are deliberately NOT included:
+# a room has exactly one of each by construction, not an arbitrary-length
+# list, so they don't have the numbered-slot ceiling problem this registry
+# and hemma_badge_row exist to solve, and forcing them through the same
+# array contract would be generalization without a real duplication payoff.
+# ============================================================================
+hemma_badge_registry:
+  variables:
+    hemma_badge_registry:
+      light:
+        template: hemma_badge_light
+        popup: hemma_light_popup
+      media_player:
+        template: hemma_badge_media_player
+        popup: none
+      plex:
+        template: hemma_badge_plex
+        popup: none
+      presence:
+        template: hemma_badge_presence
+        popup: none
+      alarm:
+        template: hemma_badge_alarm
+        popup: none
+      occupancy:
+        template: hemma_badge_occupancy
+        popup: none

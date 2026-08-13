@@ -1,6 +1,7 @@
 hemma_entity:
   template:
     - hemma_default
+    - hemma_icon_circle
   class: hemma-entity
   show_state: true
   show_entity_picture: true
@@ -144,47 +145,6 @@ hemma_entity:
       to   { transform: rotate(360deg); }
     }
 
-    /* Icon circles */
-    #img-cell {
-      position: relative;
-      border-radius: 50% !important;
-      background: var(--hemma-icon-circle-bg, rgba(255,255,255,0.10)) !important;
-      width: 44px !important;
-      height: 44px !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      overflow: hidden !important;
-    }
-    #img-cell::before { opacity: 0 !important; }
-    #img-cell img {
-      width: 68% !important;
-      height: 68% !important;
-      max-width: 68% !important;
-      max-height: 68% !important;
-      object-fit: contain !important;
-      flex: none !important;
-    }
-    #img-cell ha-icon {
-      --mdc-icon-size: 25px !important;
-      flex: none !important;
-      color: rgba(255,255,255,1.0) !important;
-    }
-    #icon { color: rgba(255,255,255,1.0) !important; }
-
-    /* Mobile portrait */
-    @media (max-width: 767px) and (orientation: portrait) {
-      #img-cell { width: 38px !important; height: 38px !important; }
-      #img-cell ha-icon { --mdc-icon-size: 22px !important; }
-      #toggle { filter: invert(var(--hemma-toggle-invert, 0)); }
-    }
-    @media (hover: hover) {
-      #img-cell:hover { filter: brightness(1.15); transform: scale(1.03); transition: filter 0.15s ease, transform 0.15s ease; }
-    }
-    @media (hover: none) {
-      #img-cell:active { filter: brightness(1.15); transform: scale(1.03); }
-    }
-
     ha-card { isolation: isolate; }
 
     ha-card::after {
@@ -271,7 +231,7 @@ hemma_entity:
               }
               const activeStates = ["on","open","opening","playing","unlocked","unlocking","cleaning","returning","cool","heat","heat_cool","auto"];
               const isOn = activeStates.includes((entity?.state || "").toLowerCase());
-              const mob = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+              const mob = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
               const W = mob ? 38 : 44, H = mob ? 26 : 26, r = mob ? 8 : 9, cx0 = mob ? 14 : 14;
               const SW = W + 2;
               const travel = mob ? 12 : 18;
@@ -372,7 +332,7 @@ hemma_entity:
           document.head.appendChild(s);
         }
 
-        const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+        const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
         const size = isMobile ? 28 : 36;
 
         return `<svg width="${size}" height="${size}" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(-90deg);display:block;">
@@ -458,7 +418,7 @@ hemma_entity:
               ]]]
           - --hemma-icon-circle-bg: var(--hemma-icon-color-current)
         name:
-          - color: var(--hemma-entity-name-active, var(--primary-text-color))
+          - color: var(--hemma-entity-name-active, #ffffff)
         state:
           - color: var(--hemma-entity-state-active-color, var(--hemma-entity-state-active, var(--secondary-text-color)))
         icon:
@@ -502,7 +462,7 @@ hemma_entity:
           ]]]
       - --hemma-toggle-w: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return isMobile ? '34px' : '46px';
           ]]]
       - --hemma-toggle-opacity: var(--hemma-toggle-inactive-opacity, 0.65)
@@ -512,7 +472,7 @@ hemma_entity:
       - box-shadow: var(--hemma-button-card-box-shadow-current, var(--button-card-box-shadow))
       - height: |
           [[[
-            return window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches
+            return (window.hemmaMM?.isMobilePortrait?.() ?? window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches)
               ? 'var(--hemma-entity-height-current, 108px)'
               : 'var(--hemma-entity-height-current, var(--hemma-entity-height-desktop, 200px))';
           ]]]
@@ -626,12 +586,12 @@ hemma_entity:
         - right: var(--hemma-entity-inner-pad-current, var(--hemma-entity-inner-pad-desktop, 20px))
         - width: |
             [[[
-              const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+              const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
               return isMobile ? '28px' : '36px';
             ]]]
         - height: |
             [[[
-              const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+              const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
               return isMobile ? '28px' : '36px';
             ]]]
         - display: var(--hemma-progress-display, none)

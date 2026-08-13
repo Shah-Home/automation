@@ -13,6 +13,19 @@ cards:
       weather_mode: room
       temp_unit: "F"
 
+      # Floor-level light badge (Phase 4, §8.2) — aggregates every light
+      # switch on this floor into one summary badge (tap to expand into
+      # individual controls), instead of a per-room badge. There's only one
+      # light per room in this house, so a room-level badge duplicated the
+      # room's own entity-grid tile with no added value; floor level is
+      # where "see/control everything at a glance" is actually useful.
+      show_lights: true
+      light_badges:
+        - entity: switch.living_room_lights
+        - entity: switch.kitchen_island_lights
+        - entity: switch.dining_room_lights
+        - entity: switch.patio_lights
+
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 
   - type: custom:layout-card
