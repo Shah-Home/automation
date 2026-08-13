@@ -1,0 +1,144 @@
+# Badge Row
+# ============================================================================
+# Generic array -> badge-row renderer (Phase 4, §4.1/§4.2 of the refactor
+# plan). Replaces the "one named variable + one custom_field per slot,
+# capped at N" pattern with a single reusable template that reads a plain
+# `items` array and instantiates one real badge card per entry via
+# hemma_badge_registry (base/hemma_badge_registry.yaml).
+#
+# Usage — instantiate as a custom_field's card, anywhere a room needs a row:
+#   custom_fields:
+#     badges_lights_v2:
+#       card:
+#         type: custom:button-card
+#         template: hemma_badge_row
+#         variables:
+#           items: '[[[ return variables.light_badges || [] ]]]'
+#           default_type: light
+#
+# Item shape: { entity, type?, enabled?, ...anything the target badge's own
+# variables: block reads (e.g. occupancy's `label`) }. `type` may be omitted
+# when every item in the array is the same kind — pass `default_type`
+# instead (e.g. a pure lights row never needs `type: light` on every item).
+# A mixed-type row (e.g. media_player + plex in one row) sets `type` per item
+# and can leave `default_type` unset.
+#
+# Each item is spread wholesale into the generated card's `variables:` —
+# hemma_badge_row does not need to know what a given badge template reads,
+# it just passes everything through and lets that template pick what it
+# needs (same "extra keys are ignored" contract already used throughout
+# this repo, e.g. hemma_badge_occupancy ignoring keys it doesn't read).
+# `shared_variables` (optional) is merged into every item — for context that
+# applies to the whole row rather than one entity (e.g. media's
+# pause_timeout_minutes).
+#
+# Visibility is NOT decided here: every badge template this composes
+# already self-hides via its own `:host{display:none}` extra_styles logic
+# driven by `variables.enabled`/entity state (hemma_badge_light,
+# hemma_badge_presence, hemma_badge_occupancy, hemma_badge_media_player,
+# hemma_badge_plex all do this today) — hemma_badge_row only filters out
+# structurally-empty entries (no entity, or a type not in the registry).
+#
+# Scope (see hemma_badge_registry.yaml header for the full reasoning): this
+# covers light/media_player/plex/presence/occupancy — the domains with a
+# genuine unbounded-list shape. It deliberately does NOT yet cover the
+# media/plex row's cross-item "don't show the same track twice across synced
+# speakers" dedup + staggered collapse animation (today hand-implemented per
+# numbered slot in hemma_room.yaml's badges_media custom_field) — that
+# behavior is real, state-reactive, and depends on stable per-slot DOM nodes
+# for its CSS transition to animate smoothly, which can't be verified without
+# a live browser. Migrating it is scoped as its own follow-up rather than
+# folded in here. hemma_badge_row IS safe today for light/presence/occupancy
+# rows, which are simple independent show/hide with no cross-item logic.
+# ============================================================================
+hemma_badge_row:
+  template: [hemma_default, hemma_badge_registry]
+
+  variables:
+    items: []
+    default_type: null
+    shared_variables: {}
+
+  show_icon: false
+  show_name: false
+  show_state: false
+  show_label: false
+  show_entity_picture: false
+  tap_action: { action: none }
+  hold_action: { action: none }
+  double_tap_action: { action: none }
+
+  styles:
+    card:
+      - background: transparent !important
+      - box-shadow: none !important
+      - backdrop-filter: none !important
+      - -webkit-backdrop-filter: none !important
+      - padding: 0 !important
+      - margin: 0 !important
+      - border: none !important
+      - border-radius: 0 !important
+      - overflow: visible !important
+      - width: max-content !important
+      - justify-self: start !important
+      - align-self: start !important
+    grid:
+      - display: flex !important
+      - flex-direction: row !important
+      - flex-wrap: nowrap !important
+      - gap: var(--badge-gap-current, var(--badge-gap, 10px)) !important
+      - align-items: center !important
+      - justify-content: flex-start !important
+      - overflow: visible !important
+      - padding: 0 !important
+      - margin: 0 !important
+      - width: max-content !important
+
+  custom_fields:
+    row:
+      card:
+        type: custom:layout-card
+        layout_type: custom:grid-layout
+        layout:
+          grid-auto-flow: column
+          grid-auto-columns: max-content
+          grid-template-columns: none
+          justify-content: start
+          justify-items: start
+          align-items: center
+          grid-column-gap: var(--badge-gap-current, var(--badge-gap, 10px))
+        card_mod:
+          style: |
+            ha-card {
+              overflow: visible !important;
+            }
+        cards: >
+          [[[
+            const registry = variables?.hemma_badge_registry || {};
+            const items = Array.isArray(variables?.items) ? variables.items : [];
+            const shared = (variables?.shared_variables && typeof variables.shared_variables === 'object')
+              ? variables.shared_variables : {};
+            const defaultType = variables?.default_type || null;
+
+            return items
+              .filter((it) => it && it.entity)
+              .map((it) => {
+                const type = it.type || defaultType;
+                const def = registry[type];
+                if (!def || !def.template) return null;
+
+                const cardCfg = {
+                  type: 'custom:button-card',
+                  template: def.template,
+                  entity: it.entity,
+                  variables: {
+                    enabled: it.enabled !== false,
+                    ...shared,
+                    ...it,
+                  },
+                };
+                if (it.icon) cardCfg.icon = it.icon;
+                return cardCfg;
+              })
+              .filter(Boolean);
+          ]]]

@@ -19,6 +19,12 @@ cards:
 
       humidity_sensor: sensor.living_room_thermostat_humidity
 
+      # Spotify (shared/common Spotify Connect target) — shown as a media
+      # badge in the hero header.
+      show_media: true
+      show_media_player_1: true
+      media_player_1: media_player.common_spotify
+
       # FP2 Presence Zones — shown as badges in the presence row
       occupancy_sensor_1: binary_sensor.powder_room_presence
       occupancy_label_1: Powder Room
@@ -77,6 +83,3 @@ cards:
         name: Clean Living Room
         variables:
           room: living room
-
-      # Spotify is wired as a media badge via media_player.spotify when the
-      # integration is added (set show_media_player_N + media_player_N on the hero).

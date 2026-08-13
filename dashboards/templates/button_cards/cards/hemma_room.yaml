@@ -179,6 +179,13 @@ hemma_room:
     light_entity_9:
     light_entity_10:
 
+    # Phase 4 (§4.1) array-based alternative to light_entity_1..10 above.
+    # Renders alongside the numbered slots via hemma_badge_row — set this
+    # instead of light_entity_N (still requires show_lights: true, same as
+    # the numbered-slot form) to add lights without a 10-slot cap.
+    # Shape: [{ entity: light.x }, ...]
+    light_badges: []
+
     show_weather: false
     weather_entity:
     weather_temp_sensor:
@@ -2184,6 +2191,16 @@ hemma_room:
                   if (expand) return variables.show_lights && !!m[9];
                   return variables.show_lights && !!variables.light_entity_10;
                 ]]]
+
+          # Phase 4 (§4.1) array-based lights — renders alongside the 10
+          # numbered slots above via hemma_badge_row + light_badges. Inert
+          # (renders nothing) unless a room sets light_badges, so it has no
+          # effect on rooms still using light_entity_1..10.
+          - type: custom:button-card
+            template: hemma_badge_row
+            variables:
+              items: '[[[ return variables.light_badges || [] ]]]'
+              default_type: light
 
   extra_styles: |
     #mp1, #mp2, #mp3, #mp4,

@@ -25,6 +25,12 @@ cards:
       aqi_entity_pm25: sensor.master_bedroom_pm2_5_sensor
       aqi_entity_voc: sensor.master_bedroom_voc_index_sensor
 
+      # Spotify (shared/common Spotify Connect target) — shown as a media
+      # badge in the hero header.
+      show_media: true
+      show_media_player_1: true
+      media_player_1: media_player.common_spotify
+
       show_weather: true
       weather_mode: room
 
