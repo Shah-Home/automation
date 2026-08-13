@@ -102,7 +102,7 @@ hemma_popup_recently_added:
                 card_mod: {
                   style: [
                     ':host { --ha-card-box-shadow: none !important; --button-card-box-shadow: none !important; --button-card-box-shadow-hover: none !important; }',
-                    'ha-card { background: linear-gradient(135deg,color-mix(in srgb,' + g1 + ' 18%,transparent) 0%,color-mix(in srgb,' + g2 + ' 13%,transparent) 100%) !important; border: 1px solid color-mix(in srgb,' + g1 + ' 40%,transparent) !important; border-radius: 999px !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }',
+                    'ha-card { background: linear-gradient(135deg,color-mix(in srgb,' + g1 + ' 18%,transparent) 0%,color-mix(in srgb,' + g2 + ' 13%,transparent) 100%) !important; border: 1px solid color-mix(in srgb,' + g1 + ' 40%,transparent) !important; border-radius: var(--badge-br, 9999px) !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }',
                     'ha-ripple { display: none !important; }',
                   ].join('\n'),
                 },

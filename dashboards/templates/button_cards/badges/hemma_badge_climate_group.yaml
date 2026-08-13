@@ -85,11 +85,11 @@ hemma_badge_climate_group:
           ]]]
       - --badge-title-color: >
           [[[
-            return entity?.state === 'climate' ? 'rgba(0,0,0,0.85)' : 'var(--hemma-entity-name, #ffffff)';
+            return entity?.state === 'climate' ? 'var(--hemma-badge-title-color-active)' : 'var(--hemma-entity-name, #ffffff)';
           ]]]
       - --badge-sub-color: >
           [[[
-            return entity?.state === 'climate' ? 'rgba(0,0,0,0.6)' : 'var(--secondary-text-color)';
+            return entity?.state === 'climate' ? 'var(--hemma-badge-sub-color-active)' : 'var(--secondary-text-color)';
           ]]]
       - --hemma-fan-animation: >
           [[[
@@ -121,7 +121,7 @@ hemma_badge_climate_group:
           ]]]
       - --hemma-badge-icon-color: >
           [[[
-            if (entity?.state === 'climate') return 'rgba(0,0,0,0.75)';
+            if (entity?.state === 'climate') return 'var(--hemma-badge-icon-color-active)';
             const entities = [
               variables.climate_entity,
               variables.climate_entity_2,

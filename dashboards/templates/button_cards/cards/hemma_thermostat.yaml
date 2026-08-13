@@ -68,7 +68,7 @@ hemma_thermostat:
         const isHeatCool = s === 'heat_cool';
         const isActive = isCool || isHeat || isHeatCool;
 
-        const isPortraitMobile = window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches;
+        const isPortraitMobile = (window.hemmaMM?.isMobilePortrait?.() ?? window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches);
         const size = isPortraitMobile ? 38 : 44;
         const fontSize = 42;
 
@@ -214,7 +214,7 @@ hemma_thermostat:
                   [[[
                     const on = states[variables.thermostat_toggle_helper]?.state === "on";
                     if (on) return 'var(--rail-w)';
-                    const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+                    const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
                     return isMobile ? '40px' : '46px';
                   ]]]
               - height: |
@@ -227,7 +227,7 @@ hemma_thermostat:
                   [[[
                     const on = states[variables.thermostat_toggle_helper]?.state === "on";
                     if (!on) return '13px';
-                    const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+                    const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
                     return isMobile ? '20px' : '24px';
                   ]]]
               - overflow: hidden
@@ -282,7 +282,7 @@ hemma_thermostat:
                       - background: transparent
                       - box-shadow: none !important
                       - border: none !important
-                      - border-bottom: 1px solid rgba(255,255,255,0.10) !important
+                      - border-bottom: 1px solid var(--hemma-subtle-highlight) !important
                       - backdrop-filter: none !important
                       - "--button-card-ripple-color": transparent !important
                       - "-webkit-tap-highlight-color": transparent !important
@@ -296,7 +296,7 @@ hemma_thermostat:
                       - filter: var(--thermostat-control-icon-filter, none)
                     img_cell:
                       - width: |
-                          [[[ const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches; return isMobile ? '74%' : '78%'; ]]]
+                          [[[ const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches); return isMobile ? '74%' : '78%'; ]]]
                       - aspect-ratio: '1'
                   card_mod:
                     style: |
@@ -305,7 +305,7 @@ hemma_thermostat:
                         content: '';
                         position: absolute;
                         inset: 0;
-                        background: rgba(255,255,255,0.10);
+                        background: var(--hemma-subtle-highlight);
                         opacity: 0;
                         pointer-events: none;
                         z-index: 0;
@@ -347,7 +347,7 @@ hemma_thermostat:
                     img_cell:
                       - width: |
                           [[[
-                            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+                            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
                             return isMobile ? '74%' : '78%';
                           ]]]
                       - aspect-ratio: '1'
@@ -359,7 +359,7 @@ hemma_thermostat:
                         content: '';
                         position: absolute;
                         inset: 0;
-                        background: rgba(255,255,255,0.10);
+                        background: var(--hemma-subtle-highlight);
                         opacity: 0;
                         pointer-events: none;
                         z-index: 0;
@@ -395,8 +395,8 @@ hemma_thermostat:
                       - background: transparent
                       - box-shadow: none !important
                       - border: none !important
-                      - border-top: 1px solid rgba(255,255,255,0.10) !important
-                      - border-bottom: 1px solid rgba(255,255,255,0.10) !important
+                      - border-top: 1px solid var(--hemma-subtle-highlight) !important
+                      - border-bottom: 1px solid var(--hemma-subtle-highlight) !important
                       - backdrop-filter: none !important
                       - "--button-card-ripple-color": transparent !important
                       - "-webkit-tap-highlight-color": transparent !important
@@ -407,7 +407,7 @@ hemma_thermostat:
                     name:
                       - font-size: |
                           [[[
-                            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+                            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
                             return isMobile ? '13px' : '15px';
                           ]]]
                       - font-weight: 500
@@ -419,7 +419,7 @@ hemma_thermostat:
                         content: '';
                         position: absolute;
                         inset: 0;
-                        background: rgba(255,255,255,0.10);
+                        background: var(--hemma-subtle-highlight);
                         opacity: 0;
                         pointer-events: none;
                         z-index: 0;
@@ -461,7 +461,7 @@ hemma_thermostat:
                     img_cell:
                       - width: |
                           [[[
-                            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+                            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
                             return isMobile ? '74%' : '78%';
                           ]]]
                       - aspect-ratio: '1'
@@ -473,7 +473,7 @@ hemma_thermostat:
                         content: '';
                         position: absolute;
                         inset: 0;
-                        background: rgba(255,255,255,0.10);
+                        background: var(--hemma-subtle-highlight);
                         opacity: 0;
                         pointer-events: none;
                         z-index: 0;
@@ -534,12 +534,12 @@ hemma_thermostat:
     card:
       - --rail-w: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return isMobile ? '46px' : '56px';
           ]]]
       - --hemma-puck-padding: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return isMobile ? '7px' : '8px';
           ]]]
       - --thermostat-control-opacity: |
@@ -549,24 +549,24 @@ hemma_thermostat:
       - --thermostat-control-color: |
           [[[
             const isActive = ['cool','heat'].includes(entity?.state);
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return (isActive && isMobile) ? 'rgba(0,0,0,0.75)' : 'rgba(255,255,255,0.9)';
           ]]]
       - --thermostat-control-icon-filter: |
           [[[
             const isActive = ['cool','heat'].includes(entity?.state);
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return (isActive && isMobile) ? 'brightness(0)' : 'none';
           ]]]
       - --thermostat-rail-bg: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             const isActive = ['cool','heat'].includes(entity?.state);
             return (isMobile && isActive) ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.11)';
           ]]]
       - --thermostat-overlay-text-name: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             const isActive = ['cool','heat'].includes(entity?.state);
             if (isMobile) {
               return isActive
@@ -579,7 +579,7 @@ hemma_thermostat:
           ]]]
       - --thermostat-overlay-text-state: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             const isActive = ['cool','heat'].includes(entity?.state);
             if (isMobile) {
               return isActive
@@ -615,12 +615,12 @@ hemma_thermostat:
         - left: var(--hemma-entity-inner-pad-current, var(--hemma-entity-inner-pad-desktop, 20px))
         - width: |
             [[[
-              const isPortraitMobile = window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches;
+              const isPortraitMobile = (window.hemmaMM?.isMobilePortrait?.() ?? window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches);
               return isPortraitMobile ? '38px' : '44px';
             ]]]
         - height: |
             [[[
-              const isPortraitMobile = window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches;
+              const isPortraitMobile = (window.hemmaMM?.isMobilePortrait?.() ?? window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches);
               return isPortraitMobile ? '38px' : '44px';
             ]]]
         - border-radius: 50%

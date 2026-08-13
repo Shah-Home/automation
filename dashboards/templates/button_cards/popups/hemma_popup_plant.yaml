@@ -282,7 +282,7 @@ hemma_popup_plant:
               card_mod: {
                 style: [
                   ':host { --ha-card-box-shadow: none !important; --button-card-box-shadow: none !important; --button-card-box-shadow-hover: none !important; }',
-                  'ha-card { background: color-mix(in srgb,' + scoreColor + ' 12%,transparent) !important; border: 1px solid color-mix(in srgb,' + scoreColor + ' 35%,transparent) !important; border-radius: 999px !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; transition: background 0.2s ease, filter 0.2s ease !important; }',
+                  'ha-card { background: color-mix(in srgb,' + scoreColor + ' 12%,transparent) !important; border: 1px solid color-mix(in srgb,' + scoreColor + ' 35%,transparent) !important; border-radius: var(--badge-br, 9999px) !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; transition: background 0.2s ease, filter 0.2s ease !important; }',
                   'ha-card:hover { box-shadow: none !important; background: color-mix(in srgb,' + scoreColor + ' 22%,transparent) !important; filter: brightness(1.2) saturate(1.1); }',
                   'ha-ripple { display: none !important; }',
                 ].join('\n'),

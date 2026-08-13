@@ -1,0 +1,109 @@
+# Icon rendering mixins
+# ============================================================================
+# Two shared icon-treatment partials live in this one file (HA's
+# !include_dir_merge_named merges by top-level key, not filename — there's no
+# need for one file per mixin). Compose whichever matches the card family:
+#
+#   hemma_icon_circle     — round-tile icon (hemma_entity/hemma_light: `#img-cell`
+#                            sized as a circle, native ha-icon glyph colored directly)
+#   hemma_badge_icon_mask — flat badge icon (hemma_badge_*: icon rendered as a CSS
+#                            mask over a solid-color div instead of a glyph)
+#
+# These never compose the same card, so there's no risk of the two colliding.
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# hemma_icon_circle
+# ----------------------------------------------------------------------------
+# Shared #img-cell / #icon styling (size, background, hover/active states,
+# mobile-portrait sizing). Extracted from hemma_entity.yaml so every card
+# that shows an icon circle shares one definition instead of copy-pasting it.
+#
+# Compose via `template: [..., hemma_icon_circle]`. Override the size via
+# these custom properties (set in a composing template's styles.card) rather
+# than redefining the block:
+#   --hemma-icon-circle-size          (default 44px)
+#   --hemma-icon-circle-size-mobile   (default 38px)
+#   --hemma-icon-circle-icon-size         (default 25px)
+#   --hemma-icon-circle-icon-size-mobile  (default 22px)
+hemma_icon_circle:
+  extra_styles: |
+    #img-cell {
+      position: relative;
+      border-radius: 50% !important;
+      background: var(--hemma-icon-circle-bg, rgba(255,255,255,0.10)) !important;
+      width: var(--hemma-icon-circle-size, 44px) !important;
+      height: var(--hemma-icon-circle-size, 44px) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+    }
+    #img-cell::before { opacity: 0 !important; }
+    #img-cell img {
+      width: 68% !important;
+      height: 68% !important;
+      max-width: 68% !important;
+      max-height: 68% !important;
+      object-fit: contain !important;
+      flex: none !important;
+    }
+    #img-cell ha-icon {
+      --mdc-icon-size: var(--hemma-icon-circle-icon-size, 25px) !important;
+      flex: none !important;
+      color: var(--primary-text-color, rgba(255,255,255,1.0)) !important;
+    }
+    #icon { color: var(--primary-text-color, rgba(255,255,255,1.0)) !important; }
+
+    /* Mobile portrait */
+    @media (max-width: 767px) and (orientation: portrait) {
+      #img-cell {
+        width: var(--hemma-icon-circle-size-mobile, 38px) !important;
+        height: var(--hemma-icon-circle-size-mobile, 38px) !important;
+      }
+      #img-cell ha-icon { --mdc-icon-size: var(--hemma-icon-circle-icon-size-mobile, 22px) !important; }
+      #toggle { filter: invert(var(--hemma-toggle-invert, 0)); }
+    }
+    @media (hover: hover) {
+      #img-cell:hover { filter: brightness(1.15); transform: scale(1.03); transition: filter 0.15s ease, transform 0.15s ease; }
+    }
+    @media (hover: none) {
+      #img-cell:active { filter: brightness(1.15); transform: scale(1.03); }
+    }
+
+# ----------------------------------------------------------------------------
+# hemma_badge_icon_mask
+# ----------------------------------------------------------------------------
+# Shared #img-cell/#icon SVG-mask styling for badges that render a flat SVG
+# icon via a CSS mask over a solid-color div (instead of relying on ha-icon's
+# native glyph color — masking lets the icon recolor/opacity reliably).
+#
+# Compose via `template: [hemma_badge_base, ..., hemma_badge_icon_mask]`.
+# Each composing badge must set its own icon SVG, and may override size/
+# position — set these in the composing badge's own styles.card:
+#   --hemma-badge-icon-mask-url     (required, e.g. url('/local/hemma/icons/co2.svg'))
+#   --hemma-badge-icon-mask-size    (default 85%)
+#   --hemma-badge-icon-mask-inset   (default 0)
+#   --hemma-badge-icon-mask-z       (default auto)
+# Icon tint color is read from whichever of these the composing badge already
+# sets — no badge needs to change its existing color pipeline:
+#   --hemma-badge-icon-color, falling back to --hemma-icon-color, falling
+#   back to #ffffff.
+hemma_badge_icon_mask:
+  extra_styles: |
+    #img-cell, .img-cell { position: relative; }
+    #img-cell #icon, .img-cell #icon { color: transparent !important; opacity: 0 !important; }
+    #img-cell::before, .img-cell::before {
+      content: '';
+      position: absolute;
+      inset: var(--hemma-badge-icon-mask-inset, 0);
+      z-index: var(--hemma-badge-icon-mask-z, auto);
+      background-color: var(--hemma-badge-icon-color, var(--hemma-icon-color, #ffffff)) !important;
+      -webkit-mask: var(--hemma-badge-icon-mask-url) no-repeat center / var(--hemma-badge-icon-mask-size, 85%) var(--hemma-badge-icon-mask-size, 85%);
+      mask: var(--hemma-badge-icon-mask-url) no-repeat center / var(--hemma-badge-icon-mask-size, 85%) var(--hemma-badge-icon-mask-size, 85%);
+      transform: translateZ(0);
+    }
+
+  styles:
+    icon:
+      - color: transparent

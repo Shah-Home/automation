@@ -10,7 +10,7 @@ hemma_badge_activity:
 
   styles:
     card:
-      - background: rgba(0,0,0,0.18) !important
+      - background: var(--hemma-badge-background-quiet) !important
       - -webkit-backdrop-filter: blur(14px) saturate(1.2) !important
       - backdrop-filter: blur(14px) saturate(1.2) !important
       - justify-self: start
@@ -100,9 +100,9 @@ hemma_badge_activity:
         .replace(/'/g,'&#39;');
 
       return `
-        <div class="mp-wrap">
-          <div class="mp-title">${esc(friendly)}</div>
-          <div class="mp-sub">${esc(sub || '')}</div>
+        <div class="badge-wrap">
+          <div class="badge-title">${esc(friendly)}</div>
+          <div class="badge-sub">${esc(sub || '')}</div>
         </div>
       `;
     ]]]
@@ -143,39 +143,28 @@ hemma_badge_activity:
       overflow: visible !important;
     }
 
-    .mp-wrap{
-      display:flex;
-      flex-direction:column;
-      align-items:flex-start;
+    .badge-wrap{
       gap:2px;
-      min-width:0;
-      max-width:100%;
-      padding-top: 0 !important;
       padding-bottom: 2px !important;
       min-height: 0 !important;
     }
 
-    .mp-title{
-      font-size: var(--badge-font-size-current, 13px);
-      font-weight: 700;
-      line-height: 1.2;
-      color: rgba(255,255,255,0.96);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      text-shadow: 0 0 3px rgba(0,0,0,0.25);
+    /* Overrides base/hemma_badge_base.yaml's .badge-title/.badge-sub — only
+       the properties that genuinely differ (text-shadow for legibility over
+       blurred album art, fixed color since this badge doesn't use the
+       active/inactive color-flip other badges do). font-size, font-weight,
+       white-space, overflow, text-overflow match the base rule and are
+       inherited from it rather than repeated here. */
+    .badge-title{
+      color: var(--hemma-badge-media-title-color);
+      text-shadow: 0 0 3px var(--hemma-badge-media-title-shadow);
     }
 
-    .mp-sub{
-      font-size: calc(var(--badge-font-size-current, 13px) - 1px);
-      font-weight: 500;
+    .badge-sub{
       line-height: 1.15;
-      opacity: .82;
-      color: rgba(255,255,255,0.90);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      text-shadow: 0 0 3px rgba(0,0,0,0.20);
+      opacity: var(--badge-sub-opacity, .82);
+      color: var(--hemma-badge-media-sub-color);
+      text-shadow: 0 0 3px var(--hemma-badge-media-sub-shadow);
     }
 
     #name, #name *{ overflow: visible !important; }

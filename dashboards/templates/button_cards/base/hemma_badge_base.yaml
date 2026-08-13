@@ -43,7 +43,7 @@ hemma_badge_base:
       - transition: background-color .22s ease,
                     box-shadow .24s ease,
                     transform .24s ease,
-                    filter .18s ease,
+                    filter var(--hemma-transition-fast, .18s) ease,
                     opacity .35s ease
 
     grid:
@@ -136,7 +136,7 @@ hemma_badge_base:
       transition: background-color .22s ease,
                   box-shadow .24s ease,
                   transform .24s ease,
-                  filter .18s ease,
+                  filter var(--hemma-transition-fast, .18s) ease,
                   opacity .35s ease !important;
     }
 

@@ -149,9 +149,9 @@ hemma_plant:
     #img-cell ha-icon {
       --mdc-icon-size: 26px !important;
       flex: none !important;
-      color: rgba(255,255,255,1.0) !important;
+      color: var(--primary-text-color, rgba(255,255,255,1.0)) !important;
     }
-    #icon { color: rgba(255,255,255,1.0) !important; }
+    #icon { color: var(--primary-text-color, rgba(255,255,255,1.0)) !important; }
     @media (max-width: 767px) and (orientation: portrait) {
       #img-cell { width: 38px !important; height: 38px !important; }
       #img-cell ha-icon { --mdc-icon-size: 23px !important; }

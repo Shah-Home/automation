@@ -471,8 +471,34 @@ Hemma Glass:
   # Global
   badge-blur: 14px
   badge-br: 9999px
+
+  # Shared hover/press micro-interaction speed — was duplicated as the same
+  # bare 0.18s literal in hemma_badge_base.yaml and hemma_badge_light(_group).yaml
+  hemma-transition-fast: .18s
   badge-active-color: rgba(255,255,255,0.85)
   badge-title-inactive: rgba(255,255,255,0.75)
+
+  # "flipped" badges (light-colored active background needs dark text/icon) —
+  # shared by every *_group badge and hemma_badge_occupancy.yaml (refactor plan §6/§9 sweep)
+  hemma-badge-title-color-active: rgba(0,0,0,0.85)
+  hemma-badge-sub-color-active: rgba(0,0,0,0.6)
+  hemma-badge-icon-color-active: rgba(0,0,0,0.75)
+
+  # quieter/more-transparent badge background variant (plex, media_player, activity)
+  hemma-badge-background-quiet: rgba(0,0,0,0.18)
+
+  # media control buttons (play/pause, next) inside hemma_badge_media_player.yaml
+  hemma-badge-media-btn-bg: rgba(255,255,255,0.10)
+  hemma-badge-media-btn-icon-color: rgba(255,255,255,0.92)
+  hemma-badge-media-btn-hover-bg: rgba(255,255,255,0.14)
+  hemma-badge-media-btn-active-bg: rgba(255,255,255,0.18)
+
+  # media/activity badge title+sub text — identical values were duplicated
+  # verbatim between hemma_badge_media_player.yaml and hemma_badge_activity.yaml
+  hemma-badge-media-title-color: rgba(255,255,255,0.96)
+  hemma-badge-media-title-shadow: rgba(0,0,0,0.25)
+  hemma-badge-media-sub-color: rgba(255,255,255,0.90)
+  hemma-badge-media-sub-shadow: rgba(0,0,0,0.20)
 
   # Desktop
   badge-gap: 10px
@@ -569,6 +595,11 @@ Hemma Glass:
 
   # Button Card / Icon Background
   hemma-icon-circle-bg: rgba(255,255,255,0.10)
+
+  # Generic subtle white hover/overlay/divider tint (thermostat controls, menu icon
+  # hover) — a distinct token from hemma-icon-circle-bg even though the value
+  # currently matches; different UI purpose, don't couple them.
+  hemma-subtle-highlight: rgba(255,255,255,0.10)
 
   # Light
   hemma-badge-light-color:             var(--hemma-color-yellow, #ffd600)
@@ -671,6 +702,14 @@ Hemma Glass:
   state-media_player-inactive-color: rgba(255,255,255,0.3)
   state-vacuum-active-color: rgb(100,180,255)
   state-vacuum-inactive-color: rgba(255,255,255,0.3)
+
+  # hemma_vacuum.yaml's own command-state color set (distinct from the generic
+  # state-vacuum-*-color pair above, which that card doesn't consume)
+  hemma-vacuum-pending-color: "#FFC107"
+  hemma-vacuum-acknowledged-color: "#00BCD4"
+  hemma-vacuum-active-color: "#4CAF50"
+  hemma-vacuum-completed-color: "#66BB6A"
+  hemma-vacuum-error-color: "#F44336"
 
   # ============================================================================
   # COMPONENT COLORS

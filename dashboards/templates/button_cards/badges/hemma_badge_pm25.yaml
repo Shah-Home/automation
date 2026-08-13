@@ -13,7 +13,7 @@
 #   sensors         - array of AQ sensor IDs for popup detail rows
 # ============================================================================
 hemma_badge_pm25:
-  template: [hemma_badge_base, hemma_popup_base, hemma_climate_popup]
+  template: [hemma_badge_base, hemma_popup_base, hemma_climate_popup, hemma_badge_icon_mask]
 
   variables:
     enabled: true
@@ -27,8 +27,6 @@ hemma_badge_pm25:
 
   extra_styles: >
     [[[
-      const SVG_URL = '/local/hemma/icons/pm25.svg';
-
       const ev = variables?.enabled;
       const enabled = (ev === undefined || ev === null) ? true :
         (typeof ev === 'boolean') ? ev :
@@ -42,17 +40,9 @@ hemma_badge_pm25:
       const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st) || Number.isNaN(v);
 
       return `
-        :host{display:${hide ? 'none' : 'inline-block'} !important;}
-        #img-cell, .img-cell { position: relative; }
-        #img-cell #icon, .img-cell #icon { color: transparent !important; opacity: 0 !important; }
-        #img-cell::before, .img-cell::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-color: var(--hemma-icon-color, #ffffff);
-          -webkit-mask: url('${SVG_URL}') no-repeat center / 85% 85%;
-          mask: url('${SVG_URL}') no-repeat center / 85% 85%;
-          transform: translateZ(0);
+        :host{
+          display:${hide ? 'none' : 'inline-block'} !important;
+          --hemma-badge-icon-mask-url: url('/local/hemma/icons/pm25.svg');
         }
       `;
     ]]]
@@ -84,8 +74,6 @@ hemma_badge_pm25:
             if (v < 55.4)  return 'var(--hemma-badge-air-quality-poor-color)';
             return 'var(--hemma-badge-air-quality-bad-color)';
           ]]]
-    icon:
-      - color: transparent
 
   name: >
     [[[

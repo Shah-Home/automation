@@ -11,7 +11,7 @@
 #             (defaults to the entity friendly name)
 # ============================================================================
 hemma_badge_occupancy:
-  template: [hemma_badge_base]
+  template: [hemma_badge_base, hemma_badge_icon_mask]
 
   variables:
     enabled: true
@@ -22,8 +22,6 @@ hemma_badge_occupancy:
 
   extra_styles: >
     [[[
-      const SVG_URL = '/local/hemma/icons/motion.svg';
-
       const ev = variables?.enabled;
       const enabled = (ev === undefined || ev === null) ? true :
         (typeof ev === 'boolean') ? ev :
@@ -36,18 +34,11 @@ hemma_badge_occupancy:
       const hide    = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
 
       return `
-        :host{display:${hide ? 'none' : 'inline-block'} !important;}
-        #img-cell, .img-cell { position: relative; }
-        #img-cell #icon, .img-cell #icon { color: transparent !important; opacity: 0 !important; }
-        #img-cell::before, .img-cell::before {
-          content: '';
-          position: absolute;
-          inset: 2px;
-          z-index: 5;
-          background-color: var(--hemma-icon-color, #ffffff) !important;
-          -webkit-mask: url('${SVG_URL}') no-repeat center / 85% 85%;
-          mask: url('${SVG_URL}') no-repeat center / 85% 85%;
-          transform: translateZ(0);
+        :host{
+          display:${hide ? 'none' : 'inline-block'} !important;
+          --hemma-badge-icon-mask-url: url('/local/hemma/icons/motion.svg');
+          --hemma-badge-icon-mask-inset: 2px;
+          --hemma-badge-icon-mask-z: 5;
         }
       `;
     ]]]
@@ -87,18 +78,16 @@ hemma_badge_occupancy:
           [[[
             const s = String(entity?.state || '').toLowerCase();
             return s === 'on'
-              ? 'rgba(0,0,0,0.85)'
+              ? 'var(--hemma-badge-title-color-active)'
               : 'var(--badge-title-inactive)';
           ]]]
       - --badge-sub-color: >
           [[[
             const s = String(entity?.state || '').toLowerCase();
             return s === 'on'
-              ? 'rgba(0,0,0,0.6)'
+              ? 'var(--hemma-badge-sub-color-active)'
               : 'color-mix(in oklab, var(--secondary-text-color) 70%, transparent)';
           ]]]
-    icon:
-      - color: transparent
 
   name: >
     [[[

@@ -47,7 +47,7 @@ hemma_light:
   hold_action: &light_popup
     action: |
       [[[
-        const isMobile = window.matchMedia('(max-width: 767px)').matches;
+        const isMobile = (window.hemmaMM?.isMobileWidthOnly?.() ?? window.matchMedia('(max-width: 767px)').matches);
         const hasBrowserMod = typeof window.browser_mod !== 'undefined';
         return (isMobile || !hasBrowserMod) ? 'more-info' : 'fire-dom-event';
       ]]]

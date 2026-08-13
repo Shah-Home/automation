@@ -23,6 +23,8 @@ lovelace:
     - type: module
       url: /local/hemma/scripts/layout-card-modified.js
     - type: module
+      url: /local/hemma/scripts/hemma-breakpoints.js
+    - type: module
       url: /local/hemma/scripts/navbar-popup-caret.js
     - type: module
       url: /local/hemma/scripts/navbar-sidebar-offset.js

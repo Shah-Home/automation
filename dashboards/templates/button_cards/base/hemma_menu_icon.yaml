@@ -39,7 +39,7 @@ hemma_menu_icon:
       - transition: background 120ms ease
       - backdrop-filter: none
     card:hover:
-      - background: rgba(255,255,255,0.10)
+      - background: var(--hemma-subtle-highlight)
 
     custom_fields:
       glyph:

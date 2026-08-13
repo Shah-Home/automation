@@ -193,10 +193,10 @@ hemma_room:
       - padding-top: >
           [[[
             const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
-            const isPhonePortrait =
-              (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+            const isPhonePortrait = window.hemmaMM?.isPhonePortraitTouch?.() ??
+              ((mm('(pointer: coarse)') || mm('(hover: none)')) &&
               mm('(max-width: 767px)') &&
-              mm('(orientation: portrait)');
+              mm('(orientation: portrait)'));
 
             const base = 'var(--hero-top)';
             return isPhonePortrait ? `calc(${base} - 20px)` : base;
@@ -206,10 +206,10 @@ hemma_room:
       - padding-bottom: >
           [[[
             const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
-            const isPhonePortrait =
-              (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+            const isPhonePortrait = window.hemmaMM?.isPhonePortraitTouch?.() ??
+              ((mm('(pointer: coarse)') || mm('(hover: none)')) &&
               mm('(max-width: 767px)') &&
-              mm('(orientation: portrait)');
+              mm('(orientation: portrait)'));
 
             return isPhonePortrait
               ? `calc(var(--hemma-nav-height, 112px) + env(safe-area-inset-bottom, 0px) + var(--hemma-entity-mobile-gap-above-nav, 20px))`
@@ -225,7 +225,7 @@ hemma_room:
             const isDark =
               typeof hass?.themes?.darkMode === 'boolean'
                 ? hass.themes.darkMode
-                : window.matchMedia('(prefers-color-scheme: dark)').matches;
+                : (window.hemmaMM?.prefersDark?.() ?? window.matchMedia('(prefers-color-scheme: dark)').matches);
 
             if (isMobile && (variables.mobile_background ?? false)) {
               const phaseEntity = variables.mobile_background_entity || 'sensor.hemma_mobile_dynamic_background';
@@ -317,13 +317,13 @@ hemma_room:
       - grid-area: n
       - color: var(--hemma-entity-name, #ffffff)
       - opacity: 0.9
-      - font-size: var(--hero-room-name-size-current, clamp(48px, 6vw + 12px, 100px))
+      - font-size: var(--hero-room-name-size-current, clamp(75px, 4.6vw + 8px, 105px))
       - letter-spacing: var(--hero-room-name-letter-spacing-current, -2px)
       - font-weight: 700
       - justify-self: start
       - padding-left: 0
-      - line-height: var(--hero-room-name-line-height-current, 1.2)
-      - margin-left: var(--hero-room-name-margin-left-current, 0px)
+      - line-height: var(--hero-room-name-line-height-current, 1.18)
+      - margin-left: var(--hero-room-name-margin-left-current, -2px)
       - overflow: visible
 
     grid: []  # Inherits from hemma_shared
@@ -349,7 +349,7 @@ hemma_room:
         - left: >
             calc(
               var(--hero-gutter)
-              + var(--hero-room-name-margin-left-current, 0px)
+              + var(--hero-room-name-margin-left-current, -2px)
               + var(--hemma-header-temp-nudge, 0px))
         - z-index: 5
         - pointer-events: auto
@@ -372,10 +372,10 @@ hemma_room:
         - display: >
             [[[
               const mm = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
-              const isPhonePortrait =
-                (mm('(pointer: coarse)') || mm('(hover: none)')) &&
+              const isPhonePortrait = window.hemmaMM?.isPhonePortraitTouch?.() ??
+                ((mm('(pointer: coarse)') || mm('(hover: none)')) &&
                 mm('(max-width: 767px)') &&
-                mm('(orientation: portrait)');
+                mm('(orientation: portrait)'));
               const hasData = !!(variables.weather_entity || variables.weather_temp_sensor);
               const ok = !!variables.show_weather && hasData;
               return (isPhonePortrait && ok) ? 'block' : 'none';
@@ -408,7 +408,7 @@ hemma_room:
         - text-align: left !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px))
         - margin-right: auto !important
         - width: max-content
@@ -435,7 +435,7 @@ hemma_room:
         - text-align: left !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px))
         - margin-right: auto !important
         - width: max-content
@@ -495,7 +495,7 @@ hemma_room:
         - text-align: left !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px))
         - margin-right: auto !important
         - width: max-content
@@ -571,7 +571,7 @@ hemma_room:
         - margin-right: auto !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px) +
               var(--hemma-header-media-badge-nudge-current, 0px))
         - padding-left: 0
@@ -643,7 +643,7 @@ hemma_room:
         - text-align: left !important
         - margin-left: >
             calc(
-              var(--hero-room-name-margin-left-current, 0px) +
+              var(--hero-room-name-margin-left-current, -2px) +
               var(--hemma-header-badge-nudge, 0px))
         - margin-right: auto !important
         - width: max-content

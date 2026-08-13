@@ -231,7 +231,7 @@ hemma_entity:
               }
               const activeStates = ["on","open","opening","playing","unlocked","unlocking","cleaning","returning","cool","heat","heat_cool","auto"];
               const isOn = activeStates.includes((entity?.state || "").toLowerCase());
-              const mob = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+              const mob = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
               const W = mob ? 38 : 44, H = mob ? 26 : 26, r = mob ? 8 : 9, cx0 = mob ? 14 : 14;
               const SW = W + 2;
               const travel = mob ? 12 : 18;
@@ -332,7 +332,7 @@ hemma_entity:
           document.head.appendChild(s);
         }
 
-        const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+        const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
         const size = isMobile ? 28 : 36;
 
         return `<svg width="${size}" height="${size}" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(-90deg);display:block;">
@@ -462,7 +462,7 @@ hemma_entity:
           ]]]
       - --hemma-toggle-w: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return isMobile ? '34px' : '46px';
           ]]]
       - --hemma-toggle-opacity: var(--hemma-toggle-inactive-opacity, 0.65)
@@ -472,7 +472,7 @@ hemma_entity:
       - box-shadow: var(--hemma-button-card-box-shadow-current, var(--button-card-box-shadow))
       - height: |
           [[[
-            return window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches
+            return (window.hemmaMM?.isMobilePortrait?.() ?? window.matchMedia('(max-width: 767px) and (orientation: portrait)').matches)
               ? 'var(--hemma-entity-height-current, 108px)'
               : 'var(--hemma-entity-height-current, var(--hemma-entity-height-desktop, 200px))';
           ]]]
@@ -586,12 +586,12 @@ hemma_entity:
         - right: var(--hemma-entity-inner-pad-current, var(--hemma-entity-inner-pad-desktop, 20px))
         - width: |
             [[[
-              const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+              const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
               return isMobile ? '28px' : '36px';
             ]]]
         - height: |
             [[[
-              const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+              const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
               return isMobile ? '28px' : '36px';
             ]]]
         - display: var(--hemma-progress-display, none)

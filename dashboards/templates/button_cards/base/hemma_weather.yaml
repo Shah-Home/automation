@@ -55,8 +55,8 @@ hemma_weather:
       - "-webkit-tap-highlight-color": transparent
       - --weather-icon-size: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
-            const isTablet = !isMobile && window.matchMedia('(max-width: 1024px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
+            const isTablet = !isMobile && (window.hemmaMM?.isTablet?.() ?? window.matchMedia('(max-width: 1024px)').matches);
             if (isMobile) return 'var(--weather-icon-size-mobile, 26px)';
             if (isTablet) return 'var(--weather-icon-size-tablet, 34px)';
             return 'var(--weather-icon-size-desktop, 34px)';
@@ -77,7 +77,7 @@ hemma_weather:
           ]]]
       - column-gap: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return isMobile ? '7px' : '5px';
           ]]]
       - row-gap: 2px
@@ -106,7 +106,7 @@ hemma_weather:
       - font-size: |
           [[[
             if (variables.hero_mode) return 'var(--hero-weather-hero-temp-size, 28px)';
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return isMobile ? 'var(--hero-weather-title-size-mobile, 15px)' : 'var(--hero-weather-title-size, 15px)';
           ]]]
       - font-weight: 600
@@ -146,7 +146,7 @@ hemma_weather:
       - text-align: right
       - font-size: |
           [[[
-            const isMobile = window.matchMedia('(max-width: 767px), (max-height: 600px)').matches;
+            const isMobile = (window.hemmaMM?.isMobile?.() ?? window.matchMedia('(max-width: 767px), (max-height: 600px)').matches);
             return isMobile ? 'var(--hero-weather-sub-size-mobile, 13px)' : 'var(--hero-weather-sub-size, 12px)';
           ]]]
       - font-weight: 500
