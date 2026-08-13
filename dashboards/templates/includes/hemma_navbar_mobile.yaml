@@ -337,7 +337,7 @@ cards:
           icon: mdi:home-variant
           icon_selected: mdi:home-variant
 
-        - label: "1F ▾"
+        - label: "1F"
           icon: mdi:numeric-1-circle-outline
           icon_selected: mdi:numeric-1-circle
           tap_action:
@@ -366,7 +366,7 @@ cards:
               url: /dashboard-hemma/rec-room
               icon: mdi:sofa-outline
 
-        - label: "2F ▾"
+        - label: "2F"
           icon: mdi:numeric-2-circle-outline
           icon_selected: mdi:numeric-2-circle
           tap_action:
@@ -395,7 +395,7 @@ cards:
               url: /dashboard-hemma/dining-room
               icon: mdi:table-furniture
 
-        - label: "3F ▾"
+        - label: "3F"
           icon: mdi:numeric-3-circle-outline
           icon_selected: mdi:numeric-3-circle
           tap_action:
@@ -424,7 +424,7 @@ cards:
               url: /dashboard-hemma/master-bathroom
               icon: mdi:shower-head
 
-        - label: "Out ▾"
+        - label: "Out"
           icon: mdi:pine-tree
           icon_selected: mdi:pine-tree
           tap_action:
@@ -449,7 +449,7 @@ cards:
               url: /dashboard-hemma/garage
               icon: mdi:garage
 
-        - label: "Scenes ▾"
+        - label: "Scenes"
           icon: mdi:layers
           icon_selected: mdi:layers
           tap_action:
@@ -747,7 +747,7 @@ cards:
           icon: mdi:home-variant
           icon_selected: mdi:home-variant
 
-        - label: "1F ▾"
+        - label: "1F"
           icon: mdi:numeric-1-circle-outline
           icon_selected: mdi:numeric-1-circle
           tap_action:
@@ -776,7 +776,7 @@ cards:
               url: /dashboard-hemma/rec-room
               icon: mdi:sofa-outline
 
-        - label: "2F ▾"
+        - label: "2F"
           icon: mdi:numeric-2-circle-outline
           icon_selected: mdi:numeric-2-circle
           tap_action:
@@ -805,7 +805,7 @@ cards:
               url: /dashboard-hemma/dining-room
               icon: mdi:table-furniture
 
-        - label: "3F ▾"
+        - label: "3F"
           icon: mdi:numeric-3-circle-outline
           icon_selected: mdi:numeric-3-circle
           tap_action:
@@ -834,7 +834,7 @@ cards:
               url: /dashboard-hemma/master-bathroom
               icon: mdi:shower-head
 
-        - label: "Out ▾"
+        - label: "Out"
           icon: mdi:pine-tree
           icon_selected: mdi:pine-tree
           tap_action:
@@ -859,7 +859,7 @@ cards:
               url: /dashboard-hemma/garage
               icon: mdi:garage
 
-        - label: "Scenes ▾"
+        - label: "Scenes"
           icon: mdi:layers
           icon_selected: mdi:layers
           tap_action:
@@ -1156,7 +1156,7 @@ cards:
           icon: mdi:home-variant
           icon_selected: mdi:home-variant
 
-        - label: "1F ▾"
+        - label: "1F"
           icon: mdi:numeric-1-circle-outline
           icon_selected: mdi:numeric-1-circle
           tap_action:
@@ -1185,7 +1185,7 @@ cards:
               url: /dashboard-hemma/rec-room
               icon: mdi:sofa-outline
 
-        - label: "2F ▾"
+        - label: "2F"
           icon: mdi:numeric-2-circle-outline
           icon_selected: mdi:numeric-2-circle
           tap_action:
@@ -1214,7 +1214,7 @@ cards:
               url: /dashboard-hemma/dining-room
               icon: mdi:table-furniture
 
-        - label: "3F ▾"
+        - label: "3F"
           icon: mdi:numeric-3-circle-outline
           icon_selected: mdi:numeric-3-circle
           tap_action:
@@ -1243,7 +1243,7 @@ cards:
               url: /dashboard-hemma/master-bathroom
               icon: mdi:shower-head
 
-        - label: "Out ▾"
+        - label: "Out"
           icon: mdi:pine-tree
           icon_selected: mdi:pine-tree
           tap_action:
@@ -1268,7 +1268,7 @@ cards:
               url: /dashboard-hemma/garage
               icon: mdi:garage
 
-        - label: "Scenes ▾"
+        - label: "Scenes"
           icon: mdi:layers
           icon_selected: mdi:layers
           tap_action:
@@ -1581,7 +1581,7 @@ cards:
           label: Home
           icon: mdi:home-variant
 
-        - label: "First Floor ▾"
+        - label: "First Floor"
           icon: mdi:numeric-1-circle-outline
           tap_action:
             action: open-popup
@@ -1609,7 +1609,7 @@ cards:
               url: /dashboard-hemma/rec-room
               icon: mdi:sofa-outline
 
-        - label: "Second Floor ▾"
+        - label: "Second Floor"
           icon: mdi:numeric-2-circle-outline
           tap_action:
             action: open-popup
@@ -1637,7 +1637,7 @@ cards:
               url: /dashboard-hemma/dining-room
               icon: mdi:table-furniture
 
-        - label: "Third Floor ▾"
+        - label: "Third Floor"
           icon: mdi:numeric-3-circle-outline
           tap_action:
             action: open-popup
@@ -1665,7 +1665,7 @@ cards:
               url: /dashboard-hemma/master-bathroom
               icon: mdi:shower-head
 
-        - label: "Outdoors ▾"
+        - label: "Outdoors"
           icon: mdi:pine-tree
           tap_action:
             action: open-popup
@@ -1689,7 +1689,7 @@ cards:
               url: /dashboard-hemma/garage
               icon: mdi:garage
 
-        - label: "Scenes ▾"
+        - label: "Scenes"
           icon: mdi:layers
           tap_action:
             action: open-popup
