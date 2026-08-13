@@ -937,14 +937,19 @@ hemma_room:
             variables:
               enabled: '[[[ return variables.show_lights ]]]'
               light_group_entity: '[[[ return variables.show_lights ? variables.light_group_entity : null ]]]'
-              entity_1: '[[[ return variables.show_lights ? variables.light_entity_1 : null ]]]'
-              entity_2: '[[[ return variables.show_lights ? variables.light_entity_2 : null ]]]'
-              entity_3: '[[[ return variables.show_lights ? variables.light_entity_3 : null ]]]'
-              entity_4: '[[[ return variables.show_lights ? variables.light_entity_4 : null ]]]'
-              entity_5: '[[[ return variables.show_lights ? variables.light_entity_5 : null ]]]'
-              entity_6: '[[[ return variables.show_lights ? variables.light_entity_6 : null ]]]'
-              entity_7: '[[[ return variables.show_lights ? variables.light_entity_7 : null ]]]'
-              entity_8: '[[[ return variables.show_lights ? variables.light_entity_8 : null ]]]'
+              # entity_1..8 fall back to light_badges[i] (Phase 4 array form) when the
+              # matching numbered slot is unset, so the summary badge — the tap target
+              # that reveals the expanded per-light row — shows up for light_badges-only
+              # rooms too, not just light_entity_N ones. hemma_badge_light_group itself
+              # only reads entity_1..8 (not 9/10), matching its own existing 8-slot cap.
+              entity_1: '[[[ return variables.show_lights ? (variables.light_entity_1 || variables.light_badges?.[0]?.entity || null) : null ]]]'
+              entity_2: '[[[ return variables.show_lights ? (variables.light_entity_2 || variables.light_badges?.[1]?.entity || null) : null ]]]'
+              entity_3: '[[[ return variables.show_lights ? (variables.light_entity_3 || variables.light_badges?.[2]?.entity || null) : null ]]]'
+              entity_4: '[[[ return variables.show_lights ? (variables.light_entity_4 || variables.light_badges?.[3]?.entity || null) : null ]]]'
+              entity_5: '[[[ return variables.show_lights ? (variables.light_entity_5 || variables.light_badges?.[4]?.entity || null) : null ]]]'
+              entity_6: '[[[ return variables.show_lights ? (variables.light_entity_6 || variables.light_badges?.[5]?.entity || null) : null ]]]'
+              entity_7: '[[[ return variables.show_lights ? (variables.light_entity_7 || variables.light_badges?.[6]?.entity || null) : null ]]]'
+              entity_8: '[[[ return variables.show_lights ? (variables.light_entity_8 || variables.light_badges?.[7]?.entity || null) : null ]]]'
               entity_9: '[[[ return variables.show_lights ? variables.light_entity_9 : null ]]]'
               entity_10: '[[[ return variables.show_lights ? variables.light_entity_10 : null ]]]'
 
