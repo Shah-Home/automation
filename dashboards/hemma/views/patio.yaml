@@ -18,15 +18,6 @@ cards:
 
       temp_unit: "F"
 
-      # Phase 4 pilot (§8.2/§7 4c) — array-based light badge, shown in the
-      # hero header alongside the existing entity-grid tile below. Exercises
-      # hemma_badge_row + hemma_badge_registry end to end for the first time
-      # in a live room. Remove this block (and light_badges/show_lights) to
-      # roll back with zero effect on the entity-grid tile.
-      show_lights: true
-      light_badges:
-        - entity: switch.patio_lights
-
   # MOBILE NAVBAR
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 

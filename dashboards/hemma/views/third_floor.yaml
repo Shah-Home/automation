@@ -13,6 +13,12 @@ cards:
       weather_mode: room
       temp_unit: "F"
 
+      # Floor-level light badge (Phase 4, §8.2) — see second_floor.yaml for
+      # why this is floor-level rather than per-room.
+      show_lights: true
+      light_badges:
+        - entity: switch.master_bedroom_lights
+
   - !include /config/dashboards/templates/includes/hemma_navbar_mobile.yaml
 
   - type: custom:layout-card

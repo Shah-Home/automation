@@ -45,16 +45,7 @@ hemma_room:
     - '[[[ return variables.plex_stream_1 ]]]'
     - '[[[ return variables.plex_binary_2 ]]]'
     - '[[[ return variables.plex_stream_2 ]]]'
-    - '[[[ return variables.light_entity_1 ]]]'
-    - '[[[ return variables.light_entity_2 ]]]'
-    - '[[[ return variables.light_entity_3 ]]]'
-    - '[[[ return variables.light_entity_4 ]]]'
-    - '[[[ return variables.light_entity_5 ]]]'
-    - '[[[ return variables.light_entity_6 ]]]'
-    - '[[[ return variables.light_entity_7 ]]]'
-    - '[[[ return variables.light_entity_8 ]]]'
-    - '[[[ return variables.light_entity_9 ]]]'
-    - '[[[ return variables.light_entity_10 ]]]'
+    - '[[[ return JSON.stringify(variables.light_badges || []) ]]]'
     - '[[[ return variables.image ]]]'
     - '[[[ return variables.image_night ]]]'
     - '[[[ return variables.image_position ]]]'
@@ -168,22 +159,14 @@ hemma_room:
 
     show_lights: false
     light_group_entity:
-    light_entity_1:
-    light_entity_2:
-    light_entity_3:
-    light_entity_4:
-    light_entity_5:
-    light_entity_6:
-    light_entity_7:
-    light_entity_8:
-    light_entity_9:
-    light_entity_10:
 
-    # Phase 4 (§4.1) array-based alternative to light_entity_1..10 above.
-    # Renders alongside the numbered slots via hemma_badge_row — set this
-    # instead of light_entity_N (still requires show_lights: true, same as
-    # the numbered-slot form) to add lights without a 10-slot cap.
-    # Shape: [{ entity: light.x }, ...]
+    # Phase 4 (§4.1) — array of lights to show as one summary badge (tap to
+    # expand into individual controls), rendered via hemma_badge_row +
+    # hemma_badge_registry. Used at floor level (one badge per floor,
+    # aggregating every room's light on that floor) rather than per room,
+    # since this house has exactly one light per room and a room-level badge
+    # would just duplicate that room's own entity-grid toggle tile.
+    # Shape: [{ entity: switch.x }, ...]. Still requires show_lights: true.
     light_badges: []
 
     show_weather: false
@@ -937,21 +920,17 @@ hemma_room:
             variables:
               enabled: '[[[ return variables.show_lights ]]]'
               light_group_entity: '[[[ return variables.show_lights ? variables.light_group_entity : null ]]]'
-              # entity_1..8 fall back to light_badges[i] (Phase 4 array form) when the
-              # matching numbered slot is unset, so the summary badge — the tap target
-              # that reveals the expanded per-light row — shows up for light_badges-only
-              # rooms too, not just light_entity_N ones. hemma_badge_light_group itself
-              # only reads entity_1..8 (not 9/10), matching its own existing 8-slot cap.
-              entity_1: '[[[ return variables.show_lights ? (variables.light_entity_1 || variables.light_badges?.[0]?.entity || null) : null ]]]'
-              entity_2: '[[[ return variables.show_lights ? (variables.light_entity_2 || variables.light_badges?.[1]?.entity || null) : null ]]]'
-              entity_3: '[[[ return variables.show_lights ? (variables.light_entity_3 || variables.light_badges?.[2]?.entity || null) : null ]]]'
-              entity_4: '[[[ return variables.show_lights ? (variables.light_entity_4 || variables.light_badges?.[3]?.entity || null) : null ]]]'
-              entity_5: '[[[ return variables.show_lights ? (variables.light_entity_5 || variables.light_badges?.[4]?.entity || null) : null ]]]'
-              entity_6: '[[[ return variables.show_lights ? (variables.light_entity_6 || variables.light_badges?.[5]?.entity || null) : null ]]]'
-              entity_7: '[[[ return variables.show_lights ? (variables.light_entity_7 || variables.light_badges?.[6]?.entity || null) : null ]]]'
-              entity_8: '[[[ return variables.show_lights ? (variables.light_entity_8 || variables.light_badges?.[7]?.entity || null) : null ]]]'
-              entity_9: '[[[ return variables.show_lights ? variables.light_entity_9 : null ]]]'
-              entity_10: '[[[ return variables.show_lights ? variables.light_entity_10 : null ]]]'
+              # entity_1..8 read from light_badges[i] — this is the tap target that
+              # reveals the expanded per-light row rendered by hemma_badge_row below.
+              # hemma_badge_light_group itself only reads entity_1..8 (8-slot cap).
+              entity_1: '[[[ return variables.show_lights ? (variables.light_badges?.[0]?.entity || null) : null ]]]'
+              entity_2: '[[[ return variables.show_lights ? (variables.light_badges?.[1]?.entity || null) : null ]]]'
+              entity_3: '[[[ return variables.show_lights ? (variables.light_badges?.[2]?.entity || null) : null ]]]'
+              entity_4: '[[[ return variables.show_lights ? (variables.light_badges?.[3]?.entity || null) : null ]]]'
+              entity_5: '[[[ return variables.show_lights ? (variables.light_badges?.[4]?.entity || null) : null ]]]'
+              entity_6: '[[[ return variables.show_lights ? (variables.light_badges?.[5]?.entity || null) : null ]]]'
+              entity_7: '[[[ return variables.show_lights ? (variables.light_badges?.[6]?.entity || null) : null ]]]'
+              entity_8: '[[[ return variables.show_lights ? (variables.light_badges?.[7]?.entity || null) : null ]]]'
 
           - type: custom:button-card
             template: hemma_badge_presence_group
@@ -2003,204 +1982,13 @@ hemma_room:
           grid-column-gap: var(--badge-gap-current, var(--badge-gap, 10px))
 
         cards:
-          # When light_entity_2 is not set and light_entity_1 is an HA light group,
-          # the sub-badges automatically expand to show each member of the group.
-          # To use individual entities directly, set light_entity_1, light_entity_2, etc.
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[0] || null) : (g || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[0];
-                  return variables.show_lights && !!g;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[1] || null) : (variables.light_entity_2 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[1];
-                  return variables.show_lights && !!variables.light_entity_2;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[2] || null) : (variables.light_entity_3 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[2];
-                  return variables.show_lights && !!variables.light_entity_3;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[3] || null) : (variables.light_entity_4 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[3];
-                  return variables.show_lights && !!variables.light_entity_4;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[4] || null) : (variables.light_entity_5 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[4];
-                  return variables.show_lights && !!variables.light_entity_5;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[5] || null) : (variables.light_entity_6 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[5];
-                  return variables.show_lights && !!variables.light_entity_6;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[6] || null) : (variables.light_entity_7 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[6];
-                  return variables.show_lights && !!variables.light_entity_7;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[7] || null) : (variables.light_entity_8 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[7];
-                  return variables.show_lights && !!variables.light_entity_8;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[8] || null) : (variables.light_entity_9 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[8];
-                  return variables.show_lights && !!variables.light_entity_9;
-                ]]]
-
-          - type: custom:button-card
-            template: hemma_badge_light
-            entity: >
-              [[[
-                const g = variables.light_entity_1;
-                const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                return expand ? (m[9] || null) : (variables.light_entity_10 || null);
-              ]]]
-            variables:
-              enabled: >
-                [[[
-                  const g = variables.light_entity_1;
-                  const m = g ? hass.states[g]?.attributes?.entity_id : null;
-                  const expand = Array.isArray(m) && m.length > 0 && !variables.light_entity_2;
-                  if (expand) return variables.show_lights && !!m[9];
-                  return variables.show_lights && !!variables.light_entity_10;
-                ]]]
-
-          # Phase 4 (§4.1) array-based lights — renders alongside the 10
-          # numbered slots above via hemma_badge_row + light_badges. Inert
-          # (renders nothing) unless a room sets light_badges, so it has no
-          # effect on rooms still using light_entity_1..10.
+          # Phase 4 (§4.1) — array-driven, via hemma_badge_row + light_badges.
+          # Replaced the old 10 hand-copied numbered-slot cards (2026-08-13):
+          # they were never used by any room (light_entity_1..10 had zero
+          # live usage across all 19 view files), and this house has exactly
+          # one light per room, so there's no unbounded list to cap here —
+          # light_badges is set at floor level (aggregating each room's one
+          # light), not per room. See hemma_badge_registry.yaml/hemma_badge_row.yaml.
           - type: custom:button-card
             template: hemma_badge_row
             variables:
