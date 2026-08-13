@@ -25,6 +25,8 @@ hemma_room:
     - '[[[ return variables.occupancy_sensor_2 ]]]'
     - '[[[ return variables.occupancy_sensor_3 ]]]'
     - '[[[ return variables.occupancy_sensor_4 ]]]'
+    - '[[[ return JSON.stringify(variables.presence_badges || []) ]]]'
+    - '[[[ return JSON.stringify(variables.occupancy_badges || []) ]]]'
     - '[[[ return variables.media_player_1 ]]]'
     - '[[[ return variables.media_player_2 ]]]'
     - '[[[ return variables.media_player_3 ]]]'
@@ -99,6 +101,11 @@ hemma_room:
     presence_entity_3:
     presence_entity_4:
 
+    # Phase 4 (§4.1) array-based alternative to presence_entity_1..4 above —
+    # renders alongside the numbered slots via hemma_badge_row. Still
+    # requires show_presence: true. Shape: [{ entity: person.x }, ...].
+    presence_badges: []
+
     # Occupancy sensors (binary_sensor.*_presence, e.g. FP2 zones) — shown as
     # badges in the presence row. Distinct from presence_entity_* (person.*).
     occupancy_sensor_1:
@@ -109,6 +116,14 @@ hemma_room:
     occupancy_label_2:
     occupancy_label_3:
     occupancy_label_4:
+
+    # Phase 4 (§4.1) array-based alternative to occupancy_sensor_1..4/
+    # occupancy_label_1..4 above — renders alongside the numbered slots via
+    # hemma_badge_row. Unlike presence, occupancy has no separate show_x
+    # toggle — populating this array is itself sufficient to show the badge,
+    # matching the existing occupancy_sensor_N behavior.
+    # Shape: [{ entity: binary_sensor.x, label: "Zone Name" }, ...].
+    occupancy_badges: []
 
     show_media: false
     pause_timeout_minutes: 5
@@ -492,8 +507,8 @@ hemma_room:
         - max-width: 100%
         - margin-top: >
             [[[
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
+              if (!variables.show_presence && !variables.occupancy_sensor_1 && !(variables.presence_badges?.length) && !(variables.occupancy_badges?.length)) return '0';
+              if ((variables.presence_entity_1 && !variables.presence_entity_2) || variables.presence_badges?.length === 1) return '0';
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
               const expanded = states['input_select.hemma_expanded_row']?.state;
               return (expanded === 'presence' || expanded === 'occupancy')
@@ -505,14 +520,14 @@ hemma_room:
         - display: >
             [[[
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 'none';
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return 'none';
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return 'none';
+              if (!variables.show_presence && !variables.occupancy_sensor_1 && !(variables.presence_badges?.length) && !(variables.occupancy_badges?.length)) return 'none';
+              if ((variables.presence_entity_1 && !variables.presence_entity_2) || variables.presence_badges?.length === 1) return 'none';
               return 'block';
             ]]]
         - max-height: >
             [[[
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return '0';
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return '0';
+              if (!variables.show_presence && !variables.occupancy_sensor_1 && !(variables.presence_badges?.length) && !(variables.occupancy_badges?.length)) return '0';
+              if ((variables.presence_entity_1 && !variables.presence_entity_2) || variables.presence_badges?.length === 1) return '0';
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return '0';
               const expanded = states['input_select.hemma_expanded_row']?.state;
               return (expanded === 'presence' || expanded === 'occupancy') ? '200px' : '0';
@@ -523,8 +538,8 @@ hemma_room:
         - overscroll-behavior-x: contain
         - --hemma-row-fade: >
             [[[
-              if (!variables.show_presence && !variables.occupancy_sensor_1) return 0;
-              if (variables.presence_entity_1 && !variables.presence_entity_2) return 0;
+              if (!variables.show_presence && !variables.occupancy_sensor_1 && !(variables.presence_badges?.length) && !(variables.occupancy_badges?.length)) return 0;
+              if ((variables.presence_entity_1 && !variables.presence_entity_2) || variables.presence_badges?.length === 1) return 0;
               if (states['input_boolean.hemma_mobile_navigation']?.state === 'on') return 0;
               const expanded = states['input_select.hemma_expanded_row']?.state;
               return (expanded === 'presence' || expanded === 'occupancy') ? 1 : 0;
@@ -932,36 +947,46 @@ hemma_room:
               entity_7: '[[[ return variables.show_lights ? (variables.light_badges?.[6]?.entity || null) : null ]]]'
               entity_8: '[[[ return variables.show_lights ? (variables.light_badges?.[7]?.entity || null) : null ]]]'
 
+          # entity_1..4 fall back to presence_badges[i] (Phase 4 array form,
+          # 2026-08-13) when the matching numbered slot is unset. enabled
+          # additionally triggers on 2+ presence_badges, mirroring the
+          # existing "2+ numbered entities" group-vs-single split below.
           - type: custom:button-card
             template: hemma_badge_presence_group
             variables:
-              enabled: '[[[ return variables.show_presence && !!variables.presence_entity_2 ]]]'
-              entity_1: '[[[ return variables.presence_entity_1 ]]]'
-              entity_2: '[[[ return variables.presence_entity_2 ]]]'
-              entity_3: '[[[ return variables.presence_entity_3 ]]]'
-              entity_4: '[[[ return variables.presence_entity_4 ]]]'
+              enabled: '[[[ return variables.show_presence && (!!variables.presence_entity_2 || variables.presence_badges?.length >= 2) ]]]'
+              entity_1: '[[[ return variables.presence_entity_1 || variables.presence_badges?.[0]?.entity || null ]]]'
+              entity_2: '[[[ return variables.presence_entity_2 || variables.presence_badges?.[1]?.entity || null ]]]'
+              entity_3: '[[[ return variables.presence_entity_3 || variables.presence_badges?.[2]?.entity || null ]]]'
+              entity_4: '[[[ return variables.presence_entity_4 || variables.presence_badges?.[3]?.entity || null ]]]'
 
           - type: custom:button-card
             template: hemma_badge_presence
-            entity: '[[[ return variables.presence_entity_1 ]]]'
+            entity: '[[[ return variables.presence_entity_1 || variables.presence_badges?.[0]?.entity || null ]]]'
             variables:
-              enabled: '[[[ return !!(variables.show_presence && variables.presence_entity_1 && !variables.presence_entity_2) ]]]'
+              enabled: >
+                [[[
+                  return !!(variables.show_presence && variables.presence_entity_1 && !variables.presence_entity_2)
+                    || !!(variables.show_presence && variables.presence_badges?.length === 1);
+                ]]]
 
           # Occupancy group badge (FP2 binary presence zones) — single badge
           # in top row. Tap to expand/collapse individual zone badges in the
           # presence row (driven by input_select.hemma_expanded_row).
+          # entity_1..4/label_1..4 fall back to occupancy_badges[i] (Phase 4
+          # array form, 2026-08-13) when the matching numbered slot is unset.
           - type: custom:button-card
             template: hemma_badge_occupancy_group
             variables:
-              enabled: '[[[ return !!variables.occupancy_sensor_1 ]]]'
-              entity_1: '[[[ return variables.occupancy_sensor_1 ]]]'
-              entity_2: '[[[ return variables.occupancy_sensor_2 ]]]'
-              entity_3: '[[[ return variables.occupancy_sensor_3 ]]]'
-              entity_4: '[[[ return variables.occupancy_sensor_4 ]]]'
-              label_1: '[[[ return variables.occupancy_label_1 ]]]'
-              label_2: '[[[ return variables.occupancy_label_2 ]]]'
-              label_3: '[[[ return variables.occupancy_label_3 ]]]'
-              label_4: '[[[ return variables.occupancy_label_4 ]]]'
+              enabled: '[[[ return !!variables.occupancy_sensor_1 || variables.occupancy_badges?.length > 0 ]]]'
+              entity_1: '[[[ return variables.occupancy_sensor_1 || variables.occupancy_badges?.[0]?.entity || null ]]]'
+              entity_2: '[[[ return variables.occupancy_sensor_2 || variables.occupancy_badges?.[1]?.entity || null ]]]'
+              entity_3: '[[[ return variables.occupancy_sensor_3 || variables.occupancy_badges?.[2]?.entity || null ]]]'
+              entity_4: '[[[ return variables.occupancy_sensor_4 || variables.occupancy_badges?.[3]?.entity || null ]]]'
+              label_1: '[[[ return variables.occupancy_label_1 || variables.occupancy_badges?.[0]?.label || null ]]]'
+              label_2: '[[[ return variables.occupancy_label_2 || variables.occupancy_badges?.[1]?.label || null ]]]'
+              label_3: '[[[ return variables.occupancy_label_3 || variables.occupancy_badges?.[2]?.label || null ]]]'
+              label_4: '[[[ return variables.occupancy_label_4 || variables.occupancy_badges?.[3]?.label || null ]]]'
 
           - type: custom:button-card
             template: hemma_badge_media_group
@@ -1189,6 +1214,20 @@ hemma_room:
                     );
                 ]]]
               label: '[[[ return variables.occupancy_label_4 ]]]'
+
+          # Phase 4 (§4.1) array-driven presence/occupancy, alongside the
+          # numbered slots above via hemma_badge_row. Inert unless a room
+          # sets presence_badges/occupancy_badges.
+          - type: custom:button-card
+            template: hemma_badge_row
+            variables:
+              items: '[[[ return variables.presence_badges || [] ]]]'
+              default_type: presence
+          - type: custom:button-card
+            template: hemma_badge_row
+            variables:
+              items: '[[[ return variables.occupancy_badges || [] ]]]'
+              default_type: occupancy
 
     badges_media:
       card:
