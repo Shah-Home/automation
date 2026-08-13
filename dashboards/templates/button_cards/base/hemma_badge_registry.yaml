@@ -24,9 +24,11 @@
 #              convention to follow.
 #
 # Scope note: only entity-list domains live here (light, media_player, plex,
-# presence, occupancy) — the ones with a genuine "add one more" growth
-# problem (§3.1's smoking gun). The climate/AQI badges (temp, humidity,
-# air_quality, co2, pm25, voc, luminance) are deliberately NOT included:
+# presence, occupancy, alarm) — the ones with a genuine "add one more" growth
+# problem (§3.1's smoking gun), or (alarm, Phase 5) a brand-new domain added
+# specifically to prove the registry generalizes with minimal effort. The
+# climate/AQI badges (temp, humidity, air_quality, co2, pm25, voc, luminance)
+# are deliberately NOT included:
 # a room has exactly one of each by construction, not an arbitrary-length
 # list, so they don't have the numbered-slot ceiling problem this registry
 # and hemma_badge_row exist to solve, and forcing them through the same
@@ -46,6 +48,9 @@ hemma_badge_registry:
         popup: none
       presence:
         template: hemma_badge_presence
+        popup: none
+      alarm:
+        template: hemma_badge_alarm
         popup: none
       occupancy:
         template: hemma_badge_occupancy

@@ -1,0 +1,111 @@
+# Alarm Badge
+# Shows a single alarm_control_panel entity's armed/disarmed/pending/
+# triggered status, color-coded via the existing state-alarm-* theme tokens.
+#
+# Tap: opens more-info. Arming/disarming (including any code entry Alarmo
+# requires) is handled by Home Assistant's own native alarm_control_panel
+# more-info dialog — not reimplemented here.
+#
+# Variables (passed from hemma_room.yaml via hemma_badge_row):
+#   enabled - show/hide badge (default: true)
+#   label   - optional title override (defaults to entity friendly name)
+# ============================================================================
+hemma_badge_alarm:
+  template: [hemma_badge_base]
+
+  variables:
+    enabled: true
+    label: null
+
+  show_state: false
+  show_label: false
+  show_icon: true
+  icon: >
+    [[[
+      const s = String(entity?.state || '').toLowerCase();
+      if (s === 'triggered') return 'mdi:shield-alert';
+      if (['pending', 'arming', 'disarming'].includes(s)) return 'mdi:shield-sync';
+      if (s.startsWith('armed')) return 'mdi:shield-lock';
+      return 'mdi:shield-off-outline';
+    ]]]
+
+  tap_action:
+    action: more-info
+
+  extra_styles: >
+    [[[
+      const v = variables?.enabled;
+      const enabled = (v === undefined || v === null) ? true :
+        (typeof v === 'boolean') ? v :
+        (typeof v === 'number') ? v !== 0 :
+        !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+      const hasEnt = !!entity?.entity_id;
+      const stRaw  = String(entity?.state ?? '').trim();
+      const st     = stRaw.toLowerCase();
+      const hide   = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+      return `:host{display:${hide ? 'none' : 'inline-block'} !important;}`;
+    ]]]
+
+  styles:
+    card:
+      - display: >
+          [[[
+            const v = variables?.enabled;
+            const enabled = (v === undefined || v === null) ? true :
+              (typeof v === 'boolean') ? v :
+              (typeof v === 'number') ? v !== 0 :
+              !['false','0','no','off','disabled'].includes(String(v).trim().toLowerCase());
+
+            const hasEnt = !!entity?.entity_id;
+            const stRaw  = String(entity?.state ?? '').trim();
+            const st     = stRaw.toLowerCase();
+            const hide   = !enabled || !hasEnt || !stRaw || ['unknown','unavailable','none'].includes(st);
+
+            return hide ? 'none' : 'inline-grid';
+          ]]]
+      - --badge-alarm-color: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase();
+            if (s === 'triggered') return 'var(--state-alarm-triggered-color)';
+            if (['pending', 'arming', 'disarming'].includes(s)) return 'var(--state-alarm-pending-color)';
+            if (s.startsWith('armed')) return 'var(--state-alarm-armed-color)';
+            return 'var(--state-alarm-disarmed-color)';
+          ]]]
+      - --badge-title-color: >
+          [[[
+            const s = String(entity?.state || '').toLowerCase();
+            return s === 'disarmed'
+              ? 'var(--badge-title-inactive)'
+              : 'var(--hemma-entity-name, #ffffff)';
+          ]]]
+      - --badge-sub-color: var(--badge-alarm-color)
+    icon:
+      - color: var(--badge-alarm-color)
+      - --mdc-icon-size: var(--badge-icon-size-current, var(--badge-icon-size, 30px)) !important
+
+  name: >
+    [[[
+      const s = String(entity?.state || '').toLowerCase();
+      const status =
+        s === 'disarmed'            ? 'Disarmed' :
+        s === 'armed_home'          ? 'Armed · Home' :
+        s === 'armed_away'          ? 'Armed · Away' :
+        s === 'armed_night'         ? 'Armed · Night' :
+        s === 'armed_vacation'      ? 'Armed · Vacation' :
+        s === 'armed_custom_bypass' ? 'Armed · Custom' :
+        s === 'arming'              ? 'Arming…' :
+        s === 'disarming'           ? 'Disarming…' :
+        s === 'pending'             ? 'Pending…' :
+        s === 'triggered'           ? 'Triggered!' :
+                                       (entity?.state || 'Unknown');
+      const title = variables?.label || (entity?.attributes?.friendly_name || 'Alarm');
+      const esc = (t) => String(t || '').replaceAll('"', '&quot;');
+      return `
+        <div class="badge-wrap">
+          <div class="badge-title">${esc(title)}</div>
+          <div class="badge-sub">${esc(status)}</div>
+        </div>
+      `;
+    ]]]
