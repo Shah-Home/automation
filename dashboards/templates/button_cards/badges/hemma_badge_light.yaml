@@ -83,7 +83,7 @@ hemma_badge_light:
                       font-size: 32px !important;
                       font-weight: 600 !important;
                       line-height: 1.2 !important;
-                      color: var(--primary-text-color) !important;
+                      color: var(--hemma-entity-name, #ffffff) !important;
                     }
 
                   .: |
@@ -218,7 +218,7 @@ hemma_badge_light:
           content: '';
           position: absolute;
           inset: 0;
-          background-color: var(--hemma-icon-color, var(--primary-text-color)) !important;
+          background-color: var(--hemma-icon-color, #ffffff) !important;
 
           -webkit-mask: url('${SVG_URL}') no-repeat center / ${ICON_PCT}% ${ICON_PCT}%;
           mask: url('${SVG_URL}') no-repeat center / ${ICON_PCT}% ${ICON_PCT}%;
@@ -248,7 +248,7 @@ hemma_badge_light:
       - --badge-title-color: >
           [[[
             return entity?.state === 'on'
-              ? 'var(--primary-text-color)'
+              ? 'var(--hemma-entity-name, #ffffff)'
               : 'var(--badge-title-inactive)';
           ]]]
       - --badge-sub-color: >

@@ -61,7 +61,7 @@ hemma_badge_presence:
           [[[
             const s = String(entity?.state || '').toLowerCase().replace(/_/g, ' ');
             return (s === 'home' || s === 'just arrived')
-              ? 'var(--primary-text-color)'
+              ? 'var(--hemma-entity-name, #ffffff)'
               : 'var(--badge-title-inactive)';
           ]]]
       - --badge-sub-color: >

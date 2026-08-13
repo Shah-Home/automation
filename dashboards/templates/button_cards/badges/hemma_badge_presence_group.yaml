@@ -63,7 +63,7 @@ hemma_badge_presence_group:
       position: absolute;
       inset: 2px;
       z-index: 5;
-      background-color: var(--hemma-badge-icon-color, var(--primary-text-color)) !important;
+      background-color: var(--hemma-badge-icon-color, #ffffff) !important;
 
       -webkit-mask: url('/local/hemma/icons/person.svg') no-repeat center / 85% 85%;
       mask: url('/local/hemma/icons/person.svg') no-repeat center / 85% 85%;
@@ -92,7 +92,7 @@ hemma_badge_presence_group:
           ]]]
       - --badge-title-color: >
           [[[
-            return entity?.state === 'presence' ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+            return entity?.state === 'presence' ? 'rgba(0,0,0,0.85)' : 'var(--hemma-entity-name, #ffffff)';
           ]]]
       - --badge-sub-color: >
           [[[

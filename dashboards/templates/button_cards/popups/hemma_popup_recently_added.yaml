@@ -154,7 +154,7 @@ hemma_popup_recently_added:
                 },
                 custom_fields: {
                   body: '<div style="font-family:var(--primary-font-family,system-ui);">'
-                    + '<div style="font-size:22px;color:var(--primary-text-color,#e4e7eb);font-weight:400;letter-spacing:-.5px;">Nothing recently added</div>'
+                    + '<div style="font-size:22px;color:#e4e7eb;font-weight:400;letter-spacing:-.5px;">Nothing recently added</div>'
                     + '</div>',
                 },
               };
@@ -252,7 +252,7 @@ hemma_popup_recently_added:
                 : '';
 
               const badgeSpan = '<span style="display:inline-flex;width:fit-content;background:linear-gradient(135deg,color-mix(in srgb,' + badgeClr + ' 32%,transparent) 0%,color-mix(in srgb,' + badgeClr2 + ' 24%,transparent) 100%);border:1px solid color-mix(in srgb,' + badgeClr2 + ' 65%,transparent);border-radius:999px;padding:2px 6px;font-size:10px;font-weight:600;letter-spacing:0.06em;color:' + badgeTextClr + ';font-family:var(--primary-font-family,system-ui);white-space:nowrap;">' + badgeTxt + '</span>';
-              const titleDiv  = '<div style="font-size:20px;font-weight:700;color:var(--primary-text-color,#fff);line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">' + esc(item.title) + '</div>';
+              const titleDiv  = '<div style="font-size:20px;font-weight:700;color:#fff;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">' + esc(item.title) + '</div>';
               const font      = 'font-family:var(--primary-font-family,\'Hanken Grotesk\',system-ui);';
 
               const slideHtml = isMobile
@@ -319,7 +319,7 @@ hemma_popup_recently_added:
               },
               custom_fields: {
                 c: '<div style="padding:20px 20px 12px;text-align:left;">'
-                  + '<div style="font-size:16px;font-weight:500;letter-spacing:-0.01em;color:var(--primary-text-color,#fff);line-height:1.2;">Media</div>'
+                  + '<div style="font-size:16px;font-weight:500;letter-spacing:-0.01em;color:#fff;line-height:1.2;">Media</div>'
                   + '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-top:2px;">Plex \xb7 Recently Added</div>'
                   + '</div>',
               },

@@ -73,7 +73,7 @@ hemma_badge_occupancy_group:
       position: absolute;
       inset: 2px;
       z-index: 5;
-      background-color: var(--hemma-badge-icon-color, var(--primary-text-color)) !important;
+      background-color: var(--hemma-badge-icon-color, #ffffff) !important;
 
       -webkit-mask: url('/local/hemma/icons/motion.svg') no-repeat center / 85% 85%;
       mask: url('/local/hemma/icons/motion.svg') no-repeat center / 85% 85%;
@@ -133,9 +133,9 @@ hemma_badge_occupancy_group:
             };
             const entities = [variables?.entity_1, variables?.entity_2, variables?.entity_3, variables?.entity_4].filter(Boolean);
             const validEntities = entities.filter(isValid);
-            if (validEntities.length === 0) return 'var(--primary-text-color)';
+            if (validEntities.length === 0) return 'var(--hemma-entity-name, #ffffff)';
             const onCount = validEntities.filter(isOn).length;
-            return onCount > 0 ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+            return onCount > 0 ? 'rgba(0,0,0,0.85)' : 'var(--hemma-entity-name, #ffffff)';
           ]]]
       - --badge-sub-color: >
           [[[

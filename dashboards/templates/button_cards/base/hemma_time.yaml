@@ -76,7 +76,7 @@ hemma_time:
       - "-webkit-tap-highlight-color": transparent
 
     name:
-      - color: var(--primary-text-color)
+      - color: var(--hemma-entity-name, #ffffff)
       - opacity: var(--hemma-time-opacity, 0.92)
       - letter-spacing: 1px
       - font-size: 18px

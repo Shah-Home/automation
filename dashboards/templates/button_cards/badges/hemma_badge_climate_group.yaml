@@ -85,7 +85,7 @@ hemma_badge_climate_group:
           ]]]
       - --badge-title-color: >
           [[[
-            return entity?.state === 'climate' ? 'rgba(0,0,0,0.85)' : 'var(--primary-text-color)';
+            return entity?.state === 'climate' ? 'rgba(0,0,0,0.85)' : 'var(--hemma-entity-name, #ffffff)';
           ]]]
       - --badge-sub-color: >
           [[[

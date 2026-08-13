@@ -47,7 +47,7 @@ hemma_badge_temp:
           content: '';
           position: absolute;
           inset: 0;
-          background-color: var(--hemma-icon-color, var(--primary-text-color));
+          background-color: var(--hemma-icon-color, #ffffff);
           -webkit-mask: url('${svgUrl}') no-repeat center / 85% 85%;
           mask: url('${svgUrl}') no-repeat center / 85% 85%;
           transform: translateZ(0);

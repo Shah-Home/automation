@@ -418,7 +418,7 @@ hemma_entity:
               ]]]
           - --hemma-icon-circle-bg: var(--hemma-icon-color-current)
         name:
-          - color: var(--hemma-entity-name-active, var(--primary-text-color))
+          - color: var(--hemma-entity-name-active, #ffffff)
         state:
           - color: var(--hemma-entity-state-active-color, var(--hemma-entity-state-active, var(--secondary-text-color)))
         icon:

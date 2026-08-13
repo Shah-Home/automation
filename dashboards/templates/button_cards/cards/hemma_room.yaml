@@ -315,7 +315,7 @@ hemma_room:
 
     name:
       - grid-area: n
-      - color: var(--primary-text-color)
+      - color: var(--hemma-entity-name, #ffffff)
       - opacity: 0.9
       - font-size: var(--hero-room-name-size-current, clamp(48px, 6vw + 12px, 100px))
       - letter-spacing: var(--hero-room-name-letter-spacing-current, -2px)
@@ -355,7 +355,7 @@ hemma_room:
         - pointer-events: auto
         - cursor: pointer
         - overflow: visible
-        - color: var(--primary-text-color)
+        - color: var(--hemma-entity-name, #ffffff)
         - background: transparent !important
         - background-color: transparent !important
 

@@ -61,7 +61,7 @@ hemma_nav_tile:
       - background: var(--ha-card-background-active)
       - transform: translateY(-1px)
     icon:
-      - color: var(--primary-text-color)
+      - color: var(--hemma-entity-name, #ffffff)
       - width: 100%
       - height: 100%
       - opacity: 0.92
@@ -69,7 +69,7 @@ hemma_nav_tile:
       - display: none
     name:
       - grid-area: n
-      - color: var(--primary-text-color)
+      - color: var(--hemma-entity-name, #ffffff)
       - font-size: var(--hemma-entity-name-font-current, var(--hemma-entity-name-font-desktop, 16px))
       - font-weight: 700
       - line-height: 1.15

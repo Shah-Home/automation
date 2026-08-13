@@ -61,7 +61,7 @@ hemma_menu_icon:
       height: 40px !important;
       margin: 0 !important;
       display: block !important;
-      color: var(--primary-text-color) !important;
+      color: var(--hemma-entity-name, #ffffff) !important;
       z-index: 9999 !important;
       pointer-events: auto !important;
     }

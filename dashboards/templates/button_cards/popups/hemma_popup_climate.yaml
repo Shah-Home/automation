@@ -181,7 +181,7 @@ hemma_climate_popup:
             // After this block: scoreLabel, scoreColor, advice are defined
             const _scoreBlock = `
               const aqState = (qualId ? states[qualId]?.state : '').toLowerCase() || '';
-              let scoreLabel = 'Unknown', scoreColor = 'var(--primary-text-color)', advice = 'Air quality unavailable', score = 3;
+              let scoreLabel = 'Unknown', scoreColor = '#ffffff', advice = 'Air quality unavailable', score = 3;
               switch (aqState) {
                 case 'excellent': scoreLabel='Excellent'; scoreColor='var(--hemma-badge-air-quality-excellent-color)'; advice='Air quality is great';    score=5; break;
                 case 'good':      scoreLabel='Good';      scoreColor='var(--hemma-badge-air-quality-good-color)';     advice='Air quality is good';       score=4; break;
