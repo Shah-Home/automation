@@ -16,6 +16,53 @@ clean_room:
       value_template: >
         {{ states('vacuum.cleaning_lady') not in ['cleaning', 'unavailable', 'unknown'] }}
 
+    # NEW (revision 1) / CHANGED (revision 2): Record which room was
+    # dispatched, for zone-reactive automations
+    # (vacuum_automation_turn_on_zone_lights, in automations.yaml). Only set
+    # when `room` matches one of the helper's known options -- the generic
+    # "Cleaning Lady" control card (dashboards/hemma/views/home.yaml, the
+    # hemma_vacuum template's default) calls this script with room: "" for
+    # whole-house/no-zone commands, which must not overwrite the room state
+    # or raise an error (input_select.select_option errors on an option that
+    # isn't in its options list). Checking against the helper's own live
+    # `options` attribute (rather than a second hardcoded room list here)
+    # means adding a future room only requires touching the helper's options
+    # list, not this script.
+    #
+    # Written through "none" FIRST, then the real room -- even when the room
+    # is identical to whatever the helper is already set to (e.g. re-tapping
+    # "Clean Kitchen" twice in a row with no other room dispatched in
+    # between). input_select.select_option is a no-op at the state-machine
+    # level when the option string doesn't actually change (no state_changed
+    # event is emitted), so a single-write version of this step would never
+    # re-trigger vacuum_automation_turn_on_zone_lights on a same-room
+    # re-dispatch (confirmed in 04_simulation.md Scenario 3, escalated to a
+    # Blocker in 05_critic_findings.md Iteration 1 finding #1). Writing
+    # "none" first always produces a real transition EXCEPT on the very
+    # first-ever dispatch since the helper's `initial: none` (none -> none
+    # is the one no-op case, and that's fine -- there's nothing to
+    # re-trigger yet, since this is the first dispatch of this helper's
+    # life). The automation's own condition already ignores the "none"
+    # transition (to_state.state != 'none', ANDed in revision 2 with a
+    # restart guard -- see automations.yaml Piece 3), so it only ever acts
+    # on the SECOND write (the real room) -- exactly once per dispatch,
+    # including same-room re-dispatches, never zero times and never twice.
+    - if:
+        - condition: template
+          value_template: >
+            {{ room in (state_attr('input_select.vacuum_current_room', 'options') or []) }}
+      then:
+        - action: input_select.select_option
+          target:
+            entity_id: input_select.vacuum_current_room
+          data:
+            option: none
+        - action: input_select.select_option
+          target:
+            entity_id: input_select.vacuum_current_room
+          data:
+            option: "{{ room }}"
+
     # Set helper to "command_sent" to indicate we're sending a command
     - action: input_select.select_option
       target:

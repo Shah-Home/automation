@@ -110,3 +110,113 @@
         entity_id: input_select.vacuum_command_state
       data:
         option: 'error_unknown'
+
+# AUTOMATION 6: Turn on zone lights when vacuum is dispatched to a room
+# Trigger: input_select.vacuum_current_room changes state (any change)
+# Condition: (1) trigger.from_state is not none -- ignores the HA-restart
+#            restore-on-boot write (old_state is Python None the first time
+#            this entity is loaded into the state machine each session, even
+#            though its restored value is a real room string like
+#            "kitchen"). Without this guard, and now that the helper holds a
+#            real room indefinitely between dispatches (per Piece 2's
+#            reset-through-none write -- "none" is always immediately
+#            overwritten with a real room within the same script run, so the
+#            helper is never observed at rest at "none" after the first
+#            dispatch), every HA restart would risk spuriously re-running
+#            this automation against whatever room was last cleaned,
+#            unprompted (04_simulation.md Scenario 4(b);
+#            05_critic_findings.md Iteration 1 finding #2). (2) the new
+#            state is not 'none' (the helper's own reset-pulse value,
+#            written and immediately overwritten by script.clean_room within
+#            the same script run on every real dispatch -- see Piece 2).
+#            Per-switch gating ("only act on a switch if it's currently
+#            off") happens inside the action, individually per switch, not
+#            as one room-wide gate.
+# Action: wait (up to 15s) for vacuum.cleaning_lady to actually enter
+#         'cleaning' -- mirrors vacuum_automation_acknowledge_command's own
+#         trigger above, this repo's own precedent for "the GA command
+#         genuinely landed and the vacuum is moving," not just "a command
+#         was sent" (05_critic_findings.md Iteration 1 finding #3: this
+#         repo's own vacuum_automation_timeout_handler/_relay_error
+#         automations exist precisely because GA dispatch can fail silently,
+#         so "room helper was written" is a proxy for, not proof of, "vacuum
+#         is about to clean that zone"). If the wait times out (15s -- a
+#         little more generous than vacuum_automation_timeout_handler's 10s
+#         window, since this is a secondary consumer of that signal, not the
+#         primary timeout owner), continue_on_timeout: false stops the
+#         sequence right there: no switch is touched, no scene is created.
+#         Otherwise, for each light switch mapped to the triggered room that
+#         is currently off, snapshot its (off) state via scene.create -- a
+#         per-switch marker adapted from script.hemma_light_smart_toggle's
+#         snapshot pattern, recording that THIS automation is the one about
+#         to turn it on -- then turn it on. Switches already on are left
+#         alone and get no record (snapshot-only tracking scope, not a full
+#         room-state mirror)
+# Purpose: light the room the vacuum is actually about to clean (confirmed
+#          via the vacuum's own state, not just a dispatched command string),
+#          without disturbing switches a person already turned on
+#          themselves, and leave a breadcrumb of what THIS automation itself
+#          changed for a future "vacuum done" automation to consume
+- id: vacuum_automation_turn_on_zone_lights
+  alias: "Vacuum: Turn on zone lights when dispatched to clean"
+  description: "Wait for the vacuum to actually start cleaning the dispatched room, then turn on each currently-off light switch in that room; switches already on are left untouched. Snapshot-tracks (via scene.create) only the switches this automation itself turns on, for a future 'vacuum done' automation to consume."
+  mode: parallel
+  max: 5
+  triggers:
+    - platform: state
+      entity_id: input_select.vacuum_current_room
+  conditions:
+    - condition: template
+      value_template: "{{ trigger.from_state is not none }}"
+    - condition: template
+      value_template: "{{ trigger.to_state.state != 'none' }}"
+  actions:
+    - variables:
+        room: "{{ trigger.to_state.state }}"
+        # Room -> light-switch-entity map. Hardcoded per-file (see
+        # 02_draft_notes.md "Deliberately not handled" for why this isn't
+        # derived from area_entities()). Extending to a third room needs an
+        # edit here AND to the helper's options list in packages/hemma_helpers.yaml
+        # -- two edits, not a redesign.
+        room_light_switches:
+          kitchen:
+            - switch.kitchen_island_lights
+          "living room":
+            - switch.living_room_lights
+          "dining room":
+            - switch.dining_room_lights
+        zone_switches: "{{ room_light_switches.get(room, []) }}"
+
+    # Confirm the vacuum actually started cleaning before touching any
+    # light. Mirrors vacuum_automation_acknowledge_command's trigger above
+    # (vacuum.cleaning_lady -> 'cleaning'), this repo's own precedent for
+    # "the GA command genuinely landed." continue_on_timeout: false means a
+    # timeout here stops this run entirely -- the repeat step below never
+    # executes, so nothing is touched.
+    - wait_for_trigger:
+        - platform: state
+          entity_id: vacuum.cleaning_lady
+          to: 'cleaning'
+      timeout:
+        seconds: 15
+      continue_on_timeout: false
+
+    - repeat:
+        for_each: "{{ zone_switches }}"
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ states(repeat.item) == 'off' }}"
+            then:
+              # Snapshot-only record: marks that THIS automation (not the
+              # user, not any other automation) is the one turning this
+              # switch on -- not a general on/off mirror. A future "vacuum
+              # done" automation can look for scene.vacuum_zone_lights_on_*
+              # to know which switches it's responsible for turning back off.
+              - service: scene.create
+                data:
+                  scene_id: "vacuum_zone_lights_on_{{ repeat.item | replace('.', '_') }}"
+                  snapshot_entities: "{{ [repeat.item] }}"
+              - service: switch.turn_on
+                target:
+                  entity_id: "{{ repeat.item }}"

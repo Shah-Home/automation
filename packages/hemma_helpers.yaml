@@ -13,6 +13,7 @@
 #   input_number.hemma_thermostat_target_temperature - Thermostat target temp
 #   input_select.hemma_thermostat_mode      - Heat/Cool mode selector (set via thermostat overlay rail)
 #   input_select.vacuum_command_state       - Vacuum command state machine
+#   input_select.vacuum_current_room       - Room dispatched for vacuum cleaning (kitchen/living room/none)
 #   sensor.hemma_mobile_dynamic_background  - Dynamic mobile background phase (morning/afternoon/night)
 #   sensor.plex_recently_added_count       - Plex recently-added count (placeholder, awaiting Plex server)
 # ============================================================================
@@ -69,6 +70,16 @@ input_select:
       - error_unknown
     initial: idle
     icon: mdi:robot-vacuum
+
+  vacuum_current_room:
+    name: Vacuum Current Room
+    options:
+      - none
+      - kitchen
+      - living room
+      - dining room
+    initial: none
+    icon: mdi:map-marker-radius
 
 
 template:

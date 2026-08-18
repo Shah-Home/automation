@@ -110,3 +110,6 @@ blueprints/
 ##########################################################
 *.md
 !AGENTS.md
+
+# ignore all hidden files and folders except .gitignore
+.*
